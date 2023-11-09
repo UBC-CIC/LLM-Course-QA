@@ -1,11 +1,12 @@
 ﻿using System;
+using CPEN491.Backend.Service.DTOs;
 namespace CPEN491.Backend.Service.Interfaces
 {
-	public class ICourseService
+	public interface ICourseService
 	{
-		public ICourseService()
-		{
-		}
-	}
+        public string CreateCourse(CreateCourseDTO createCourseDTO);
+
+
+    }
 }
 

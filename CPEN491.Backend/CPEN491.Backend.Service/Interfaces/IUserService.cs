@@ -1,11 +1,7 @@
 ﻿using System;
-namespace CPEN491.Backend.Service.Interfaces
+namespace CPEN491.Backend.Service.Interfaces;
+
+public interface IUserService
 {
-	public class IUserService
-	{
-		public IUserService()
-		{
-		}
-	}
 }
 

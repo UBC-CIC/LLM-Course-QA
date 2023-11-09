@@ -7,12 +7,5 @@ namespace CPEN491.Backend.API.Controllers;
 public class UserController : ControllerBase
 {
 
-    private readonly ILogger<QueryController> _logger;
-
-    public UserController(ILogger<QueryController> logger)
-    {
-        _logger = logger;
-    }
-
 }
 
