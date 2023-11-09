@@ -17,6 +17,10 @@ const User = sequelize.define('User', {
     password: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    courses: {
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        allowNull: true
     }
 });
 
