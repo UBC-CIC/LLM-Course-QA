@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CPEN491.Backend.Service.Interfaces;
+using CPEN491.Backend.Service.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CPEN491.Backend.API.Controllers;
 
@@ -6,13 +8,18 @@ namespace CPEN491.Backend.API.Controllers;
 [Route("[controller]")]
 public class CourseController : ControllerBase
 {
+    private readonly ICourseService _courseService;
 
-    private readonly ILogger<CourseController> _logger;
-
-    public CourseController(ILogger<CourseController> logger)
+    public CourseController(ICourseService courseService)
     {
-        _logger = logger;
+        _courseService = courseService;
     }
 
+    [HttpPost(Name = "CreateCourse")]
+    public ActionResult<string> Create(CreateCourseDTO createCourseDTO)
+    {
+        string courseId = _courseService.CreateCourse(createCourseDTO);
+        return Ok(courseId);
+    }
 }
 
