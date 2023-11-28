@@ -1,0 +1,22 @@
+.course-card {
+    width: 300px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: var(--white);
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.course-code {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.number-of-students {
+    color: #888;
+    font-size: 14px;
+}
