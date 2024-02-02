@@ -22,7 +22,7 @@ def login():
         return jsonify({'id': user_id}), 200
     else:
         return jsonify({'error': 'Invalid username or password'}), 400
-    
+
 @bp.route('/logout', methods=['GET'])
 @login_required
 def logout():

@@ -22,3 +22,9 @@ class User(db.Model, UserMixin):
 
     # add relationship to courses 
     courses = relationship('Course', secondary='course_students', backref='students')
+
+    def is_admin(self):
+        return self.role == Role.Admin
+    
+    def is_instructor(self):
+        return self.role == Role.Instructor
