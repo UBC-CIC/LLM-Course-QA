@@ -4,9 +4,10 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 import uuid
+import enum
 
 db = SQLAlchemy()
-class Role(Enum):
+class Role(enum.Enum):
     Instructor = 1
     Student = 2
     Admin = 3
