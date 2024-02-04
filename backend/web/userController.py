@@ -36,5 +36,3 @@ def logout():
         return jsonify({'message': 'User logged out'}), 200
     else:
         return jsonify({'error': 'Logout failed'}), 400
-
-
