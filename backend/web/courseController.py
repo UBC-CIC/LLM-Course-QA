@@ -46,15 +46,17 @@ def upload_document(courseId):
     if not current_user.is_instructor():
         return jsonify({'error': 'Unauthorized'}), 401
     
-    body = request.get_json()
-    document = body.files['document']
+    if 'document' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    
+    file = request.files['document']
 
     uploadDocumentData = {
         'course_id': courseId,
-        'document': document
+        'document': file
     }
     
-    return courseService.uploadDocument(uploadDocumentData)
+    return courseService.upload_course_document(uploadDocumentData)
 
 @courseBp.route('/<courseId>/documents/<documentId>', methods=['DELETE'])
 @login_required
