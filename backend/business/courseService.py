@@ -1,4 +1,5 @@
-from ..data.models.course import Course, Document
+from ..data.models.course import Course
+from ..data.models.document import Document
 from ..extensions import db
 import random
 import boto3

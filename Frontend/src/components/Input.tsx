@@ -17,6 +17,7 @@ type InputProps = {
     inputId: string;
     placholderIn?: boolean;
     onClick?: () => void;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Input: React.FC<InputProps> = (props: InputProps) => {
@@ -32,6 +33,7 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
                     <div style={{ display: "flex", flexDirection: "row" }}>
                         <input
                             id={props.inputId}
+                            onChange={props.onChange}
                             className="text-input"
                             type={props.type || 'text'}
                             placeholder={props.placholderIn ? props.placeholder : ""}
