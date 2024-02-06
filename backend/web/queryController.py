@@ -8,8 +8,11 @@ queryBp = Blueprint('query', __name__, url_prefix='/queries')
 @login_required
 def query_llm():
     data = request.get_json()
-
-    query_response = queryService.query_llm(data)
+    query_data = {
+        'question': data['question'],
+        'course_id': data['course_id']
+    }
+    query_response = queryService.query_llm(query_data)
     if query_response:
         return jsonify({'response': query_response}), 200
     else:

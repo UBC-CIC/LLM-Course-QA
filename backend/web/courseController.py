@@ -4,6 +4,7 @@ from flask_login import login_required, current_user
 
 courseBp = Blueprint('course', __name__, url_prefix='/courses')
 
+# Create a course
 @courseBp.route('', methods=['POST'])
 @login_required
 def create_course():
@@ -55,8 +56,13 @@ def upload_document(courseId):
         'course_id': courseId,
         'document': file
     }
-    
-    return courseService.upload_course_document(uploadDocumentData)
+    try:
+        upload_document = courseService.upload_course_document(uploadDocumentData)
+        if not upload_document:
+            return jsonify({'error': 'Error uploading document'}), 400
+        return jsonify({'message': 'Document uploaded'}), 201
+    except:
+        return jsonify({'error': 'Internal Server Error'}), 500
 
 @courseBp.route('/<courseId>/documents/<documentId>', methods=['DELETE'])
 @login_required
@@ -69,3 +75,39 @@ def delete_course_document(courseId, documentId):
         'document_id': documentId
     }
     return courseService.delete_course_document(deleteCourseDocumentData)
+
+# get all courses
+@courseBp.route('', methods=['GET'])
+@login_required
+def get_courses():
+    userId = current_user.id
+    list_courses_data = {
+        'user_id': userId
+    }
+
+    courses = courseService.list_courses(list_courses_data)
+    
+    if not courses:
+        return jsonify({'error': 'No courses found'}), 404
+    
+    return jsonify(courses), 200
+
+# Adds the user to the course
+@courseBp.route('/join', methods=['POST'])
+@login_required
+def join_course():
+    user_id = current_user.id
+    data = request.get_json()
+
+    join_course_data = {
+        'access_code': data['access_code'],
+        'user_id': user_id
+    }
+    
+    try:
+        join_course = courseService.join_course(join_course_data)
+        if not join_course:
+            return jsonify({'error': 'Course does not exist'}), 400
+        return jsonify({'message': 'Course joined'}), 200
+    except:
+        return jsonify({'error': 'Internal Server Error'}), 500

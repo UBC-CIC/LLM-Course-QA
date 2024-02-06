@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user
 from ..data.models.user import User
 from ..extensions import db, bcrypt
 
+# Registers a user
 def register(create_user_data):
     from .courseService import get_courses
 
@@ -26,6 +27,7 @@ def register(create_user_data):
 
     return user.id
 
+# Logs in user and creates a session
 def login(login_data):
     user = User.query.filter_by(username=login_data['username']).first()
     print(user.is_admin())
@@ -38,16 +40,20 @@ def login(login_data):
     
     return None
 
+# Logs out user and invalidates the session
+def logout():
+    logout_user()
+    return True  
+
 def add_course_to_admins(course):
     users = User.query.filter_by(role='Admin').all()
     for user in users:
         user.courses.append(course)
     db.session.commit()
 
+# Gets user by id
 def get_user(user_id):
     user = User.query.get(user_id)
     return user
 
-def logout():
-    logout_user()
-    return True  
+
