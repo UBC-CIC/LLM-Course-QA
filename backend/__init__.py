@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 import os
 from .data.models.user import *
 from .web.courseController import courseBp
@@ -10,6 +11,7 @@ from .extensions import db, login_manager, bcrypt
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    CORS(app)
     app.secret_key = 'pl40'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/course-qa'
     app.register_blueprint(courseBp)
