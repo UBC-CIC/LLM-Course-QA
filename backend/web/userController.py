@@ -24,7 +24,7 @@ def login():
 
     user_data = userService.login(data)
     if user_data:
-        return jsonify({'id': user_data.id, "role" : user_data.role}), 200
+        return jsonify({'id': user_data["id"], 'role': str(user_data["role"])}), 200
     else:
         return jsonify({'error': 'Invalid username or password'}), 400
 

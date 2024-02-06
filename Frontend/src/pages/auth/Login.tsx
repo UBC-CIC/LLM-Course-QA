@@ -6,21 +6,27 @@ import { FormValidator } from '../../utils/formValidation'
 import Constants from '../../utils/constants'
 import { useNavigate } from 'react-router-dom'
 import Header from '../../components/Header'
+import { useLogin } from '../../hooks/useLogin'
 
 const Login = () => {
 
+    const {login, error, isLoading} = useLogin();
     let navigate = useNavigate();
-    const formSubmission = () => {
 
+    const formSubmission = () => {
+        
         let email = document.getElementById('login-email') as HTMLInputElement;
         let password = document.getElementById('login-pswd') as HTMLInputElement;
-
+        
         const validateEmail = FormValidator.validateEmptyField('login-email', email.value, "Email Address");
         const validatePassword = FormValidator.validateEmptyField('login-pswd', password.value, "Password");
-
+        
         if (validateEmail && validatePassword) {
             //navigate to the Login page
-            navigate('/chat', { replace: true });
+            login(email.value, password.value)
+            if(localStorage.getItem('user')) {
+                navigate('/chat', { replace: true });
+            }
         }
     }
 

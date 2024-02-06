@@ -11,6 +11,8 @@
   width: 100%;
   background-color: var(--gray-100);
 }
+iframe#webpack-dev-server-client-overlay{display:none!important}
+
 
 body {
   font-family: 'open-sans', sans-serif;

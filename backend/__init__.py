@@ -13,7 +13,7 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     CORS(app)
     app.secret_key = 'pl40'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/course-qa'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Abc1234*@localhost/course-qa'
     app.register_blueprint(courseBp)
     app.register_blueprint(queryBp)
     app.register_blueprint(userBp)
