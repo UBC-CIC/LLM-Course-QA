@@ -42,11 +42,8 @@ def delete_course(courseId):
         return jsonify({'error': 'Internal Server Error'}), 500
 
 @courseBp.route('/<courseId>/documents', methods=['POST'])
-@login_required
-def upload_document(courseId):
-    if not current_user.is_instructor():
-        return jsonify({'error': 'Unauthorized'}), 401
-    
+# @login_required
+def upload_document(courseId):    
     if 'document' not in request.files:
         return jsonify({'error': 'No file part'}), 400
     
@@ -78,10 +75,10 @@ def delete_course_document(courseId, documentId):
     return courseService.delete_course_document(deleteCourseDocumentData)
 
 # get all courses
-@courseBp.route('', methods=['GET'])
-@login_required
-def get_courses():
-    userId = current_user.id
+@courseBp.route('/<userId>', methods=['GET'])
+# @login_required
+def get_courses(userId):
+   
     list_courses_data = {
         'user_id': userId
     }
@@ -115,7 +112,7 @@ def join_course():
 
 # get all course documents
 @courseBp.route('/<courseId>/documents', methods=['GET'])
-@login_required
+# @login_required
 def get_course_documents(courseId):
     list_course_documents_data = {
         'course_id': courseId

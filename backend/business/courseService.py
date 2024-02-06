@@ -73,7 +73,7 @@ def upload_course_document(course_document_data):
     file = course_document_data['document']
     if not file or file.content_type != 'application/pdf':
         return False
-    session = boto3.Session(profile_name='')
+    session = boto3.Session(profile_name='Daniel')
 
     try:
         s3 = session.client('s3')
@@ -95,13 +95,35 @@ def upload_course_document(course_document_data):
 def list_course_documents(list_course_documents_data):
     course_id = list_course_documents_data['course_id']
     documents = Document.query.filter_by(course_id=course_id).all()
-    return documents
+    # make it serializable
+    document_objects = []
+    for document in documents:
+        document_objects.append({
+            'id': document.id,
+            'name': document.name
+        })
+    return document_objects
 
 # Returns courses where user is enrolled/teaching/administrating
 def list_courses(list_courses_data):
     user_id = list_courses_data['user_id']
     courses = Course.query.filter(Course.users.any(id=user_id)).all()
-    return courses
+
+    # create sererializable course object
+    serialized_courses = []
+    for course in courses:
+        serialized_courses.append({
+            'id': course.id,
+            'course_code': course.course_code,
+            'course_section': course.course_section,
+            'name': course.name,
+            'description': course.description,
+            'access_code': course.access_code,
+            'student_count': len(course.users)
+        })
+
+
+    return serialized_courses
 
 # Gets all courses
 def get_courses():
