@@ -14,6 +14,6 @@ def query_llm():
     }
     query_response = queryService.query_llm(query_data)
     if query_response:
-        return jsonify({'response': query_response}), 200
+        return jsonify({'response': query_response["result"]}), 200
     else:
         return jsonify({'error': 'Error creating response'}), 400
