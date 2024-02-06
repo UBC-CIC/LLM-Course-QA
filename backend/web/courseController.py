@@ -6,20 +6,20 @@ courseBp = Blueprint('course', __name__, url_prefix='/courses')
 
 # Create a course
 @courseBp.route('', methods=['POST'])
-@login_required
+# @login_required
 def create_course():
-    if not current_user.is_instructor():
-        return jsonify({'error': 'Unauthorized'}), 401
+    # if not current_user.is_instructor():
+    #     return jsonify({'error': 'Unauthorized'}), 401
     
     createCourseData = request.get_json()
-    createCourseData['instructor'] = current_user.id
+    # createCourseData['instructor'] = current_user.id
 
     try:
-        createCourse = courseService.create_course(createCourseData)
-        if not createCourse:
+        create_course_id = courseService.create_course(createCourseData)
+        if not create_course_id:
             return jsonify({'error': 'Course already exists'}), 400
 
-        return jsonify({'id' : create_course , 'message': 'Course created'}), 201
+        return jsonify({'id' : str(create_course_id) , 'message': 'Course created'}), 201
     except:
         return jsonify({'error': 'Internal Server Error'}), 500
 
@@ -42,11 +42,8 @@ def delete_course(courseId):
         return jsonify({'error': 'Internal Server Error'}), 500
 
 @courseBp.route('/<courseId>/documents', methods=['POST'])
-@login_required
-def upload_document(courseId):
-    if not current_user.is_instructor():
-        return jsonify({'error': 'Unauthorized'}), 401
-    
+# @login_required
+def upload_document(courseId):    
     if 'document' not in request.files:
         return jsonify({'error': 'No file part'}), 400
     
@@ -78,10 +75,10 @@ def delete_course_document(courseId, documentId):
     return courseService.delete_course_document(deleteCourseDocumentData)
 
 # get all courses
-@courseBp.route('', methods=['GET'])
-@login_required
-def get_courses():
-    userId = current_user.id
+@courseBp.route('/<userId>', methods=['GET'])
+# @login_required
+def get_courses(userId):
+   
     list_courses_data = {
         'user_id': userId
     }
@@ -113,25 +110,9 @@ def join_course():
     except:
         return jsonify({'error': 'Internal Server Error'}), 500
 
-# get all courses
-@courseBp.route('', methods=['GET'])
-@login_required
-def get_courses():
-    userId = current_user.id
-    list_courses_data = {
-        'user_id': userId
-    }
-
-    courses = courseService.list_courses(list_courses_data)
-    
-    if not courses:
-        return jsonify({'error': 'No courses found'}), 404
-    
-    return jsonify(courses), 200
-
 # get all course documents
 @courseBp.route('/<courseId>/documents', methods=['GET'])
-@login_required
+# @login_required
 def get_course_documents(courseId):
     list_course_documents_data = {
         'course_id': courseId

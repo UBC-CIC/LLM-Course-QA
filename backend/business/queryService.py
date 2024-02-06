@@ -87,6 +87,7 @@ def query_llm(query_data):
         }
     }]
     }
+
     retriever = AmazonKendraRetriever(index_id="", attribute_filter=attribute_filter) # to set index_id
     qa_chain = RetrievalQA.from_chain_type(llm=query_service.llm_open,
                                   chain_type="stuff",
@@ -102,3 +103,5 @@ def query_llm(query_data):
         "result": llm_response['result'],
         # "sources": sources
     }
+    return response
+
