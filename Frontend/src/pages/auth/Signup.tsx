@@ -25,15 +25,6 @@ const SignUp = () => {
         }
     }
 
-    const signup = async (email, password) => {
-        // const response = await fetch('', {
-        //     method: 'POST',
-        //     body: JSON.stringify({ email, password }),
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     }
-        // });
-    }
 
     return (
         <div style={{
