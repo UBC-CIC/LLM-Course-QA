@@ -21,7 +21,8 @@ const App = () => {
           </Route>
           <Route path="/chat" element={user ? <Chat/> : <Navigate to="/"/>} />
           <Route path="/dashboard" element={user ? (JSON.parse(user).role === "Role.Student" ? <StudentDashboard /> : <InstructorDashboard/>) : <Navigate to="/"/>} />
-          <Route path="/upload" element={user && JSON.parse(user).role === "Role.Instructor" ? <UploadFile/> : <Navigate to="/"/>} />
+          {/* <Route path="/upload" element={user && JSON.parse(user).role === "Role.Instructor" ? <UploadFile/> : <Navigate to="/"/>} /> */}
+          <Route path="/upload" element={<UploadFile/>} />
           {/* <Route path="/test" element={<Test />} /> */}
           <Route path="*" element={<h1>404</h1>} />
         </Routes>

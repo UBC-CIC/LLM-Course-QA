@@ -4,14 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faUpload } from '@fortawesome/free-solid-svg-icons';
 import './UploadFile.css';
 
-
 const UploadFile = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isDraggingOver, setIsDraggingOver] = useState(false);
-
     const [files, setFiles] = useState<File[]>([]);
-
     const [hover, setHover] = useState('#fda29b');
+    const [uploadProgress, setUploadProgress] = useState(0); // New state for upload progress
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -25,7 +23,6 @@ const UploadFile = () => {
         setIsDraggingOver(false);
         const file = event.dataTransfer.files?.[0];
         if (file) {
-
             setSelectedFile(file);
             setFiles([...files, file]); // Push the new file to the files state
         }
@@ -40,6 +37,20 @@ const UploadFile = () => {
         const updatedFiles = [...files];
         updatedFiles.splice(index, 1);
         setFiles(updatedFiles);
+    };
+
+    const handleUpload = () => {
+        // Simulating file upload progress
+        const interval = setInterval(() => {
+            setUploadProgress((prevProgress) => {
+                if (prevProgress < 100) {
+                    return prevProgress + 10;
+                } else {
+                    clearInterval(interval);
+                    return prevProgress;
+                }
+            });
+        }, 500);
     };
 
     return (
@@ -90,6 +101,12 @@ const UploadFile = () => {
                 </table>
             </div>
             <input type="file" onChange={handleFileChange} />
+            {selectedFile && (
+                <div className="progress-bar">
+                    <div className="progress" style={{ width: `${uploadProgress}%` }}></div>
+                </div>
+            )}
+            <button onClick={handleUpload}>Upload</button>
         </div>
     );
 };
