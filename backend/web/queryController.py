@@ -5,7 +5,7 @@ from flask_login import login_required
 queryBp = Blueprint('query', __name__, url_prefix='/queries')
 
 @queryBp.route('', methods=['POST'])
-@login_required
+# @login_required
 def query_llm():
     data = request.get_json()
     query_data = {
