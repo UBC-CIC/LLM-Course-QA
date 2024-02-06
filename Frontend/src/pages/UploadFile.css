@@ -33,14 +33,14 @@ input[type="file"] {
 
 
 .uploaded-files {
-    width: 70%;
+    width: 1000px;
     margin: 0 auto;
 }
 
 .uploaded-files table {
-    width: 800px;
+    width: 100%;
     border-collapse: collapse;
-    background: aqua;
+    background: var(--gray-200);
     table-layout: fixed; /* Added property */
 }
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faUpload } from '@fortawesome/free-solid-svg-icons';
 import './UploadFile.css';
 
 
@@ -10,6 +10,8 @@ const UploadFile = () => {
     const [isDraggingOver, setIsDraggingOver] = useState(false);
 
     const [files, setFiles] = useState<File[]>([]);
+
+    const [hover, setHover] = useState('#fda29b');
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -23,6 +25,7 @@ const UploadFile = () => {
         setIsDraggingOver(false);
         const file = event.dataTransfer.files?.[0];
         if (file) {
+
             setSelectedFile(file);
             setFiles([...files, file]); // Push the new file to the files state
         }
@@ -33,6 +36,12 @@ const UploadFile = () => {
         setIsDraggingOver(true);
     };
 
+    const handleRemoveFile = (index: number) => {
+        const updatedFiles = [...files];
+        updatedFiles.splice(index, 1);
+        setFiles(updatedFiles);
+    };
+
     return (
         <div>
             <Header />
@@ -40,32 +49,21 @@ const UploadFile = () => {
                 className={`drop-zone ${isDraggingOver ? 'drag-over' : ''}`}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
+                onDragLeave={() => setIsDraggingOver(false)}
             >
-                {selectedFile ? (
-                    <div>
-                        {selectedFile.type.startsWith('image/') ? (
-                            <img
-                                src={URL.createObjectURL(selectedFile)}
-                                alt="File Preview"
-                            />
-                        ) : (
-                            <p>{selectedFile.name}</p>
-                        )}
-                    </div>
-                ) : (
-                    <div>
-                        <FontAwesomeIcon icon={faUpload} size="4x" />
-                        <p>{isDraggingOver ? 'Drop to upload' : 'Drag and drop a file or click the button to upload a file.'}</p>
-                    </div>
-                )}
+                <div>
+                    <FontAwesomeIcon icon={faUpload} size="4x" />
+                    <p>{isDraggingOver ? 'Drop to upload' : 'Drag and drop a file or click the button to upload a file.'}</p>
+                </div>
             </div>
+
             <div className="uploaded-files">
                 <table>
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Size</th>
-                            <th>Date Uploaded</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -73,6 +71,19 @@ const UploadFile = () => {
                             <tr key={index}>
                                 <td>{file.name}</td>
                                 <td>{(file.size / (1024 * 1024)).toFixed(2)} MB</td>
+                                <td>
+                                    <FontAwesomeIcon
+                                        icon={faTrash}
+                                        size="xl"
+                                        color={hover}
+                                        onMouseOver={() => {
+                                            document.body.style.cursor = 'pointer'
+                                        }}
+                                        onMouseLeave={() => {
+                                            document.body.style.cursor = 'default'
+                                        }}
+                                        onClick={() => handleRemoveFile(index)} />
+                                </td>
                             </tr>
                         ))}
                     </tbody>

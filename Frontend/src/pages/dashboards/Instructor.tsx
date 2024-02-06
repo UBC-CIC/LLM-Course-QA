@@ -8,13 +8,12 @@ const InstructorDashboard = () => {
         window.location.href = '/upload';
     };
 
+
+
     return (
         <div>
             <Header />
             <div className="dashboard">
-                <CourseCard course="CPEN 491" studentNum={100} onClick={redirectToUploadPage} />
-                <CourseCard course="CPEN 491" studentNum={100} onClick={redirectToUploadPage} />
-                <CourseCard course="CPEN 491" studentNum={100} onClick={redirectToUploadPage} />
                 <CourseCard course="CPEN 491" studentNum={100} onClick={redirectToUploadPage} />
                 <CourseCard course="CPEN 491" studentNum={100} onClick={redirectToUploadPage} />
             </div>
