@@ -22,9 +22,9 @@ def login():
     except Exception as e:
         print(f"Error parsing JSON: {str(e)}")
 
-    user_id = userService.login(data)
-    if user_id:
-        return jsonify({'id': user_id}), 200
+    user_data = userService.login(data)
+    if user_data:
+        return jsonify({'id': user_data.id, "role" : user_data.role}), 200
     else:
         return jsonify({'error': 'Invalid username or password'}), 400
 

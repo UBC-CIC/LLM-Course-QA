@@ -56,6 +56,7 @@ def upload_document(courseId):
         'course_id': courseId,
         'document': file
     }
+
     try:
         upload_document = courseService.upload_course_document(uploadDocumentData)
         if not upload_document:
@@ -111,3 +112,31 @@ def join_course():
         return jsonify({'message': 'Course joined'}), 200
     except:
         return jsonify({'error': 'Internal Server Error'}), 500
+
+# get all courses
+@courseBp.route('', methods=['GET'])
+@login_required
+def get_courses():
+    userId = current_user.id
+    list_courses_data = {
+        'user_id': userId
+    }
+
+    courses = courseService.list_courses(list_courses_data)
+    
+    if not courses:
+        return jsonify({'error': 'No courses found'}), 404
+    
+    return jsonify(courses), 200
+
+# get all course documents
+@courseBp.route('/<courseId>/documents', methods=['GET'])
+@login_required
+def get_course_documents(courseId):
+    list_course_documents_data = {
+        'course_id': courseId
+    }
+    documents = courseService.list_course_documents(list_course_documents_data)
+    if not documents:
+        return jsonify({'error': 'No documents found'}), 404
+    return jsonify(documents), 200

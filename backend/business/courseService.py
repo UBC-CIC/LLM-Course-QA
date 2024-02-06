@@ -1,4 +1,4 @@
-from ..data.models.course import Course
+from ..data.models.course import Course, Document
 from ..extensions import db
 import random
 import boto3
@@ -47,6 +47,10 @@ def create_course(create_course_data):
 def delete_course(course_delete_data):
     course = Course.query.get(course_delete_data['course_id'])
     if course:
+        # delete course from s3
+        session = boto3.Session(profile_name='Daniel')
+        s3 = session.client('s3')
+        s3.delete_object(Bucket='institutionname', Key=str(course.id) + "/")
         db.session.delete(course)
         db.session.commit()
         return True
@@ -63,8 +67,8 @@ def join_course(join_course_data):
             return True
     return False
 
+# Uploads course document to s3
 def upload_course_document(course_document_data):
-    # check if document is a pdf
     file = course_document_data['document']
     if not file or file.content_type != 'application/pdf':
         return False
@@ -72,25 +76,33 @@ def upload_course_document(course_document_data):
 
     try:
         s3 = session.client('s3')
-        # upload file to s3 bucket named institutionname in folder course id
+        # add file to document table
+        document = Document(
+            name=file.filename,
+            course_id=course_document_data['course_id']
+        )
+        db.session.add(document)
+        db.session.commit()
         s3.upload_fileobj(file, 'institutionname', str(course_document_data['course_id']) + "/" + file.filename,
-                          ExtraArgs={'Metadata': {'course_id': str(course_document_data['course_id'])}})
+                          ExtraArgs={'Metadata': {'course_id': str(course_document_data['course_id']), 'document_id': str(document.id)}})
     except:
         return False
    
     return True
 
-# returns courses where user is enrolled/teaching/administrating
+# list course documents
+def list_course_documents(list_course_documents_data):
+    course_id = list_course_documents_data['course_id']
+    documents = Document.query.filter_by(course_id=course_id).all()
+    return documents
+
+# Returns courses where user is enrolled/teaching/administrating
 def list_courses(list_courses_data):
     user_id = list_courses_data['user_id']
     courses = Course.query.filter(Course.users.any(id=user_id)).all()
     return courses
 
-# gets all courses
+# Gets all courses
 def get_courses():
     courses = Course.query.all()
     return courses
-
-
-
-    

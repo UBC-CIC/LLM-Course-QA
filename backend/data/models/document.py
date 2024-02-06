@@ -6,16 +6,15 @@ from .courseUsers import course_user_association
 import uuid
 from ...extensions import db
 
-class Course(db.Model):
-    __tablename__ = 'courses'
+class Document(db.Model):
+    __tablename__ = 'documents'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    course_code = Column(String, nullable=False)
-    course_section = Column(String, nullable=False)
     name = Column(String, nullable=False)
-    description = Column(String, nullable=True)
-    access_code = Column(String, nullable=False)
-    
-    documents = relationship('Document', backref='course') 
+
+    course_id = Column(UUID(as_uuid=True), ForeignKey('courses.id'), nullable=False)
+
+
+
 
 

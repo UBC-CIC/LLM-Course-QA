@@ -36,7 +36,7 @@ def login(login_data):
 
     if bcrypt.check_password_hash(user.password, login_data['password']):
         login_user(user)
-        return user.id
+        return {"id": user.id, "role": user.role}
     
     return None
 
