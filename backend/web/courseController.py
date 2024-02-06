@@ -6,13 +6,13 @@ courseBp = Blueprint('course', __name__, url_prefix='/courses')
 
 # Create a course
 @courseBp.route('', methods=['POST'])
-@login_required
+# @login_required
 def create_course():
-    if not current_user.is_instructor():
-        return jsonify({'error': 'Unauthorized'}), 401
+    # if not current_user.is_instructor():
+    #     return jsonify({'error': 'Unauthorized'}), 401
     
     createCourseData = request.get_json()
-    createCourseData['instructor'] = current_user.id
+    # createCourseData['instructor'] = current_user.id
 
     try:
         createCourse = courseService.create_course(createCourseData)
