@@ -15,11 +15,11 @@ def create_course():
     # createCourseData['instructor'] = current_user.id
 
     try:
-        createCourse = courseService.create_course(createCourseData)
-        if not createCourse:
+        create_course_id = courseService.create_course(createCourseData)
+        if not create_course_id:
             return jsonify({'error': 'Course already exists'}), 400
 
-        return jsonify({'id' : create_course , 'message': 'Course created'}), 201
+        return jsonify({'id' : str(create_course_id) , 'message': 'Course created'}), 201
     except:
         return jsonify({'error': 'Internal Server Error'}), 500
 

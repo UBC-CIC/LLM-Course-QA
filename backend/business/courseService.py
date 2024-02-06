@@ -35,7 +35,7 @@ def create_course(create_course_data):
         add_course_to_admins(course)
 
         # create s3 bucket for course
-        session = boto3.Session(profile_name='')
+        session = boto3.Session(profile_name='Daniel')
         s3 = session.client('s3')
         s3.put_object(Bucket='institutionname', Key=str(course.id) + "/")
 
