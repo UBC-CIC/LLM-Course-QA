@@ -113,22 +113,6 @@ def join_course():
     except:
         return jsonify({'error': 'Internal Server Error'}), 500
 
-# get all courses
-@courseBp.route('', methods=['GET'])
-@login_required
-def get_courses():
-    userId = current_user.id
-    list_courses_data = {
-        'user_id': userId
-    }
-
-    courses = courseService.list_courses(list_courses_data)
-    
-    if not courses:
-        return jsonify({'error': 'No courses found'}), 404
-    
-    return jsonify(courses), 200
-
 # get all course documents
 @courseBp.route('/<courseId>/documents', methods=['GET'])
 @login_required
