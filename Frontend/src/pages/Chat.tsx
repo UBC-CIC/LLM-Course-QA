@@ -12,27 +12,6 @@ export type Message = {
     sender: 'me' | 'other' | 'loading';
 }
 
-const mockMessages: Message[] = [
-    {
-        id: 1,
-        content: "Hey, what is CPEN 491 about?",
-        timestamp: "2021-09-01T12:00:00Z",
-        sender: "me"
-    },
-    {
-        id: 2,
-        content: `CPEN 491 is a 10 credit capstone course. According to the course syllabus, the course is related to design, analysis, and implementation of solutions in response to a real world computer engineering problem, provided by industry, research laboratories, or other suitable entities. It Includes coverage of topics such as project management.`,
-        timestamp: "2021-09-01T12:01:00Z",
-        sender: "other"
-    },
-    {
-        id: 3,
-        content: "What is each part of the course worth?",
-        timestamp: "2021-09-01T12:02:00Z",
-        sender: "me"
-    },
-];
-
 const Chat = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState<string>('');
@@ -40,7 +19,6 @@ const Chat = () => {
     const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        setMessages(mockMessages);
         messagesEndRef.current?.scrollIntoView({ behavior: "auto" })
     }, [messages]);
 
@@ -48,21 +26,53 @@ const Chat = () => {
         setNewMessage(event.target.value);
     };
 
-    const handleSendMessage = () => {
+    const handleSendMessage = async () => {
         if (newMessage === '') {
             return;
         }
-        mockMessages.push({
-            id: mockMessages.length + 1,
+
+        let sentMessage = messages;
+        sentMessage.push({
+            id: messages.length + 1,
+            content: newMessage,
             timestamp: new Date().toISOString(),
-            sender: 'me',
-            content: newMessage
+            sender: 'me'
         });
 
-        setNewMessage('');
+        setMessages(sentMessage);
 
-        const updateMessages = [...mockMessages];
-        setMessages(updateMessages);
+
+        const course = localStorage.getItem('selectedCourse');
+        const courseId = course ? JSON.parse(course).id : null;
+
+        try {
+            const response = await fetch('http://127.0.0.1:5000/queries', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ question: newMessage, course_id: courseId })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                const answer = data.response;
+                console.log(messages)
+                let newMessages = messages;
+                newMessages.push({
+                    id: messages.length + 1,
+                    timestamp: new Date().toISOString(),
+                    sender: 'other',
+                    content: answer
+                });
+                setMessages(newMessages); 
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        setNewMessage('');
     };
 
     return (
@@ -93,11 +103,11 @@ const Chat = () => {
                             handleSendMessage();
                         }
                     }} />
-                <FontAwesomeIcon 
-                    className='send-icon' 
-                    icon={faPaperPlane} 
-                    onClick={handleSendMessage} 
-                    size='2x' 
+                <FontAwesomeIcon
+                    className='send-icon'
+                    icon={faPaperPlane}
+                    onClick={handleSendMessage}
+                    size='2x'
                     color='rgb(76, 147, 175)' />
             </div>
         </div>

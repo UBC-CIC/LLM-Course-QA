@@ -16,10 +16,23 @@ const InstructorDashboard = () => {
     const [courseSection, setCourseSection] = useState('');
 
     const getCourses = async () => {
-        // Fetch courses from the server
-        // const response = await fetch('http://example.com/courses');
-        // const json = await response.json();
-        // setCourses(json);
+        const user = localStorage.getItem('user');
+        const userId = user ? JSON.parse(user).id : null;
+
+        const response = await fetch('http://127.0.0.1:5000/courses/' + userId, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'  
+            },
+        });
+
+        const json = await response.json();
+
+        if (response.ok) {
+            console.log('Courses fetched successfully');
+            console.log(json);
+            setCourses(json);
+        }
     }
 
     useEffect(() => {
@@ -45,6 +58,10 @@ const InstructorDashboard = () => {
             section: courseSection,
         };
         setCourses([...courses, newCourse]);
+        const user = localStorage.getItem('user');
+        const userId = user ? JSON.parse(user).id : null;
+
+        console.log(userId)
 
         const response = await fetch('http://127.0.0.1:5000/courses', {
             method: 'POST',
@@ -57,7 +74,7 @@ const InstructorDashboard = () => {
                 description: courseDescription, 
                 course_code: courseCode, 
                 course_section: courseSection,
-                instructor: localStorage.getItem('userId')
+                instructor: userId
             }),
         });
 
@@ -87,8 +104,11 @@ const InstructorDashboard = () => {
                 {courses.map((course: any) => (
                     <CourseCard
                         key={course.id}
-                        course={course.name}
-                        studentNum={course.students ? course.students.length : 0}
+                        course={course.course_code}
+                        name={course.name}
+                        section={course.course_section}
+                        studentNum={course.student_count}
+                        accessCode={course.access_code}
                         onClick={() => redirectToUploadPage(course)}
                     />
                 ))}
@@ -119,7 +139,7 @@ const InstructorDashboard = () => {
                             onHoverColour='error-700'
                             disabled={false}
                             onDisabledColour='gray-300'
-                            onClick={handleAddCourse}>
+                            onClick={handleCloseModal}>
                             Cancel</Button>
                         <Button
                             className='form-button'

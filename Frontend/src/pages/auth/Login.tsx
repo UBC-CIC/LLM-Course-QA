@@ -13,7 +13,7 @@ const Login = () => {
     const {login, error, isLoading} = useLogin();
     let navigate = useNavigate();
 
-    const formSubmission = () => {
+    const formSubmission = async () => {
         
         let email = document.getElementById('login-email') as HTMLInputElement;
         let password = document.getElementById('login-pswd') as HTMLInputElement;
@@ -23,7 +23,7 @@ const Login = () => {
         
         if (validateEmail && validatePassword) {
             //navigate to the Login page
-            login(email.value, password.value)
+            await login(email.value, password.value);
             if(localStorage.getItem('user')) {
                 navigate('/chat', { replace: true });
             }
@@ -45,8 +45,10 @@ const Login = () => {
                     width={480}
                     height={480}
                     buttonText='Login'>
-                    <Input placeholder="Email Address" icon={faUser} type='text' inputId="login-email" />
+                    <Input placeholder="Username" icon={faUser} type='text' inputId="login-email" />
                     <Input placeholder="Password" icon={faLock} type='password' inputId="login-pswd" />
+                    <p className='no-account
+                    ' onClick={() => navigate('/auth/signup')}> Don't have an account? Sign up</p>
                 </Form>
             </div>
         </div>

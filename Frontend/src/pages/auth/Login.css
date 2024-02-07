@@ -15,3 +15,16 @@
     width: 275px;
     margin: 0px auto;
 }
+
+.no-account{
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 20px auto;
+    color: var(--blue-400);
+
+}
+
+.no-account:hover {
+    cursor: pointer;
+}
