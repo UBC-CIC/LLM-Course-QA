@@ -4,6 +4,7 @@ from typing import Dict
 from langchain_community.llms.sagemaker_endpoint import LLMContentHandler, SagemakerEndpoint
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
+import boto3
 
 # Singleton class runs only once
 class SingletonQueryService:
@@ -41,22 +42,21 @@ class SingletonQueryService:
         self.content_handler = ContentHandler()
 
         self.llm_open = SagemakerEndpoint(
-            credentials_profile_name="", # to set
-            endpoint_name="", # to set
-            region_name="us-west-2",
+            credentials_profile_name="", # input
+            endpoint_name="", # input
+            region_name="", # input
             model_kwargs=parameters,
             endpoint_kwargs={"CustomAttributes":"accept_eula=true",
-                             "InferenceComponentName": ""}, # to set
+                             "InferenceComponentName": ""}, # input
             content_handler=self.content_handler,
         )
 
-        template = """ <s>[INST] <<SYS>>
+        template = """ <s>[INST] 
             The following is a conversation between a human and a friendly AI. 
             The AI uses the information in the context to answer the question from the human.
             It does not use any other information. 
             This is the context:
             {context}
-            <</SYS>>
             Instruction: Based on the above documents, provide a detailed answer for, {question} Answer "don't know" 
             if not present in the document. 
             Solution:
@@ -69,9 +69,6 @@ class SingletonQueryService:
 
 
 query_service = SingletonQueryService()
-
-
-
 
 def query_llm(query_data):
     question = query_data['question']
@@ -87,8 +84,13 @@ def query_llm(query_data):
         }
     }]
     }
+    session = boto3.Session(profile_name='') # input
+    # use boto and kendra to get documents
+    kendra = session.client('kendra', region_name='')# input
+  
+    retriever = AmazonKendraRetriever(index_id="", credentials_profile_name="",region_name="" ) # input
+    docs = retriever.get_relevant_documents(question)
 
-    retriever = AmazonKendraRetriever(index_id="", attribute_filter=attribute_filter) # to set index_id
     qa_chain = RetrievalQA.from_chain_type(llm=query_service.llm_open,
                                   chain_type="stuff",
                                   retriever=retriever,
@@ -104,4 +106,3 @@ def query_llm(query_data):
         # "sources": sources
     }
     return response
-

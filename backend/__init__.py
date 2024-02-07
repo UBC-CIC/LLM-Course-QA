@@ -11,9 +11,11 @@ from .extensions import db, login_manager, bcrypt
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
-    CORS(app)
+    # CORS(app)
+    # allow cors all origins
+    CORS(app, resources={r"/*": {"origins": "*"}})
     app.secret_key = 'pl40'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Abc1234*@localhost/course-qa'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/course-qa'
     app.register_blueprint(courseBp)
     app.register_blueprint(queryBp)
     app.register_blueprint(userBp)

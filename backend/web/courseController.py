@@ -92,14 +92,13 @@ def get_courses(userId):
 
 # Adds the user to the course
 @courseBp.route('/join', methods=['POST'])
-@login_required
+# @login_required
 def join_course():
-    user_id = current_user.id
     data = request.get_json()
 
     join_course_data = {
         'access_code': data['access_code'],
-        'user_id': user_id
+        'user_id': data['user_id']
     }
     
     try:
