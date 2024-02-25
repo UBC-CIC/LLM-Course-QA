@@ -99,7 +99,6 @@ const UploadFile = () => {
                 <table>
                     <thead>
                         <tr>
-                            <th>Id</th>
                             <th>Name</th>
                             <th></th>
                         </tr>
@@ -107,7 +106,6 @@ const UploadFile = () => {
                     <tbody>
                         {files.map((file: any, index: any) => (
                             <tr key={index}>
-                                <td>{file.id}</td>
                                 <td>{file.name}</td>
                                 <td>
                                     <FontAwesomeIcon
