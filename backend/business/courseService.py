@@ -1,9 +1,10 @@
 from ..data.models.course import Course
 from ..data.models.document import Document
 from ..extensions import db
+from . import extractionService
 import random
 import boto3
-from langchain.document_loaders import AmazonTextractPDFLoader
+
 
 def create_course(create_course_data):
     from .userService import add_course_to_admins, get_user
@@ -11,7 +12,7 @@ def create_course(create_course_data):
     course = Course.query.filter_by(course_code=create_course_data['course_code']).first()
     if course:
         return None
-    
+
     instructor = get_user(create_course_data['instructor'])
 
     if not instructor:
@@ -20,14 +21,14 @@ def create_course(create_course_data):
     if 'description' not in create_course_data:
         create_course_data['description'] = ""
 
-    try: 
+    try:
         course = Course(
             course_code=create_course_data['course_code'],
             course_section=create_course_data['course_section'],
             name=create_course_data['name'],
             description=create_course_data['description'],
-            access_code= random.randint(1000, 9999),
-            users = [instructor]
+            access_code=random.randint(1000, 9999),
+            users=[instructor]
         )
 
         db.session.add(course)
@@ -45,6 +46,7 @@ def create_course(create_course_data):
 
     return course.id
 
+
 def delete_course(course_delete_data):
     course = Course.query.get(course_delete_data['course_id'])
     if course:
@@ -56,6 +58,7 @@ def delete_course(course_delete_data):
         db.session.commit()
         return True
     return False
+
 
 def join_course(join_course_data):
     from .userService import get_user
@@ -85,11 +88,17 @@ def upload_course_document(course_document_data):
         db.session.add(document)
         db.session.commit()
         s3.upload_fileobj(file, 'institutionname', str(course_document_data['course_id']) + "/" + file.filename,
-                          ExtraArgs={'Metadata': {'course_id': str(course_document_data['course_id']), 'document_id': str(document.id)}})
+                          ExtraArgs={'Metadata': {'course_id': str(course_document_data['course_id']),
+                                                  'document_id': str(document.id)}})
+
+        s3_url = "s3://institutionname/" + str(course_document_data['course_id']) + "/" + file.filename        
+        document = extractionService.extract_text(s3_url)
+
     except:
         return False
-   
+
     return True
+
 
 # list course documents
 def list_course_documents(list_course_documents_data):
@@ -103,6 +112,7 @@ def list_course_documents(list_course_documents_data):
             'name': document.name
         })
     return document_objects
+
 
 # Returns courses where user is enrolled/teaching/administrating
 def list_courses(list_courses_data):
@@ -122,8 +132,8 @@ def list_courses(list_courses_data):
             'student_count': len(course.users)
         })
 
-
     return serialized_courses
+
 
 # Gets all courses
 def get_courses():

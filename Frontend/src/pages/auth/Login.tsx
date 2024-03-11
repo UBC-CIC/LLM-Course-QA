@@ -25,7 +25,8 @@ const Login = () => {
             //navigate to the Login page
             await login(email.value, password.value);
             if(localStorage.getItem('user')) {
-                navigate('/chat', { replace: true });
+                navigate('/dashboard', { replace: true });
+                window.location.reload();
             }
         }
     }

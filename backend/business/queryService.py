@@ -1,11 +1,11 @@
 import json
+from langchain.chat_models import ChatOpenAI
 from langchain_community.retrievers import AmazonKendraRetriever
 from typing import Dict
 from langchain_community.llms.sagemaker_endpoint import LLMContentHandler, SagemakerEndpoint
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 import boto3
-
 # Singleton class runs only once
 class SingletonQueryService:
     _instance = None
@@ -44,7 +44,7 @@ class SingletonQueryService:
         self.llm_open = SagemakerEndpoint(
             credentials_profile_name="", # input
             endpoint_name="", # input
-            region_name="", # input
+            region_name="us-west-2", # input
             model_kwargs=parameters,
             endpoint_kwargs={"CustomAttributes":"accept_eula=true",
                              "InferenceComponentName": ""}, # input
@@ -57,8 +57,8 @@ class SingletonQueryService:
             It does not use any other information. 
             This is the context:
             {context}
-            Instruction: Based on the above documents, provide a detailed answer for, {question} Answer "don't know" 
-            if not present in the document. 
+            Instruction: Based on the above documents, provide a detailed answer for, {question} Answer "I don't know" 
+            if not present in the document. Never provide an answer that is not based on the context, even if it is a well known fact.
             Solution:
             [/INST]"""
         self.PROMPT = PromptTemplate(
@@ -86,9 +86,9 @@ def query_llm(query_data):
     }
     session = boto3.Session(profile_name='') # input
     # use boto and kendra to get documents
-    kendra = session.client('kendra', region_name='')# input
+    kendra = session.client('kendra', region_name='us-west-2')# input
   
-    retriever = AmazonKendraRetriever(index_id="", credentials_profile_name="",region_name="" ) # input
+    retriever = AmazonKendraRetriever(index_id="", credentials_profile_name="",region_name="us-west-2" ) # input
     docs = retriever.get_relevant_documents(question)
 
     qa_chain = RetrievalQA.from_chain_type(llm=query_service.llm_open,

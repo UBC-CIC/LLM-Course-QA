@@ -14,7 +14,7 @@ const SignUp = () => {
 
     let navigate = useNavigate();
 
-    const formSubmission = () => {
+    const formSubmission = async () => {
 
         let firstName = document.getElementById('signup-name') as HTMLInputElement;
         let email = document.getElementById('signup-email') as HTMLInputElement;
@@ -33,7 +33,9 @@ const SignUp = () => {
 
         if (validateEmail && validatePassword) {
             //navigate to the Login page
-            signup(firstName.value, email.value, password.value, roleStudent.checked ? 'Student' : 'Instructor');
+            await signup(firstName.value, email.value, password.value, roleStudent.checked ? 'Student' : 'Instructor');
+            navigate('/auth/login', { replace: true });
+            window.location.reload();
         }
     }
 
@@ -55,7 +57,7 @@ const SignUp = () => {
                     checkbox={false}>
                     <Input placeholder="Name" icon={faUser} inputId="signup-name" />
                     <Input placeholder="Username" icon={faEnvelope} inputId="signup-email" />
-                    <Input placeholder="Password" icon={faLock} inputId="signup-password" />
+                    <Input placeholder="Password" icon={faLock} type='password' inputId="signup-password" />
                     <div>
                         <label>
                             <input id="role-student" type="radio" name="userType" value="student" /> Student
