@@ -1,25 +1,24 @@
 import './Header.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignOut } from '@fortawesome/free-solid-svg-icons';
+import { Avatar, AvatarFallback, AvatarImage } from "../avatar/Avatar"
 
 const Header = () => {
-  return (
-    <header className="header">
-    <div className='logo-container ml-6'>
-        LOGO
-    </div>
+    return (
+        <header className="header">
+            <div className='logo-container ml-6'>
+                LOGO
+            </div>
 
-      <div className="logo-container">
-        Course-QA
-      </div>
-      <div className="profile-icon-container mr-6">
-        <FontAwesomeIcon icon={faSignOut} onClick={() => {
-          localStorage.removeItem('user');
-          window.location.reload();
-        }}/>
-      </div>
-    </header>
-  );
+            <div className="logo-container">
+                Course Q&A
+            </div>
+            <div className="profile-icon-container mr-6">
+                <Avatar>
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+            </div>
+        </header>
+    );
 };
 
 export default Header;
