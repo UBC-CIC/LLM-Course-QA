@@ -14,7 +14,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/dialog/Dialog"
-import { useState } from "react";
+import React, { useState } from "react";
 
 
 const navItems: NavItem[] = [

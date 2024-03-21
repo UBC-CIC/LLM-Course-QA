@@ -13,19 +13,10 @@ import './Dashboard.css'
 import { Button } from "@/components/button/Button";
 import SideNav, { NavItem } from '@/components/navbar/SideNav';
 import { MdOutlineLibraryBooks, MdOutlineSettings, MdPeopleOutline } from "react-icons/md";
-import { useState } from "react";
-import Form from "@/components/form/Form";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/input/Input";
 
-type CourseData = {
-    courseCode: string;
-    courseSections: string;
-    courseName: string;
-}
-import SideNav from '@/components/navbar/SideNav';
-import React, { useEffect, useState } from 'react';
-
-const InstructorDashboard = () => {
+const InstructorDashboard: React.FC = () => {
     type CourseData = {
         courseCode: string;
         courseSections: string;
@@ -33,7 +24,6 @@ const InstructorDashboard = () => {
     }
 
     const [courses, setCourses] = useState<any[]>([]);
-    const [showModal, setShowModal] = useState(false);
     const [courseName, setCourseName] = useState('');
     const [courseDescription, setCourseDescription] = useState('');
     const [courseCode, setCourseCode] = useState('');
@@ -63,14 +53,6 @@ const InstructorDashboard = () => {
         getCourses();
     }, []);
 
-    const addCourse = () => {
-        setShowModal(true);
-    }
-
-    const handleCloseModal = () => {
-        setShowModal(false);
-    }
-
     const handleAddCourse = async () => {
         // Perform validation on course inputs
 
@@ -90,12 +72,12 @@ const InstructorDashboard = () => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-                
+
             },
             body: JSON.stringify({
-                name: courseName, 
-                description: courseDescription, 
-                course_code: courseCode, 
+                name: courseName,
+                description: courseDescription,
+                course_code: courseCode,
                 course_section: courseSection,
                 instructor: userId
             }),
@@ -111,7 +93,6 @@ const InstructorDashboard = () => {
         setCourseDescription('');
         setCourseCode('');
         setCourseSection('');
-        setShowModal(false);
     }
 
     const redirectToUploadPage = (course: any) => {
@@ -119,59 +100,57 @@ const InstructorDashboard = () => {
         window.location.href = '/upload';
     };
 
-const sampleData: CourseData[] = [
-    {
-        courseCode: 'CPEN 491',
-        courseSections: '101',
-        courseName: 'Capstone Design Project'
-    },
-    {
-        courseCode: 'CPEN 491',
-        courseSections: '101',
-        courseName: 'Capstone Design Project'
-    },
-    {
-        courseCode: 'CPEN 491',
-        courseSections: '101',
-        courseName: 'Capstone Design Project'
-    },
-    {
-        courseCode: 'CPEN 491',
-        courseSections: '101',
-        courseName: 'Capstone Design Project'
-    },
-    {
-        courseCode: 'CPEN 491',
-        courseSections: '101',
-        courseName: 'Capstone Design Project'
-    },
-    {
-        courseCode: 'CPEN 491',
-        courseSections: '101',
-        courseName: 'Capstone Design Project'
-    },
-]
+    const sampleData: CourseData[] = [
+        {
+            courseCode: 'CPEN 491',
+            courseSections: '101',
+            courseName: 'Capstone Design Project'
+        },
+        {
+            courseCode: 'CPEN 491',
+            courseSections: '101',
+            courseName: 'Capstone Design Project'
+        },
+        {
+            courseCode: 'CPEN 491',
+            courseSections: '101',
+            courseName: 'Capstone Design Project'
+        },
+        {
+            courseCode: 'CPEN 491',
+            courseSections: '101',
+            courseName: 'Capstone Design Project'
+        },
+        {
+            courseCode: 'CPEN 491',
+            courseSections: '101',
+            courseName: 'Capstone Design Project'
+        },
+        {
+            courseCode: 'CPEN 491',
+            courseSections: '101',
+            courseName: 'Capstone Design Project'
+        },
+    ]
 
-const navItems: NavItem[] = [
-    {
-        url: "/",
-        name: "Courses",
-        icon: <MdOutlineLibraryBooks size={'1.75rem'} />
-    },
-    {
-        url: "/users",
-        name: "Users",
-        icon: <MdPeopleOutline size={'1.75rem'} />
-    },
-    {
-        url: "/settings",
-        name: "Settings",
-        icon: <MdOutlineSettings size={'1.75rem'} />
-    }
-]
+    const navItems: NavItem[] = [
+        {
+            url: "/",
+            name: "Courses",
+            icon: <MdOutlineLibraryBooks size={'1.75rem'} />
+        },
+        {
+            url: "/users",
+            name: "Users",
+            icon: <MdPeopleOutline size={'1.75rem'} />
+        },
+        {
+            url: "/settings",
+            name: "Settings",
+            icon: <MdOutlineSettings size={'1.75rem'} />
+        }
+    ]
 
-
-const InstructorDashboard = () => {
     return (
         <div className='flex flex-row' >
             <SideNav navItems={navItems} />
@@ -207,6 +186,6 @@ const InstructorDashboard = () => {
             </div>
         </div >
     );
-};
+}
 
 export default InstructorDashboard;
