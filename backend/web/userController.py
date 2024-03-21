@@ -7,7 +7,7 @@ userBp = Blueprint('user', __name__, url_prefix='/users')
 @userBp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    # call userService.register which returns a user id. This should be a json response. If none is returned then send error
+    # TODO: Validate data
     user_id = userService.register(data)
     if user_id:
         return jsonify({'id': user_id}), 201
@@ -18,7 +18,7 @@ def register():
 def login():
     try:
         data = request.get_json()
-    # Your code for handling the JSON data goes here
+    # TODO: Validate data
     except Exception as e:
         print(f"Error parsing JSON: {str(e)}")
 
