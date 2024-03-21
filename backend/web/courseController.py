@@ -8,6 +8,7 @@ courseBp = Blueprint('course', __name__, url_prefix='/courses')
 @courseBp.route('', methods=['POST'])
 # @login_required
 def create_course():
+    # TODO: Ensure only admins and instructors can create courses
     # if not current_user.is_instructor():
     #     return jsonify({'error': 'Unauthorized'}), 401
     

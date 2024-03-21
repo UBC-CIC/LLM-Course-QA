@@ -8,6 +8,7 @@ queryBp = Blueprint('query', __name__, url_prefix='/queries')
 # @login_required
 def query_llm():
     data = request.get_json()
+    # TODO: Validate data
     query_data = {
         'question': data['question'],
         'course_id': data['course_id']
