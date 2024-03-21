@@ -1,22 +1,17 @@
 import { MdPeopleOutline, MdOutlineSettings, MdOutlineLibraryBooks } from 'react-icons/md'
 import '../../../public/ubclogo.png'
 
-const navItems = {
-    "Courses": {
-        url: "/",
-        icon: <MdOutlineLibraryBooks size={'1.75rem'}/>
-    },
-    "Users": {
-        url: "/users",
-        icon: <MdPeopleOutline size={'1.75rem'}/>
-    },
-    "Settings": {
-        url: "/settings",
-        icon: <MdOutlineSettings size={'1.75rem'}/>
-    }
+export type NavItem = {
+    url: string;
+    name: string;
+    icon: JSX.Element;
 }
 
-const SideNav = () => {
+interface SideNavProps {
+    navItems: NavItem[];
+}
+
+const SideNav = (props: SideNavProps) => {
 
     return (
         <div
@@ -26,13 +21,13 @@ const SideNav = () => {
                     <img src="/ubclogo.png" alt="UBC Logo" />
                 </div>
                 <nav>
-                    {Object.entries(navItems).map(([name, data]) => (
+                    {props.navItems.map((data) => (
                         <a
-                            key={name}
+                            key={data.name}
                             href={data.url}
                             className="flex flex-col items-center p-3 hover:bg-gray-200 transition duration-200">
                             {data.icon}
-                            {name}
+                            {data.name}
                         </a>
 
                     ))}
