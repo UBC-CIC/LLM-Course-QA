@@ -15,7 +15,5 @@ class Course(db.Model):
     name = Column(String, nullable=False)
     description = Column(String, nullable=True)
     access_code = Column(String, nullable=False)
-    
-    documents = relationship('Document', backref='course') 
-
-
+    documents = relationship('Document', backref='course')
+    thread = relationship('Conversation', backref='course')
