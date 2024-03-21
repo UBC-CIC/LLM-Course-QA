@@ -1,10 +1,13 @@
 from ..data.models.course import Course
-from ..data.models.document import Document
-from ..extensions import db
+from ..data.models.document import Document, StatusEnum
+from ..extensions import db, vecdb, profile_name
+from langchain_community.vectorstores import Chroma
 from . import extractionService
+from .embeddingService import embedding
+from sqlalchemy import and_
 import random
 import boto3
-
+import threading
 
 def create_course(create_course_data):
     from .userService import add_course_to_admins, get_user
@@ -36,10 +39,11 @@ def create_course(create_course_data):
         add_course_to_admins(course)
 
         # create s3 bucket for course
-        session = boto3.Session(profile_name='Daniel')
+        session = boto3.Session(profile_name=profile_name)
         s3 = session.client('s3')
         s3.put_object(Bucket='institutionname', Key=str(course.id) + "/")
-
+        # create collection in vector store
+        vecdb.create_collection(str(course.id))
     except:
         db.session.rollback()
         return None
@@ -51,10 +55,12 @@ def delete_course(course_delete_data):
     course = Course.query.get(course_delete_data['course_id'])
     if course:
         # delete course from s3
-        session = boto3.Session(profile_name='Daniel')
+        session = boto3.Session(profile_name=profile_name)
         s3 = session.client('s3')
         s3.delete_object(Bucket='institutionname', Key=str(course.id) + "/")
         db.session.delete(course)
+        # delete collection from vector store
+        vecdb.delete_collection(str(course.id))
         db.session.commit()
         return True
     return False
@@ -76,29 +82,59 @@ def upload_course_document(course_document_data):
     file = course_document_data['document']
     if not file or file.content_type != 'application/pdf':
         return False
-    session = boto3.Session(profile_name='Daniel')
+    session = boto3.Session(profile_name=profile_name)
 
     try:
         s3 = session.client('s3')
+        count = 0
+        new_filename = file.filename
+        while Document.query.filter(and_(Document.course_id == course_document_data['course_id'], Document.name == new_filename)).first():
+            parts = file.filename.split('.')
+            postfix = str(count)
+            if len(parts) > 1:
+                extension = parts[-1]
+                base_name = '.'.join(parts[:-1])
+                new_filename = f"{base_name}_{postfix}.{extension}"
+            else:
+                new_filename = f"{file.filename}_{postfix}"
+            count += 1
         # add file to document table
+        file.filename = new_filename
         document = Document(
             name=file.filename,
-            course_id=course_document_data['course_id']
+            course_id=course_document_data['course_id'],
         )
         db.session.add(document)
         db.session.commit()
-        s3.upload_fileobj(file, 'institutionname', str(course_document_data['course_id']) + "/" + file.filename,
-                          ExtraArgs={'Metadata': {'course_id': str(course_document_data['course_id']),
+        s3.upload_fileobj(file, 'institutionname', str(document.course_id) + "/" + file.filename,
+                          ExtraArgs={'Metadata': {'course_id': str(document.course_id),
                                                   'document_id': str(document.id)}})
 
         s3_url = "s3://institutionname/" + str(course_document_data['course_id']) + "/" + file.filename        
-        document = extractionService.extract_text(s3_url)
-
+        # add document to vector store
+        thread = threading.Thread(target=vectorize_documents, args=(str(document.course_id), s3_url, str(document.id),))
+        thread.start()
     except:
         return False
-
     return True
 
+def delete_course_document(course_document_data):
+    document = Document.query.get(course_document_data['document_id'])
+    if document:
+        # if document.upload_status == StatusEnum.PENDING:
+        #     return False
+        session = boto3.Session(profile_name=profile_name)
+        s3 = session.client('s3')
+        s3_url = "s3://institutionname/" + str(document.course_id) + "/" + document.name
+        s3.delete_object(Bucket='institutionname', Key=str(document.course_id) + "/" + document.name)
+        course_id = str(document.course_id)
+        db.session.delete(document)
+        db.session.commit()
+        # remove from vector store
+        thread = threading.Thread(target=delete_document_vectors, args=(course_id, s3_url,))
+        thread.start()
+        return True
+    return False
 
 # list course documents
 def list_course_documents(list_course_documents_data):
@@ -139,3 +175,24 @@ def list_courses(list_courses_data):
 def get_courses():
     courses = Course.query.all()
     return courses
+
+def vectorize_documents(course_id, s3_url, document_id):
+    documents = extractionService.extract_text(s3_url, document_id)
+    vectordb = Chroma(
+    client=vecdb,
+    collection_name=course_id,
+    embedding_function=embedding,
+    )
+    # add document to vector store
+    vectordb.add_documents(documents=documents)
+    # update document status
+    # document = Document.query.get(document_id)
+    # document.upload_status = StatusEnum.COMPLETE
+    # db.session.commit()
+
+def delete_document_vectors(course_id, document_id):
+    # delete document from vector store
+    collection = vecdb.get_collection(name=course_id)
+    collection.delete_documents(
+        where={"source": document_id}
+    )
