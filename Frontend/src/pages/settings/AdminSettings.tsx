@@ -2,7 +2,7 @@ import { Button } from "@/components/button/Button";
 import SideNav from '@/components/navbar/SideNav';
 import { Input } from "@/components/input/Input";
 import { BlockPicker } from 'react-color';
-// import usestate
+
 import React from 'react';
 import {
     Popover,
@@ -63,7 +63,6 @@ const AdminSettings = () => {
                         <h3 className="text-lg mr-6 w-40">Password</h3>
                         <Input type ='password' className="w-70" placeholder="*****" />
                     </div>
-                    
                 </div>
             </div>
         </div>
