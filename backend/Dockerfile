@@ -12,3 +12,5 @@ RUN apt update && apt install -y build-essential
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
 EXPOSE 5000
+
+CMD ["flask", "run"]

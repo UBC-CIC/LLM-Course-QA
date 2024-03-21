@@ -6,3 +6,5 @@ flask_bcrypt
 boto3
 langchain
 requests
+chromadb
+amazon-textract-caller
