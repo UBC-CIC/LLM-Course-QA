@@ -14,4 +14,4 @@ class Query(db.Model):
     date = Column(DateTime, default=db.func.current_timestamp())
     student_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
     course_id = Column(UUID(as_uuid=True), ForeignKey('courses.id'), nullable=False)
-    thread_id = Column(UUID(as_uuid=True), ForeignKey('threads.id'), nullable=False)
+    # conversation_id = Column(UUID(as_uuid=True), ForeignKey('threads.id'), nullable=False)
