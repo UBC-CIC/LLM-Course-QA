@@ -12,7 +12,6 @@ def query_llm(query_data):
     question = query_data['question']
     course_id = query_data['course_id']
     question = question
-
     # use chroma and sagemaker embeddings to get documents
     vectordb = Chroma(client=vecdb, collection_name = course_id ,embedding_function=query_embedding)
     retriever = vectordb.as_retriever()
@@ -25,11 +24,11 @@ def query_llm(query_data):
                                   chain_type_kwargs={"prompt": prompt})
     llm_response = qa_chain(question)
     
-    sources = []
-    for source in llm_response["source_documents"]:
-        sources.append(source.metadata['source'])
+    # sources = []
+    # for source in llm_response["source_documents"]:
+    #     sources.append(source.metadata['source'])
     response = {
         "result": llm_response['result'],
-        "sources": sources
+        # "sources": sources
     }
     return response
