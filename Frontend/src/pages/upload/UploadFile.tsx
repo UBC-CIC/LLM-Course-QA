@@ -1,3 +1,9 @@
+import {
+    Book,
+    Settings,
+    SquareUser,
+  } from "lucide-react"
+
 import { Table, TableBody, TableRow, TableHead, TableHeader, TableCell } from '@/components/table/Table';
 import { ScrollArea } from '@/components/scroll-area/ScrollArea';
 import { Badge } from '@/components/badge/Badge';
@@ -41,7 +47,23 @@ const UploadFile = () => {
     return (
         <>
             <div className='flex flex-row' >
-                <SideNav />
+                <SideNav navItems={[
+                    {
+                        url: "/",
+                        name: "Courses",
+                        icon: <Book size={24} />,
+                    },
+                    {
+                        url: "/users",
+                        name: "Users",
+                        icon: <SquareUser size={24} />,
+                    },
+                    {
+                        url: "/settings",
+                        name: "Settings",
+                        icon: <Settings size={24} />,
+                    },
+                ]} />
                 <ScrollArea className="h-screen w-full rounded-md border pl-12 pr-12 ">
                     <div className="flex justify-between items-center mt-2">
                         <h1 className='text-xl font-bold'>Documents</h1>

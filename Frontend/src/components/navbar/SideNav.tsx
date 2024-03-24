@@ -12,7 +12,6 @@ interface SideNavProps {
 }
 
 const SideNav = (props: SideNavProps) => {
-
     return (
         <div
             className='h-screen w-28 border-r border-gray-200'>

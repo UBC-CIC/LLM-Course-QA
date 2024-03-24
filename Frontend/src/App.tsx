@@ -4,7 +4,9 @@ import UploadFile from './pages/upload/UploadFile';
 import AdminDashboard from './pages/dashboards/AdminDashboard';
 import Login from './pages/auth/Login';
 import InstructorDashboard from './pages/dashboards/InstructorDashboard';
+import Chat from './pages/Chat';
 // import AdminSettings from './pages/settings/AdminSettings';
+// import Chat  from './pages/Chat';
 
 function App() {
   return (
@@ -17,8 +19,8 @@ function App() {
           <Route path="/student" element={<StudentDashboard />} />
           <Route path="/upload" element={<UploadFile />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          {/* <Route path="/settings" elesment={<AdminSettings/>} /> */}
-        </Routes>
+          <Route path="/chat" element={<Chat />} />
+        </Routes> 
       </Router>
     </>
   )

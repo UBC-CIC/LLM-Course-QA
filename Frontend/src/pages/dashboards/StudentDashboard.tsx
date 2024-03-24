@@ -1,3 +1,9 @@
+import {
+    Book,
+    Settings,
+    SquareUser,
+  } from "lucide-react"
+
 import CourseCard from "@/components/card/CourseCard";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignIn } from '@fortawesome/free-solid-svg-icons';
@@ -29,6 +35,7 @@ const navItems: NavItem[] = [
         icon: <MdOutlineSettings size={'1.75rem'} />
     }
 ]
+
 
 
 

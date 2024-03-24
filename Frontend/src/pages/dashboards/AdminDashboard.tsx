@@ -28,7 +28,6 @@ const AdminDashboard = () => {
     return (
         <>
             <div className='flex flex-row' >
-                <SideNav />
                 <ScrollArea className="h-screen w-full rounded-md border pl-12 pr-12 pt-12">
                     <div className="flex justify-between items-center mt-2">
                         <h1 className='text-3xl font-bold'>Users</h1>

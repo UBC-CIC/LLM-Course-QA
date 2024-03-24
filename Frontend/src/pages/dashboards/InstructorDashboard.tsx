@@ -1,4 +1,10 @@
 import {
+    Book,
+    Settings,
+    SquareUser,
+  } from "lucide-react"
+
+import {
     Dialog,
     DialogContent,
     DialogDescription,
@@ -6,6 +12,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/dialog/Dialog"
+
 import CourseCard from "@/components/card/CourseCard";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -16,7 +23,7 @@ import { MdOutlineLibraryBooks, MdOutlineSettings, MdPeopleOutline } from "react
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/input/Input";
 
-const InstructorDashboard: React.FC = () => {
+const InstructorDashboard = () => {
     type CourseData = {
         courseCode: string;
         courseSections: string;
@@ -153,7 +160,23 @@ const InstructorDashboard: React.FC = () => {
 
     return (
         <div className='flex flex-row' >
-            <SideNav navItems={navItems} />
+            <SideNav navItems={[
+          {
+            url: "/",
+            name: "Courses",
+            icon: <Book size={24} />,
+          },
+          {
+            url: "/users",
+            name: "Users",
+            icon: <SquareUser size={24} />,
+          },
+          {
+            url: "/settings",
+            name: "Settings",
+            icon: <Settings size={24} />,
+          },
+        ]}/>
             <div className="my-0 mx-auto grid grid-cols-3 gap-24 p-12 overflow-auto h-screen">
                 <div>
                     <Dialog>
@@ -173,7 +196,7 @@ const InstructorDashboard: React.FC = () => {
                                 <Input type="text" placeholder="Course Name" />
                                 <Input type="text" placeholder="Course Section" />
                                 <Input type="text" placeholder="Course Description" />
-                                <Button variant="default" className="w-full mt-4">Add Course</Button>
+                                <Button variant="default" className="w-full mt-4" onClick={handleAddCourse}>Add Course</Button>
                             </DialogHeader>
                         </DialogContent>
                     </Dialog>
