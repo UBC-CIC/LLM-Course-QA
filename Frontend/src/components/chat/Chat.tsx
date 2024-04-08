@@ -79,21 +79,21 @@ export function CardsChat({ className }: CardsChatProps) {
 
     const [messages, setMessages] = React.useState([
         {
-            role: "agent",
-            content: "Hi, how can I help you today?",
-        },
-        {
             role: "user",
-            content: "Hey, I'm having trouble with my account.",
+            content: "Is the final project due on March 25th?",
         },
         {
             role: "agent",
-            content: "What seems to be the problem?",
+            content: "No, the final project is due on April 11th. The project video is due on March 25th.",
         },
         {
             role: "user",
-            content: "I can't log in.",
+            content: "When is the last time the Canucks won a Stanley Cup?",
         },
+        {
+            role: "agent",
+            content: "I'm sorry, I don't have that information in the course material.",
+        }
     ])
     const [input, setInput] = React.useState("")
     const inputLength = input.trim().length
@@ -104,7 +104,7 @@ export function CardsChat({ className }: CardsChatProps) {
                 <CardHeader className="flex flex-row items-center">
                     <div className="flex items-center space-x-4">
                         <div>
-                            <p className="text-lg font-medium leading-none">test</p>
+                            <p className="text-xl font-medium leading-none">CPEN 491</p>
                         </div>
                     </div>
                     <TooltipProvider delayDuration={0}>
@@ -136,8 +136,8 @@ export function CardsChat({ className }: CardsChatProps) {
                                         ? "ml-auto bg-primary text-primary-foreground"
                                         : "bg-muted"
                                 )}
+                                dangerouslySetInnerHTML={{ __html: message.content }}
                             >
-                                {message.content}
                             </div>
                         ))}
                     </div>

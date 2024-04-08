@@ -61,9 +61,6 @@ const InstructorDashboard = () => {
     }, []);
 
     const handleAddCourse = async () => {
-        // Perform validation on course inputs
-
-        // Push the new course to the courses list
         const newCourse = {
             name: courseName,
             description: courseDescription,
@@ -79,7 +76,6 @@ const InstructorDashboard = () => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-
             },
             body: JSON.stringify({
                 name: courseName,
@@ -96,49 +92,12 @@ const InstructorDashboard = () => {
             console.log('Course added successfully');
             console.log(json);
         }
+
         setCourseName('');
         setCourseDescription('');
         setCourseCode('');
         setCourseSection('');
     }
-
-    const redirectToUploadPage = (course: any) => {
-        localStorage.setItem('selectedCourse', JSON.stringify(course));
-        window.location.href = '/upload';
-    };
-
-    const sampleData: CourseData[] = [
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-    ]
 
     const navItems: NavItem[] = [
         {
@@ -192,18 +151,18 @@ const InstructorDashboard = () => {
                                 <DialogDescription>
                                     Fill in the details of the course you want to add
                                 </DialogDescription>
-                                <Input type="text" placeholder="Course Code" />
-                                <Input type="text" placeholder="Course Name" />
-                                <Input type="text" placeholder="Course Section" />
-                                <Input type="text" placeholder="Course Description" />
+                                <Input type="text" placeholder="Course Code" value={courseCode} onChange={(e) => setCourseCode(e.target.value)}/>
+                                <Input type="text" placeholder="Course Name" value={courseName} onChange={(e) => setCourseName(e.target.value)}/>
+                                <Input type="text" placeholder="Course Section" value={courseSection} onChange={(e) => setCourseSection(e.target.value)}/>
+                                <Input type="text" placeholder="Course Description" value={courseDescription} onChange={(e) => setCourseDescription(e.target.value)}/>
                                 <Button variant="default" className="w-full mt-4" onClick={handleAddCourse}>Add Course</Button>
                             </DialogHeader>
                         </DialogContent>
                     </Dialog>
                 </div>
-                {sampleData.map((course) => (
+                {courses.map((course) => (
                     <div>
-                        <CourseCard courseCode={course.courseCode} courseSection={course.courseSections} courseName={course.courseName} isInstructor={true} />
+                        <CourseCard courseCode={course.course_code} courseSection={course.course_section} courseName={course.name} isInstructor={true} />
                     </div>
                 ))}
             </div>

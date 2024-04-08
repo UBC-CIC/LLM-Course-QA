@@ -2,6 +2,11 @@ import { Button } from "@/components/button/Button";
 import SideNav from '@/components/navbar/SideNav';
 import { Input } from "@/components/input/Input";
 import { BlockPicker } from 'react-color';
+import {
+    Book,
+    Settings,
+    SquareUser,
+  } from "lucide-react"
 
 import React from 'react';
 import {
@@ -19,7 +24,23 @@ const AdminSettings = () => {
 
     return (
         <div className='flex flex-row' >
-            <SideNav />
+                 <SideNav navItems={[
+          {
+            url: "/",
+            name: "Courses",
+            icon: <Book size={24} />,
+          },
+          {
+            url: "/users",
+            name: "Users",
+            icon: <SquareUser size={24} />,
+          },
+          {
+            url: "/settings",
+            name: "Settings",
+            icon: <Settings size={24} />,
+          },
+        ]}/>
             <div className="p-6 pt-12 w-screen">
                 <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold mb-6">Settings</h1>

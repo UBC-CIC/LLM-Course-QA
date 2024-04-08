@@ -2,13 +2,29 @@ import { Button } from '@/components/button/Button';
 import { Input } from '@/components/input/Input';
 import React from 'react';
 import './Login.css';
-
-const Login: React.FC = () => {
+import {useLogin} from "../../hooks/useLogin";
+import { useNavigate } from 'react-router-dom'
+const Login = () => {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
+    const {login, error, isLoading} = useLogin();
+    const navigate = useNavigate();
 
-    const handleLogin = () => {
-        // Add your login logic here
+    const handleLogin = async () => {
+        await login(email, password);
+        if(localStorage.getItem('user')) {
+            const user = localStorage.getItem('user');
+            console.log(user);
+            const role = user ? JSON.parse(user).role : null;
+            console.log(role);
+            if(role === 'Role.Student') {
+                navigate('/student', { replace: true });
+            } else if(role === 'Role.Instructor') {
+                navigate('/instructor', { replace: true });
+            } else if(role === 'Role.Admin') {
+                navigate('/admin', { replace: true });
+            }
+        }
     };
 
     return (

@@ -1,5 +1,9 @@
 import { MdPeopleOutline, MdOutlineSettings, MdOutlineLibraryBooks } from 'react-icons/md'
 import '../../../public/ubclogo.png'
+import {
+    LogOut
+  } from "lucide-react"
+
 
 export type NavItem = {
     url: string;
@@ -30,6 +34,13 @@ const SideNav = (props: SideNavProps) => {
                         </a>
 
                     ))}
+                    <a
+                        href="/auth/logout"
+                        className="flex flex-col items-center p-3">
+                        <LogOut size={24} />
+                    
+                    </a>
+
                 </nav>
             </div>
         </div>

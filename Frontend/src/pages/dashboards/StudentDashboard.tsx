@@ -3,7 +3,6 @@ import {
     Settings,
     SquareUser,
   } from "lucide-react"
-
 import CourseCard from "@/components/card/CourseCard";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignIn } from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +11,7 @@ import { Button } from "@/components/button/Button";
 import SideNav, { NavItem } from '@/components/navbar/SideNav';
 import { MdOutlineLibraryBooks, MdOutlineSettings } from "react-icons/md";
 import { Input } from "@/components/input/Input";
+import { useNavigate } from 'react-router-dom'
 import {
     Dialog,
     DialogContent,
@@ -20,12 +20,12 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/dialog/Dialog"
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 
 const navItems: NavItem[] = [
     {
-        url: "/",
+        url: "/student",
         name: "Courses",
         icon: <MdOutlineLibraryBooks size={'1.75rem'} />
     },
@@ -36,51 +36,68 @@ const navItems: NavItem[] = [
     }
 ]
 
-
-
-
 const StudentDashboard = () => {
     const [modal, setModal] = useState(false)
+    const [courses, setCourses] = useState<any[]>([]);
+    const [showModal, setShowModal] = useState(false);
+    const [courseAccessCode, setCourseAccessCode] = useState('');
+    const navigate = useNavigate();
+    const getCourses = async () => {
+        const user = localStorage.getItem('user');
+        const userId = user ? JSON.parse(user).id : null;
+
+        const response = await fetch('http://127.0.0.1:5000/courses/' + userId, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'  
+            },
+        });
+
+        const json = await response.json();
+
+        if (response.ok) {
+            console.log('Courses fetched successfully');
+            console.log(json);
+            setCourses(json);
+        }
+    }
+
+    useEffect(() => {
+        getCourses();
+    }, []);
+
+    const handleJoinCourse = async () => {
+        const user = localStorage.getItem('user');
+        const userId = user ? JSON.parse(user).id : null;
+
+        setShowModal(false);
+
+        const response = await fetch('http://127.0.0.1:5000/courses/join', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                access_code: courseAccessCode,
+            }),
+        });
+        
+        const json = await response.json();
+
+        if (response.ok) {
+            console.log('Course added successfully');
+            console.log(json);
+            setCourses([...courses, ...json]);
+        }
+        setCourseAccessCode('');
+    }
 
     type CourseData = {
         courseCode: string;
         courseSections: string;
         courseName: string;
     }
-
-
-    const sampleData: CourseData[] = [
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        }
-    ]
 
     return (
         <div className='flex flex-row' >
@@ -100,15 +117,15 @@ const StudentDashboard = () => {
                                 <DialogDescription>
                                     Enter the share link to join a course
                                 </DialogDescription>
-                                <Input type="text" placeholder="Course Link" />
-                                <Button variant="default" className="w-full mt-4">Join Course</Button>
+                                <Input type="text" placeholder="Access Code" value={courseAccessCode} onChange={(e) => setCourseAccessCode(e.target.value)}/>
+                                <Button variant="default" className="w-full mt-4" onClick={handleJoinCourse}>Join Course</Button>
                             </DialogHeader>
                         </DialogContent>
                     </Dialog>
                 </div>
-                {sampleData.map((course) => (
+                {courses.map((course) => (
                     <div>
-                        <CourseCard courseCode={course.courseCode} courseSection={course.courseSections} courseName={course.courseName} isInstructor={true} />
+                        <CourseCard courseCode={course.course_code} courseSection={course.course_section} courseName={course.name} isInstructor={false} />
                     </div>
                 ))}
             </div>
