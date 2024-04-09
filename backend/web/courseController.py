@@ -86,9 +86,6 @@ def get_courses(userId):
 
     courses = courseService.list_courses(list_courses_data)
     
-    if not courses:
-        return jsonify({'error': 'No courses found'}), 404
-    
     return jsonify(courses), 200
 
 # Adds the user to the course
