@@ -44,7 +44,7 @@ def delete_course(courseId):
 
 @courseBp.route('/<courseId>/documents', methods=['POST'])
 # @login_required
-def upload_document(courseId):    
+def upload_document(courseId):
     if 'document' not in request.files:
         return jsonify({'error': 'No file part'}), 400
     

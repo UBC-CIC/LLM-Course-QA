@@ -12,6 +12,4 @@ class Query(db.Model):
     question = Column(Text, nullable=False)
     answer = Column(Text, nullable=False)
     date = Column(DateTime, default=db.func.current_timestamp())
-    student_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
-    course_id = Column(UUID(as_uuid=True), ForeignKey('courses.id'), nullable=False)
-    # conversation_id = Column(UUID(as_uuid=True), ForeignKey('threads.id'), nullable=False)
+    conversation_id = Column(UUID(as_uuid=True), ForeignKey('conversations.id'), nullable=False)
