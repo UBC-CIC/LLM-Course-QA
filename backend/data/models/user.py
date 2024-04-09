@@ -22,7 +22,7 @@ class User(db.Model, UserMixin):
     password = Column(String, nullable=False)
     role = Column(Enum(Role), nullable=False)
     courses = relationship('Course', secondary=course_user_association, backref='users')
-    # conversations = relationship('Conversations', backref='users')
+    conversations = relationship('Conversations', backref='users')
 
     def is_admin(self):
         return self.role == Role.Admin
