@@ -27,17 +27,23 @@ parameters = {
         }
 
 
-llm_open = SagemakerEndpoint(
-        credentials_profile_name=profile_name, # for local testing with sso
-        endpoint_name=llm_endpoint_name, 
-        region_name=region_name,
-        model_kwargs=parameters,
-        endpoint_kwargs={"CustomAttributes":"accept_eula=true",
-                             "InferenceComponentName": llm_inference_component_name},
-        content_handler=content_handler,
-    )
+llm_open_args = {
+    "endpoint_name": llm_endpoint_name,
+    "region_name": region_name,
+    "model_kwargs": parameters,
+    "endpoint_kwargs": {"CustomAttributes": "accept_eula=true",
+                        "InferenceComponentName": llm_inference_component_name},
+    "content_handler": content_handler
+}
 
-# llm_open = Ollama(  model="mistral")
+if profile_name != '':
+    llm_open_args["credentials_profile_name"] = profile_name
+
+llm_open = SagemakerEndpoint(**llm_open_args)
+
+
+if profile_name != '':
+    llm_open_args["credentials_profile_name"] = profile_name
 
 template = """ <s>[INST] 
             The following is a conversation between a human and a friendly AI. 

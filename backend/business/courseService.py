@@ -1,8 +1,7 @@
 from ..data.models.course import Course
 from ..data.models.user import User
-
 from ..data.models.document import Document, StatusEnum
-from ..extensions import db, vecdb,  profile_name
+from ..extensions import db, vecdb, session
 from langchain_community.vectorstores import Chroma
 from . import extractionService
 from .embeddingService import embedding
@@ -41,7 +40,6 @@ def create_course(create_course_data):
         add_course_to_admins(course)
 
         # Creates s3 bucket for course
-        session = boto3.Session(profile_name=profile_name)
         s3 = session.client('s3')
         s3.put_object(Bucket='institutionname', Key=str(course.id) + "/")
         # Creates collection in vector store
@@ -57,7 +55,6 @@ def delete_course(course_delete_data):
     course = Course.query.get(course_delete_data['course_id'])
     if course:
         # Deletes course from s3
-        session = boto3.Session(profile_name=profile_name)
         s3 = session.client('s3')
         s3.delete_object(Bucket='institutionname', Key=str(course.id) + "/")
         db.session.delete(course)
@@ -84,8 +81,6 @@ def upload_course_document(course_document_data):
     file = course_document_data['document']
     if not file or file.content_type != 'application/pdf':
         return False
-    session = boto3.Session(profile_name=profile_name)
-
     try:
         s3 = session.client('s3')
         count = 0
@@ -134,7 +129,6 @@ def upload_course_document(course_document_data):
 def delete_course_document(course_document_data):
     document = Document.query.get(course_document_data['document_id'])
     if document:
-        session = boto3.Session(profile_name=profile_name)
         s3 = session.client('s3')
         s3_url = "s3://institutionname/" + str(document.course_id) + "/" + document.name
         s3.delete_object(Bucket='institutionname', Key=str(document.course_id) + "/" + document.name)
