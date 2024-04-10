@@ -4,11 +4,11 @@ from langchain.chains import RetrievalQA
 from ..data.models.conversation import Conversation
 from ..data.models.query import Query
 import boto3
-from ..extensions import vecdb, db
+from ..extensions import db, vecdb
 from .embeddingService import query_embedding
 from .generationService import llm_open, prompt
-
-
+from .courseService import get_course
+import time
 
 def query_llm(query_data):
     question = query_data['question']
@@ -16,6 +16,7 @@ def query_llm(query_data):
     conversation_id = query_data['conversation_id']
     user_id = query_data['user_id']
     question = question
+
     # use chroma and sagemaker embeddings to get documents
     vectordb = Chroma(client=vecdb, collection_name = course_id ,embedding_function=query_embedding)
     retriever = vectordb.as_retriever()
@@ -30,30 +31,37 @@ def query_llm(query_data):
     
     if (conversation_id == None):
         conversation = Conversation(
-            conversation_name = question,
-            student_id = user_id,
+            name = question,
+            user_id = user_id,
             course_id = course_id,
         )
         db.session.add(conversation)
+        db.session.commit()
+        conversation_id = conversation.id
+
     query = Query(
         question = question,
-        answer = llm_response['result'],
+        answer = llm_response,
         conversation_id = conversation_id
     )
     db.session.add(query)
+    db.session.commit()
     
     # sources = []
     # for source in llm_response["source_documents"]:
     #     sources.append(source.metadata['source'])
     
     response = {
-        "result": llm_response['result'],
+        "result": llm_response,
+        "conversation_id": conversation_id
         # "sources": sources
     }
     return response
 
 def query_list(query_data):
-    queries = Conversation.query.get(query_data['conversation_id']).queries.order_by(Query.date)
+    conversation = Conversation.query.get(query_data['conversation_id'])
+    queries = sorted(conversation.queries, key=lambda query: query.date)
+
     query_objects = []
     for query in queries:
         query_objects.append({
@@ -65,8 +73,9 @@ def query_list(query_data):
     }
     return response
 
-def query_conversations(query_data):
+def conversation_history(query_data):
     conversations = Conversation.query.filter_by(user_id=query_data['user_id'], course_id=query_data['course_id']).order_by(Conversation.date.desc()).all()
+    cId = get_course(query_data['course_id'])
     conversation_objects = []
     for conversation in conversations:
         conversation_objects.append({
@@ -75,7 +84,9 @@ def query_conversations(query_data):
         })
     response = {
         "result": conversation_objects,
+        "course_name": cId.course_code
         # "sources": sources
     }
+
     return response
 

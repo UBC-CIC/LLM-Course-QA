@@ -40,11 +40,21 @@ def login(login_data):
     
     return None
 
+# Changes user password
+def change_password(change_password_data):
+    user = User.query.get(change_password_data['user_id'])
+    if bcrypt.check_password_hash(user.password, change_password_data['old_password']):
+        user.password = bcrypt.generate_password_hash(change_password_data['new_password']).decode('utf-8')
+        db.session.commit()
+        return True
+    return False
+
 # Logs out user and invalidates the session
 def logout():
     logout_user()
     return True  
 
+# Adds course to admins
 def add_course_to_admins(course):
     users = User.query.filter_by(role='Admin').all()
     for user in users:
@@ -55,5 +65,21 @@ def add_course_to_admins(course):
 def get_user(user_id):
     user = User.query.get(user_id)
     return user
+
+# Gets all users
+def get_users():
+    print("Get all users")
+    users = User.query.all()
+    user_objects = []
+    for user in users:
+        role = "Admin" if str(user.role) == 'Role.Admin' else "instructor" if str(user.role) == 'Role.Instructor' else "student"
+
+        user_objects.append({
+            'id': user.id,
+            'name': user.name,
+            'role': role
+        })
+        
+    return user_objects
 
 

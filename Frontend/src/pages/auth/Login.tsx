@@ -4,6 +4,7 @@ import React from 'react';
 import './Login.css';
 import {useLogin} from "../../hooks/useLogin";
 import { useNavigate } from 'react-router-dom'
+
 const Login = () => {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
@@ -13,17 +14,7 @@ const Login = () => {
     const handleLogin = async () => {
         await login(email, password);
         if(localStorage.getItem('user')) {
-            const user = localStorage.getItem('user');
-            console.log(user);
-            const role = user ? JSON.parse(user).role : null;
-            console.log(role);
-            if(role === 'Role.Student') {
-                navigate('/student', { replace: true });
-            } else if(role === 'Role.Instructor') {
-                navigate('/instructor', { replace: true });
-            } else if(role === 'Role.Admin') {
-                navigate('/admin', { replace: true });
-            }
+            navigate('/dashboard');
         }
     };
 
@@ -38,6 +29,7 @@ const Login = () => {
                 <Input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="mb-4" />
                 <Input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mb-4" />
                 <Button onClick={handleLogin} className="w-full">Login</Button>
+                <p className='text-center text-lg my-5 mx-auto text-blue-400 cursor-pointer' onClick={() => navigate('/signup')}> Don't have an account? Sign up</p>
             </div>
         </div>
     );

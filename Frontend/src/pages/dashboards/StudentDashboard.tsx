@@ -25,7 +25,7 @@ import React, { useState, useEffect } from "react";
 
 const navItems: NavItem[] = [
     {
-        url: "/student",
+        url: "/dashboard",
         name: "Courses",
         icon: <MdOutlineLibraryBooks size={'1.75rem'} />
     },
@@ -125,7 +125,7 @@ const StudentDashboard = () => {
                 </div>
                 {courses.map((course) => (
                     <div>
-                        <CourseCard courseCode={course.course_code} courseSection={course.course_section} courseName={course.name} isInstructor={false} />
+                        <CourseCard courseId={course.id} courseCode={course.course_code} courseSection={course.course_section} courseName={course.name} isInstructor={false} />
                     </div>
                 ))}
             </div>

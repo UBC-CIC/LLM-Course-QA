@@ -38,10 +38,8 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/tooltip/Tooltip"
+import { Message } from "../../pages/Chat.tsx"
 
-type CardsChatProps = {
-    className?: string;
-}
 
 const users = [
     {
@@ -73,33 +71,54 @@ const users = [
 
 type User = (typeof users)[number]
 
-export function CardsChat({ className }: CardsChatProps) {
+type CardsChatProps = {
+    initMessages: Message[];
+    courseId: string;
+    userId: string;
+}
+
+export function CardsChat({ initMessages, courseId, userId }: CardsChatProps) {
     const [open, setOpen] = React.useState(false)
     const [selectedUsers, setSelectedUsers] = React.useState<User[]>([])
+    const [messages, setMessages] = React.useState<Message[]>(initMessages)
 
-    const [messages, setMessages] = React.useState([
-        {
-            role: "user",
-            content: "Is the final project due on March 25th?",
-        },
-        {
-            role: "agent",
-            content: "No, the final project is due on April 11th. The project video is due on March 25th.",
-        },
-        {
-            role: "user",
-            content: "When is the last time the Canucks won a Stanley Cup?",
-        },
-        {
-            role: "agent",
-            content: "I'm sorry, I don't have that information in the course material.",
-        }
-    ])
     const [input, setInput] = React.useState("")
     const inputLength = input.trim().length
 
+    const handleSendMessage = async () => {
+        // send post to /queries
+        const response = await fetch(`http://127.0.0.1:5000/queries`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "question": input,
+                "course_id": courseId,
+                "user_id": userId
+
+            })
+        });
+
+        const json = await response.json();
+
+        if (response.ok) {
+            console.log('Message sent successfully');
+            console.log(json);
+            // push the message to the messages array
+            setMessages(messages => [
+                ...messages,
+                {
+                    role: "llm",
+                    message: json.response,
+                },
+            ])
+        }
+
+    }
+
     return (
-        <div className={`${className} overflow-auto`}>
+        <div className={'h-full w-full overflow-auto'}>
             <Card className={`w-full h-full flex flex-col`}>
                 <CardHeader className="flex flex-row items-center">
                     <div className="flex items-center space-x-4">
@@ -136,13 +155,13 @@ export function CardsChat({ className }: CardsChatProps) {
                                         ? "ml-auto bg-primary text-primary-foreground"
                                         : "bg-muted"
                                 )}
-                                dangerouslySetInnerHTML={{ __html: message.content }}
                             >
+                                {message.message}
                             </div>
                         ))}
                     </div>
                 </CardContent>
-                <CardFooter className= "mt-auto p-4">
+                <CardFooter className="mt-auto p-4">
                     <form
                         onSubmit={(event) => {
                             event.preventDefault()
@@ -151,25 +170,29 @@ export function CardsChat({ className }: CardsChatProps) {
                                 ...messages,
                                 {
                                     role: "user",
-                                    content: input,
+                                    message: input,
                                 },
                             ])
+                            handleSendMessage()
                             setInput("")
                         }}
                         className="flex w-full items-center space-x-2"
                     >
-                        <Input
-                            id="message"
-                            placeholder="Type your message..."
-                            className="flex-1"
-                            autoComplete="off"
-                            value={input}
-                            onChange={(event) => setInput(event.target.value)}
-                        />
-                        <Button type="submit" size="icon" disabled={inputLength === 0}>
-                            <Send className="h-4 w-4" />
-                            <span className="sr-only">Send</span>
-                        </Button>
+                        <div className="flex w-full items-center space-x-2">
+                            <Input
+                                id="message"
+                                placeholder="Type your message..."
+                                className="flex-1"
+                                autoComplete="off"
+                                value={input}
+                                onChange={(event) => setInput(event.target.value)}
+                            />
+                            <Button type="submit" size="icon" disabled={inputLength === 0}>
+                                <Send className="h-4 w-4" />
+                                <span className="sr-only">Send</span>
+                            </Button>
+                        </div>
+
                     </form>
                 </CardFooter>
             </Card>

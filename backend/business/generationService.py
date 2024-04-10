@@ -5,39 +5,39 @@ from langchain.prompts import PromptTemplate
 from ..extensions import profile_name, region_name, llm_endpoint_name, llm_inference_component_name
 from langchain_community.llms import Ollama
 
-# class ContentHandler(LLMContentHandler):
-#     content_type = "application/json"
-#     accepts = "application/json"
+class ContentHandler(LLMContentHandler):
+    content_type = "application/json"
+    accepts = "application/json"
 
-#     def transform_input(self, prompt: str, model_kwargs: Dict) -> bytes:
+    def transform_input(self, prompt: str, model_kwargs: Dict) -> bytes:
         
-#         input_str = json.dumps({"inputs": prompt, "parameters": model_kwargs})
-#         return input_str.encode("utf-8")
+        input_str = json.dumps({"inputs": prompt, "parameters": model_kwargs})
+        return input_str.encode("utf-8")
 
-#     def transform_output(self, output: bytes) -> str:
-#         response_json = json.loads(output.read().decode("utf-8"))
-#         return response_json[0]["generated_text"]
+    def transform_output(self, output: bytes) -> str:
+        response_json = json.loads(output.read().decode("utf-8"))
+        return response_json[0]["generated_text"]
 
-# content_handler = ContentHandler()
+content_handler = ContentHandler()
 
-# parameters = {
-#             "max_new_tokens": 1024,
-#             "temperature": 1,
-#             "stop_sequences": None,
-#         }
+parameters = {
+            "max_new_tokens": 1024,
+            "temperature": 1,
+            "stop_sequences": None,
+        }
 
 
-# llm_open = SagemakerEndpoint(
-#         credentials_profile_name=profile_name, # for local testing with sso
-#         endpoint_name=llm_endpoint_name, 
-#         region_name=region_name,
-#         model_kwargs=parameters,
-#         endpoint_kwargs={"CustomAttributes":"accept_eula=true",
-#                              "InferenceComponentName": llm_inference_component_name},
-#         content_handler=content_handler,
-#     )
+llm_open = SagemakerEndpoint(
+        credentials_profile_name=profile_name, # for local testing with sso
+        endpoint_name=llm_endpoint_name, 
+        region_name=region_name,
+        model_kwargs=parameters,
+        endpoint_kwargs={"CustomAttributes":"accept_eula=true",
+                             "InferenceComponentName": llm_inference_component_name},
+        content_handler=content_handler,
+    )
 
-llm_open = Ollama(  model="mistral")
+# llm_open = Ollama(  model="mistral")
 
 template = """ <s>[INST] 
             The following is a conversation between a human and a friendly AI. 

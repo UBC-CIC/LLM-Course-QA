@@ -3,25 +3,23 @@ import { Button } from '../button/Button';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 type CardProps = {
     courseCode: string;
     courseSection: string;
     courseName: string;
     isInstructor: boolean;
+    courseId: string;
 }
 
 const CourseCard = (props: CardProps) => {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     const handleButtonClick = () => {
-      navigate('/upload'); 
+        navigate('/upload');
     };
-
-    const handleChatClick = () => {
-        navigate('/chat'); 
-      };
 
     return (
         <div className='rounded-lg shadow-lg w-96 h-52 p-6'>
@@ -30,20 +28,28 @@ const CourseCard = (props: CardProps) => {
 
             {props.isInstructor ?
                 <div className='flex justify-between mt-6'>
-                    <Button variant='default' className='w-1/3 m-1 bg-blue-700'>
-                        <QuestionAnswerIcon />
-                    </Button>
-                    <Button variant='default' className='w-1/3 m-1 bg-blue-700' onClick={handleButtonClick}>
-                        <UploadFileIcon />
-                    </Button>
-                    <Button variant='default' className='w-1/3 m-1 bg-blue-700'>
-                        <GroupAddIcon />
-                    </Button>
+                    <Link to={`/chat/${props.courseId}`} className='w-1/3 m-1'>
+                        <Button variant='default' className='w-full bg-blue-700'>
+                            <QuestionAnswerIcon />
+                        </Button>
+                    </Link>
+                    <Link to={`/upload/${props.courseId}`} className='w-1/3 m-1'>
+                        <Button variant='default' className='w-full bg-blue-700'>
+                            <UploadFileIcon />
+                        </Button>
+                    </Link>
+                    <Link to={`/users/${props.courseId}`} className='w-1/3 m-1'>
+                        <Button variant='default' className='w-full bg-blue-700'>
+                            <GroupAddIcon />
+                        </Button>
+                    </Link>
                 </div>
                 :
-                <Button variant='default' size={"icon"} className='w-full mt-10 bg-blue-700' onClick={handleChatClick}>
-                    <QuestionAnswerIcon />
-                </Button>
+                <Link to={`/chat/${props.courseId}`}>
+                    <Button variant='default' size={"icon"} className='w-full mt-10 bg-blue-700'>
+                        <QuestionAnswerIcon />
+                    </Button>
+                </Link>
             }
         </div>
     );

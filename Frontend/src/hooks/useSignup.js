@@ -1,13 +1,10 @@
 import { useState } from 'react'
 
 export const useSignup = () => {
-
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
 
-
     const signup = async (name, username, password, role) => {
-
         setIsLoading(true)
 
         const response = await fetch('http://127.0.0.1:5000/users/register', {

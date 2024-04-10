@@ -36,3 +36,24 @@ def logout():
         return jsonify({'message': 'User logged out'}), 200
     else:
         return jsonify({'error': 'Logout failed'}), 400
+    
+@userBp.route('', methods=['PUT'])
+def change_password():
+    data = request.get_json()
+    change_password_data = {
+        'user_id': data['user_id'],
+        'old_password': data['old_password'],
+        'new_password': data['new_password']
+    }
+    change_password = userService.change_password(change_password_data)
+
+    if change_password:
+        return jsonify({'message': 'Password changed'}), 200
+    else:
+        return jsonify({'error': 'Invalid password'}), 400
+
+# Gets all users
+@userBp.route('', methods=['GET'])
+def get_users():
+    users = userService.get_users()
+    return jsonify(users), 200

@@ -1,10 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams } from "react-router-dom"
 import {
     Book,
     Settings,
     SquareUser,
-  } from "lucide-react"
+} from "lucide-react"
 
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/dialog/Dialog"
+
+import { Input } from "@/components/input/Input";
+import { faSignIn } from '@fortawesome/free-solid-svg-icons';
 import { Table, TableBody, TableRow, TableHead, TableHeader, TableCell } from '@/components/table/Table';
 import { ScrollArea } from '@/components/scroll-area/ScrollArea';
 import { Badge } from '@/components/badge/Badge';
@@ -16,67 +28,32 @@ import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import SideNav from '@/components/navbar/SideNav';
 
 type CourseData = {
-    Filename: string;
+    id: string;
+    name: string;
     status: 'Processing' | 'Uploaded';
     fileType: 'Class Slide' | 'Syllabus' | 'Class Notes' | 'Announcement' | 'Resources';
 }
 
-const sampleData: CourseData[] = [
-    {
-        Filename: 'syllabus.pdf',
-        status: 'Uploaded',
-        fileType: 'Syllabus'
-    },
-    {
-        Filename: 'slides-1.pdf',
-        status: 'Uploaded',
-        fileType: 'Class Slide'
-    },
-    {
-        Filename: 'slides-2.pdf',
-        status: 'Uploaded',
-        fileType: 'Class Slide'
-    },
-    {
-        Filename: 'slides-3.pdf',
-        status: 'Uploaded',
-        fileType: 'Class Slide'
-    },
-    {
-        Filename: 'slides-4.pdf',
-        status: 'Uploaded',
-        fileType: 'Class Slide'
-    },
-    {
-        Filename: 'announcement-1.pdf',
-        status: 'Uploaded',
-        fileType: 'Announcement'
-    }
-]
 
 const UploadFile = () => {
+    const { id } = useParams<{ id: string }>()
+
     const [selectedFile, setSelectedFile] = useState<any>(null);
     const [isDraggingOver, setIsDraggingOver] = useState(false);
     const [files, setFiles] = useState<any[]>([]);
     const [hover, setHover] = useState('#fda29b');
     const [uploadProgress, setUploadProgress] = useState(0); // New state for upload progress
-    const course = localStorage.getItem('selectedCourse');
-    const courseId = course ? JSON.parse(course).id : null;
 
     useEffect(() => {
         const getFiles = async () => {
-            const response = await fetch('http://127.0.0.1:5000/courses/' + courseId + '/documents', {
+            const response = await fetch('http://127.0.0.1:5000' + '/courses/' + id + '/documents', {
                 method: 'GET',
             });
 
             const json = await response.json();
 
             if (response.ok) {
-                console.log('Files fetched: ' + json);
-                console.log('Files before: ' + files);
-
                 setFiles([...files, ...json]);
-                console.log('Files after: ' + files)
             } else {
                 console.error('Failed to fetch files');
             }
@@ -85,62 +62,57 @@ const UploadFile = () => {
         getFiles();
     }, []);
 
-
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            setSelectedFile(file);
+    const inputFile = useRef<HTMLInputElement>(null);
+    const handleUpload = () => {
+        if (inputFile.current) {
+            inputFile.current.click();
         }
     };
 
-    const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        setIsDraggingOver(false);
-        const file = event.dataTransfer.files?.[0];
+    const handleFileChange = async (event: any) => {
+        const file = event.target.files[0];
         if (file) {
             const formData = new FormData();
             formData.append('document', file);
+            const response = await fetch('http://127.0.0.1:5000/courses/' + id + '/documents', {
+                method: 'POST',
+                body: formData,
+            });
 
-            try {
-                const response = await fetch('http://127.0.0.1:5000/courses/' + courseId + '/documents', {
-                    method: 'POST',
-                    body: formData,
-                });
+            const json = await response.json();
+            console.log(json);
 
-                if (response.ok) {
-                    console.log('File uploaded successfully');
-                } else {
-                    console.error('Failed to upload file');
-                }
-            } catch (error) {
-                console.error('Network error occurred', error);
+            if (response.ok) {
+                setFiles([...files, json.file_data]);
+            } else {
+                console.error('Failed to upload document');
             }
-
-            setSelectedFile(file);
-            setFiles([...files, file]); // Push the new file to the files state
         }
-    };
+    }
 
-    const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        setIsDraggingOver(true);
-    };
+    const handleDelete = (documentId: string) => async () => {
+        console.log('Deleting document with id: ' + documentId);
+        const response = await fetch('http:///127.0.0.1:5000/courses/' + id + '/documents/' + documentId, {
+            method: 'DELETE',
+        });
 
-    const handleRemoveFile = (index: number) => {
-        const updatedFiles = [...files];
-        updatedFiles.splice(index, 1);
-        setFiles(updatedFiles);
-    };
+        if (response.ok) {
+            console.log('Document deleted successfully');
+            setFiles(files.filter((file) => file.id !== documentId));
+        } else {
+            console.error('Failed to delete document');
+        }
+    }
 
     return (
         <>
             <div className='flex flex-row' >
                 <SideNav navItems={[
                     {
-                        url: "/instructor",
+                        url: "/dashboard",
                         name: "Courses",
                         icon: <Book size={24} />,
-                    }, 
+                    },
                     {
                         url: "/settings",
                         name: "Settings",
@@ -151,7 +123,8 @@ const UploadFile = () => {
                     <div className="flex justify-between items-center mt-2">
                         <h1 className='text-xl font-bold'>Documents</h1>
                         <div>
-                            <Button variant={'outline'} className='mr-2'><FontAwesomeIcon icon={faUpload} className='mr-2' /> Upload</Button>
+                            <Button variant={'outline'} className='mr-2' onClick={handleUpload}><FontAwesomeIcon icon={faUpload} className='mr-2' /> Upload</Button>
+                            <input type='file' ref={inputFile} onChange={handleFileChange} className='hidden' />
                             <Button variant={'destructive'} className='hidden'>Delete</Button>
                         </div>
                     </div>
@@ -161,7 +134,6 @@ const UploadFile = () => {
                             <TableRow>
                                 <TableHead><Checkbox /></TableHead>
                                 <TableHead>Filename</TableHead>
-                                <TableHead>File Type</TableHead>
                                 <TableHead></TableHead>
                             </TableRow>
                         </TableHeader>
@@ -170,9 +142,8 @@ const UploadFile = () => {
                                 <TableBody>
                                     <TableRow>
                                         <TableCell><Checkbox /></TableCell>
-                                        <TableCell className="font-medium">{data.Filename}</TableCell>
-                                        <TableCell><Badge>{data.fileType}</Badge></TableCell>
-                                        <TableCell><FontAwesomeIcon icon={faTrash} className="text-red-500 cursor-pointer" /></TableCell>
+                                        <TableCell className="font-medium">{data.name}</TableCell>
+                                        <TableCell><FontAwesomeIcon icon={faTrash} className="text-red-500 cursor-pointer" onClick={handleDelete(data.id)} /></TableCell>
                                     </TableRow>
                                 </TableBody>
                             ))

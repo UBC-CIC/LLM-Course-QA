@@ -1,7 +1,6 @@
 import {
     Book,
-    Settings,
-    SquareUser,
+    Settings
   } from "lucide-react"
 
 import {
@@ -18,8 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import './Dashboard.css'
 import { Button } from "@/components/button/Button";
-import SideNav, { NavItem } from '@/components/navbar/SideNav';
-import { MdOutlineLibraryBooks, MdOutlineSettings, MdPeopleOutline } from "react-icons/md";
+import SideNav from '@/components/navbar/SideNav';
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/input/Input";
 
@@ -99,24 +97,6 @@ const InstructorDashboard = () => {
         setCourseSection('');
     }
 
-    const navItems: NavItem[] = [
-        {
-            url: "/",
-            name: "Courses",
-            icon: <MdOutlineLibraryBooks size={'1.75rem'} />
-        },
-        {
-            url: "/users",
-            name: "Users",
-            icon: <MdPeopleOutline size={'1.75rem'} />
-        },
-        {
-            url: "/settings",
-            name: "Settings",
-            icon: <MdOutlineSettings size={'1.75rem'} />
-        }
-    ]
-
     return (
         <div className='flex flex-row' >
             <SideNav navItems={[
@@ -124,11 +104,6 @@ const InstructorDashboard = () => {
             url: "/",
             name: "Courses",
             icon: <Book size={24} />,
-          },
-          {
-            url: "/users",
-            name: "Users",
-            icon: <SquareUser size={24} />,
           },
           {
             url: "/settings",
@@ -162,7 +137,7 @@ const InstructorDashboard = () => {
                 </div>
                 {courses.map((course) => (
                     <div>
-                        <CourseCard courseCode={course.course_code} courseSection={course.course_section} courseName={course.name} isInstructor={true} />
+                        <CourseCard courseId={course.id} courseCode={course.course_code} courseSection={course.course_section} courseName={course.name} isInstructor={true} />
                     </div>
                 ))}
             </div>

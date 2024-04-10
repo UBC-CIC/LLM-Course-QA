@@ -1,5 +1,5 @@
 import json
-from ..data.models.user import User
+from ..data.models.user import User, Role
 from ..extensions import db, bcrypt
 
 def get_config():
@@ -31,11 +31,32 @@ def update_config(update_config_data):
 
 def update_users(update_user_data):
     user = User.query.get(update_user_data['id'])
+    print("user", user)
     if user is None:
         return False
     
-    # Updates user role
-    user.role = update_user_data['role']
+    if update_user_data['role'] == 'Admin':
+        print("admin")
+        user.role = Role.Admin
+    elif update_user_data['role'] == 'Instructor':
+        print("instructor")
+        user.role = Role.Instructor
+    elif update_user_data['role'] == 'Student':
+        print("student")
+        user.role = Role.Student
+    else:
+        print("invalid role")
+
+    db.session.commit()
+
+    return True
+
+def delete_user(delete_user_data):
+    user = User.query.get(delete_user_data['user_id'])
+    if user is None:
+        return False
+    
+    db.session.delete(user)
     db.session.commit()
 
     return True

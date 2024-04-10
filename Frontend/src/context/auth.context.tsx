@@ -1,10 +1,8 @@
-import { createContext, useEffect, useReducer } from 'react'
-import { useCookieContext } from '../hooks/useCookieContext'
-import { useCookie } from '../hooks/useCookie'
+import { createContext, useReducer } from 'react'
 
-export const AuthContext = createContext()
+export const AuthContext = createContext<any>(null)
 
-export const authReducer = (state, action) => {
+export const authReducer = (state: any, action: any) => {
     switch (action.type) {
         case 'LOGIN':
             return {
@@ -20,7 +18,7 @@ export const authReducer = (state, action) => {
 
 }
 
-export const AuthContextProvider = ({ children }) => {
+export const AuthContextProvider = ( children: any ) => {
 
     const [state, dispatch] = useReducer(authReducer, {
         user: null

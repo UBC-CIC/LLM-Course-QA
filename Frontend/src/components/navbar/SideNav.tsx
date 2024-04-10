@@ -4,6 +4,8 @@ import {
     LogOut
   } from "lucide-react"
 
+import { useNavigate } from 'react-router-dom';
+
 
 export type NavItem = {
     url: string;
@@ -16,6 +18,14 @@ interface SideNavProps {
 }
 
 const SideNav = (props: SideNavProps) => {
+
+    const navigate = useNavigate();
+
+    const onLogout = () => {
+        localStorage.removeItem('user')
+        navigate('/')
+    }
+        
     return (
         <div
             className='h-screen w-28 border-r border-gray-200'>
@@ -32,15 +42,11 @@ const SideNav = (props: SideNavProps) => {
                             {data.icon}
                             {data.name}
                         </a>
-
                     ))}
                     <a
-                        href="/auth/logout"
-                        className="flex flex-col items-center p-3">
+                        className="flex flex-col items-center p-3 hover:bg-gray-200 transition duration-200" onClick={onLogout}>
                         <LogOut size={24} />
-                    
                     </a>
-
                 </nav>
             </div>
         </div>
