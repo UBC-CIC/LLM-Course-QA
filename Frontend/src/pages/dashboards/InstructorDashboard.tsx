@@ -38,7 +38,7 @@ const InstructorDashboard = () => {
         const user = localStorage.getItem('user');
         const userId = user ? JSON.parse(user).id : null;
 
-        const response = await fetch('http://127.0.0.1:5000/courses/' + userId, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${userId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -70,7 +70,7 @@ const InstructorDashboard = () => {
         const user = localStorage.getItem('user');
         const userId = user ? JSON.parse(user).id : null;
 
-        const response = await fetch('http://127.0.0.1:5000/courses', {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

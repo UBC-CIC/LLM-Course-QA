@@ -46,7 +46,7 @@ const InstitutionUsers = () => {
     const [selectedRole, setSelectedRole] = useState<string>('');
 
     const getAllUsers = async () => {
-        const response = await fetch('http://127.0.0.1:5000/users', {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -67,7 +67,7 @@ const InstitutionUsers = () => {
     }, []);
 
     const handleDelete = (userId: string) => async () => {
-        const response = await fetch(`http://127.0.0.1:5000/admin/users`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/users`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -87,7 +87,7 @@ const InstitutionUsers = () => {
     }
 
     const updateUserRole = (userId: string, role: string) => async () => {
-        const response = await fetch(`http://127.0.0.1:5000/admin/users` , {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/users` , {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'

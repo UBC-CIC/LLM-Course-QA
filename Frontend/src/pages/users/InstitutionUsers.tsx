@@ -49,7 +49,7 @@ const InstitutionUsers = () => {
     const [users, setUsers] = useState<any[]>([]);
 
     const getAllUsers = async () => {
-        const response = await fetch('http://127.0.0.1:5000/users', {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -71,7 +71,7 @@ const InstitutionUsers = () => {
 
     const handleDelete = (userId: string) => async () => {
         console.log(userId);
-        const response = await fetch(`http://127.0.0.1:5000/courses/${id}/users/${userId}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/users/${userId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'

@@ -71,7 +71,7 @@ const Chat = () => {
 
   const handleSendMessage = async () => {
     setBubbles(true);
-    const response = await fetch(`http://127.0.0.1:5000/queries`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/queries`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -112,7 +112,7 @@ const Chat = () => {
 
   const getMessages = async (conversation_id: string) => {
     setMessages([]);
-    const response = await fetch(`http://127.0.0.1:5000/queries/conversations/${conversation_id}`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/queries/conversations/${conversation_id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -140,7 +140,7 @@ const Chat = () => {
   }
 
   const getChatHistory = async () => {
-    const response = await fetch(`http://127.0.0.1:5000/queries/${id}/conversations/${userId}`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/queries/${id}/conversations/${userId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

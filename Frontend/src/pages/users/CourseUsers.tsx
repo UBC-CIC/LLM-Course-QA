@@ -51,7 +51,7 @@ const CourseUsers = () => {
 
 
     const getEnrolledStudents = async () => {
-        const response = await fetch('http://127.0.0.1:5000/courses/' + id + '/users', {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/users`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -74,7 +74,7 @@ const CourseUsers = () => {
 
     const handleDelete = (studentId: string) => async () => {
         console.log(studentId);
-        const response = await fetch(`http://127.0.0.1:5000/courses/${id}/users/${studentId}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/users/${studentId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'

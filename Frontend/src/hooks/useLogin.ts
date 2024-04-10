@@ -9,14 +9,14 @@ export const useLogin = () => {
 
     // const { dispatch } = useAuthContext()
 
-    const login = async (username, password) => {
+    const login = async (username: string, password: string) => {
         setIsLoading(true)
-        const response = await fetch('http://127.0.0.1:5000/users/login', {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({username: username, password: password}),
+            body: JSON.stringify({ username: username, password: password }),
         })
 
         const json = await response.json()
@@ -35,7 +35,7 @@ export const useLogin = () => {
             console.log((json))
         }
 
-    } 
+    }
 
     return { login, error, isLoading }
 }

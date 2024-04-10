@@ -57,9 +57,7 @@ const AdminSettings = () => {
             new_password: newPassword,
         }
 
-        const url = 'http://127.0.0.1:5000/users';
-
-        fetch(url, {
+        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

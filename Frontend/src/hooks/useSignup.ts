@@ -4,12 +4,12 @@ export const useSignup = () => {
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
 
-    const signup = async (name, username, password, role) => {
+    const signup = async (name: string, username: string, password: string, role: string) => {
         setIsLoading(true)
 
-        const response = await fetch('http://127.0.0.1:5000/users/register', {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/register`, {
             method: 'POST',
-            body: JSON.stringify({name, username, password, role}),
+            body: JSON.stringify({ name, username, password, role }),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -27,7 +27,7 @@ export const useSignup = () => {
             setError('')
         }
 
-    } 
+    }
 
     return { signup, error, isLoading }
 }

@@ -87,7 +87,7 @@ export function CardsChat({ initMessages, courseId, userId }: CardsChatProps) {
 
     const handleSendMessage = async () => {
         // send post to /queries
-        const response = await fetch(`http://127.0.0.1:5000/queries`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/queries`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
