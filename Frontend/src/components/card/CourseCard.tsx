@@ -3,7 +3,6 @@ import { Button } from '../button/Button';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 type CardProps = {

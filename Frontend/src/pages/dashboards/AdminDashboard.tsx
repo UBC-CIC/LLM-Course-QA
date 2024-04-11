@@ -4,7 +4,7 @@ import { Badge } from '@/components/badge/Badge';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import SideNav from '@/components/navbar/SideNav';
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"
+// import { useParams } from "react-router-dom"
 
 import {
     Book,
@@ -41,7 +41,7 @@ interface UserData {
 }
 
 const InstitutionUsers = () => {
-    const { id } = useParams<{ id: string }>()
+    // const { id } = useParams<{ id: string }>()
     const [users, setUsers] = useState<any[]>([]);
     const [selectedRole, setSelectedRole] = useState<string>('');
 

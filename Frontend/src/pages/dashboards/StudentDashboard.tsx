@@ -60,8 +60,6 @@ const StudentDashboard = () => {
         const user = localStorage.getItem('user');
         const userId = user ? JSON.parse(user).id : null;
 
-        setShowModal(false);
-
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/join`, {
             method: 'POST',
             headers: {
