@@ -2,7 +2,7 @@ from langchain_community.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from ..data.models.conversation import Conversation
 from ..data.models.query import Query
-from ..extensions import db, vecdb
+from ..extensions import db, vecdb, session
 from .embeddingService import query_embedding
 from .generationService import llm_open, prompt
 from .courseService import get_course
@@ -38,22 +38,36 @@ def query_llm(query_data):
 
     query = Query(
         question = question,
-        answer = llm_response,
+        answer = llm_response['result'],
         conversation_id = conversation_id
     )
     db.session.add(query)
     db.session.commit()
-
-    # sources = []
-    # for source in llm_response["source_documents"]:
-    #     sources.append(source.metadata['source'])
+    s3 = session.client('s3')
+    sources = []
+    for source in llm_response["source_documents"]:
+        s3_presigned_data = split_s3_url(source.metadata['source'])
+        presigned_url = s3.generate_presigned_url('get_object', Params={'Bucket': s3_presigned_data['bucket_name'], 'Key': s3_presigned_data['object_name']}, ExpiresIn=3600)
+        file_name = s3_presigned_data['object_name'].split('/')[-1]
+        sources.append({
+            'file_name': file_name,
+            'presigned_url': presigned_url
+        })
 
     response = {
         "result": llm_response,
-        "conversation_id": conversation_id
-        # "sources": sources
+        "conversation_id": conversation_id,
+        "sources": sources
     }
+
     return response
+
+def split_s3_url(source):
+    parts = source.replace("s3://", "").split("/", 1)
+    bucket_name = parts[0]
+    object_name = parts[1]
+
+    return {"bucket_name": bucket_name, "object_name": object_name}
 
 def query_list(query_data):
     conversation = Conversation.query.get(query_data['conversation_id'])

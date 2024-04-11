@@ -4,6 +4,7 @@ from .web.courseController import courseBp
 from .web.queryController import queryBp
 from .web.userController import userBp
 from .web.adminController import adminBp
+from .web.reportController import reportBp
 from .extensions import db, login_manager, bcrypt
 
 
@@ -18,6 +19,7 @@ def create_app(test_config=None):
     app.register_blueprint(queryBp)
     app.register_blueprint(userBp)
     app.register_blueprint(adminBp)
+    app.register_blueprint(reportBp)
     db.init_app(app)
 
     # update db with models

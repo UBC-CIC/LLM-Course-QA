@@ -35,13 +35,10 @@ def update_users(update_user_data):
         return False
 
     if update_user_data['role'] == 'Admin':
-        print("admin")
         user.role = Role.Admin
     elif update_user_data['role'] == 'Instructor':
-        print("instructor")
         user.role = Role.Instructor
     elif update_user_data['role'] == 'Student':
-        print("student")
         user.role = Role.Student
     else:
         print("invalid role")

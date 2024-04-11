@@ -15,6 +15,7 @@ const Login = () => {
         await login(email, password);
         if(localStorage.getItem('user')) {
             navigate('/dashboard');
+            window.location.reload();
         }
     };
 

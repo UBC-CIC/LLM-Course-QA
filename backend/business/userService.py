@@ -1,7 +1,8 @@
 from flask_login import login_user, logout_user
 
-from ..data.models.user import User
+from ..data.models.user import User, Role
 from ..extensions import db, bcrypt
+from .courseService import get_course
 
 # Registers a user
 def register(create_user_data):
@@ -56,7 +57,7 @@ def logout():
 
 # Adds course to admins
 def add_course_to_admins(course):
-    users = User.query.filter_by(role='Admin').all()
+    users = User.query.filter_by(role=Role.Admin).all()
     for user in users:
         user.courses.append(course)
     db.session.commit()
@@ -82,4 +83,24 @@ def get_users():
 
     return user_objects
 
+# Gets all instructors
+def get_instructors():
+    users = User.query.filter_by(role=Role.Instructor).all()
+    user_objects = []
+    for user in users:
+        user_objects.append({
+            'id': user.id,
+            'name': user.name,
+        })
 
+    return user_objects
+
+# Adds a user to a course
+def add_user_to_course(add_user_data):
+    user = User.query.get(add_user_data['user_id'])
+    course = get_course(add_user_data['course_id'])
+    if user and course:
+        user.courses.append(course)
+        db.session.commit()
+        return True
+    return False

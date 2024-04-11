@@ -90,6 +90,8 @@ const InstructorDashboard = () => {
         setCourseDescription('');
         setCourseCode('');
         setCourseSection('');
+
+        window.location.reload();
     }
 
     return (

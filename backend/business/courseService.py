@@ -49,6 +49,16 @@ def create_course(create_course_data):
 
     return course.id
 
+def update_course(update_course_data):
+    course = Course.query.get(update_course_data['course_id'])
+    if course:
+        course.course_code = update_course_data['course_code']
+        course.course_section = update_course_data['course_section']
+        course.name = update_course_data['name']
+        course.description = update_course_data['description']
+        db.session.commit()
+        return True
+    return False
 
 def delete_course(course_delete_data):
     course = Course.query.get(course_delete_data['course_id'])
