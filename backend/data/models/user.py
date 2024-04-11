@@ -22,6 +22,7 @@ class User(db.Model, UserMixin):
     role = Column(Enum(Role), nullable=False)
     courses = relationship('Course', secondary=course_user_association, backref='users')
     conversations = relationship('Conversation', backref='users')
+    reports = relationship('Report', backref='users')
 
     def is_admin(self):
         return self.role == Role.Admin

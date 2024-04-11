@@ -8,7 +8,7 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 bcrypt = Bcrypt()
 vecdb = chromadb.PersistentClient(path="./vecdb.db")
-profile_name = '' # input for local testing with sso
+profile_name = 'Daniel' # input for local testing with sso
 embedding_endpoint_name = 'cic-emb' # input
 llm_endpoint_name = '' # input
 llm_inference_component_name = '' # input

@@ -13,3 +13,4 @@ class Conversation(db.Model):
     user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
     course_id = Column(UUID(as_uuid=True), ForeignKey('courses.id'), nullable=False)
     queries = relationship('Query', backref='conversation')
+    reports = relationship('Report', backref='conversation')

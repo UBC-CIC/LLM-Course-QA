@@ -17,6 +17,7 @@ def create_course():
 
     try:
         create_course_id = courseService.create_course(createCourseData)
+        print("create_course_id", create_course_id)
         if not create_course_id:
             return jsonify({'error': 'Course already exists'}), 400
 
@@ -25,7 +26,7 @@ def create_course():
         return jsonify({'error': 'Internal Server Error'}), 500
 
 @courseBp.route('/<courseId>', methods=['DELETE'])
-@login_required
+# @login_required
 def delete_course(courseId):
     if not current_user.is_admin() and not current_user.is_instructor():
         return jsonify({'error': 'Unauthorized'}), 401
@@ -127,7 +128,6 @@ def list_enrolled_students(courseId):
     list_enrolled_students = courseService.list_enrolled_students(list_enrolled_students_data)
     return jsonify(list_enrolled_students), 200
 
-
 # remove student from course
 @courseBp.route('/<courseId>/users/<student_id>', methods=['DELETE'])
 # @login_required
@@ -140,3 +140,19 @@ def remove_student_from_course(courseId, student_id):
     if not remove_student:
         return jsonify({'error': 'Student does not exist in course'}), 400
     return jsonify({'message': 'Student removed from course'}), 200
+
+# Updates course details
+@courseBp.route('/<courseId>', methods=['PUT'])
+def update_course(courseId):
+    data = request.get_json()
+    update_course_data = {
+        'course_id': courseId,
+        'course_code': data['course_code'],
+        'course_section': data['course_section'],
+        'name': data['name'],
+        'description': data['description']
+    }
+    update_course = courseService.update_course(update_course_data)
+    if not update_course:
+        return jsonify({'error': 'Course does not exist'}), 400
+    return jsonify({'message': 'Course updated'}), 200

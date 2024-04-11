@@ -57,3 +57,24 @@ def change_password():
 def get_users():
     users = userService.get_users()
     return jsonify(users), 200
+
+# Gets all instructors
+@userBp.route('/instructors', methods=['GET'])
+def get_instructors():
+    users = userService.get_instructors()
+    return jsonify(users), 200
+
+# Adds user to course
+@userBp.route('/<user_id>/courses', methods=['POST'])
+def add_instructor(user_id):
+    data = request.get_json()
+    add_instructor_data = {
+        'user_id': user_id,
+        'course_id': data['course_id']
+    }
+    add_instructor = userService.add_user_to_course(add_instructor_data)
+
+    if add_instructor:
+        return jsonify({'message': 'Instructor added'}), 200
+    else:
+        return jsonify({'error': 'Instructor already exists'}), 400
