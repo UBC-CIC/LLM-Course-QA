@@ -38,7 +38,7 @@ def query_llm(query_data):
 
     query = Query(
         question = question,
-        answer = llm_response,
+        answer = llm_response['result'],
         conversation_id = conversation_id
     )
     db.session.add(query)

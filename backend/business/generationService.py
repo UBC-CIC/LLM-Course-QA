@@ -20,10 +20,10 @@ content_handler = ContentHandler()
 
 
 parameters = {
-            "max_new_tokens": 1024,
-            "temperature": 1,
-            "stop_sequences": None,
-        }
+    "max_new_tokens": 1024,
+    "temperature": 0.1,
+    "top_k": 10,
+}
 
 
 llm_open_args = {
@@ -41,19 +41,21 @@ if profile_name != '':
 llm_open = SagemakerEndpoint(**llm_open_args)
 
 
-if profile_name != '':
-    llm_open_args["credentials_profile_name"] = profile_name
+# llm_open = Ollama(model="mistral")
 
-template = """<s>[INST]
-            The following is a conversation between a human and a friendly AI.
-            The AI uses the information in the context to answer the question from the human.
-            It does not use any other information.
-            This is the context:
-            {context}
-            Instruction: Based on the above documents, provide a detailed answer for, {question} Answer "I don't know"
-            if not present in the document. Never provide an answer that is not based on the context, even if it is a well known fact.
-            Solution:
-            [/INST]"""
+template = """ <s>[INST] 
+You are a helpful assistant that provides direct and concise answers based only on the provided information.
+Use the following information from the course information to answer the user's question. If the answer is not present in the provided information, your answer must only be 'I do not know the answer'.
+Do not refer to the fact that there are provided course documents in your answer, just directly answer the question. 
+< -- COURSE INFORMATION -- >
+{context}
+< -- END COURSE INFORMATION -- >
+< -- QUESTION -- > 
+{question}
+< -- END QUESTION -- >
+Solution:
+[/INST]"""
+
 PROMPT = PromptTemplate(
                 template=template, input_variables=["context", "question"],
             )
