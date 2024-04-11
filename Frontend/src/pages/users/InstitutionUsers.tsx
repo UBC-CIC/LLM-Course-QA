@@ -4,11 +4,12 @@ import { Badge } from '@/components/badge/Badge';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import SideNav from '@/components/navbar/SideNav';
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"
+// import { useParams } from "react-router-dom"
 
 import {
     Book,
     Settings,
+    SquareUser,
 } from "lucide-react"
 
 import {
@@ -40,8 +41,9 @@ interface UserData {
 }
 
 const InstitutionUsers = () => {
-    const { id } = useParams<{ id: string }>()
+    // const { id } = useParams<{ id: string }>()
     const [users, setUsers] = useState<any[]>([]);
+    const [selectedRole, setSelectedRole] = useState<string>('');
 
     const getAllUsers = async () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, {
@@ -65,12 +67,14 @@ const InstitutionUsers = () => {
     }, []);
 
     const handleDelete = (userId: string) => async () => {
-        console.log(userId);
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/users/${userId}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/users`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             },
+            body: JSON.stringify({
+                user_id: userId
+            })
         });
 
         const json = await response.json();
@@ -83,7 +87,24 @@ const InstitutionUsers = () => {
     }
 
     const updateUserRole = (userId: string, role: string) => async () => {
-        console.log(userId);
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/users` , {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: userId,
+                role: role
+            })
+        });
+
+        const json = await response.json();
+
+        if (response.ok) {
+            getAllUsers();
+        } else {
+            console.log(json);
+        }
     }
 
     return (
@@ -94,6 +115,11 @@ const InstitutionUsers = () => {
                         url: "/dashboard",
                         name: "Courses",
                         icon: <Book size={24} />,
+                    },
+                    {
+                        url: "/users",
+                        name: "Users",
+                        icon: <SquareUser size={24} />,
                     },
                     {
                         url: "/settings",
@@ -131,7 +157,7 @@ const InstitutionUsers = () => {
                                             <DialogHeader>
                                                 <DialogTitle>Edit User</DialogTitle>
                                                 <DialogDescription>
-                                                <Select>
+                                                <Select onValueChange={role => setSelectedRole(role)}>
                                                     <SelectTrigger>
                                                         <SelectValue placeholder="Select user role" />
                                                     </SelectTrigger>
@@ -144,8 +170,8 @@ const InstitutionUsers = () => {
                                                         </SelectGroup>
                                                     </SelectContent>
                                                 </Select>
-                                                    <Button variant={'default'} className="mt-4" onClick={updateUserRole(data.id, data.role)}>Save</Button>
-                                                    <Button variant={'destructive'} className="mt-4">Delete</Button>
+                                                    <Button variant={'default'} className="mt-4" onClick={updateUserRole(data.id, selectedRole)}>Save</Button>
+                                                    <Button variant={'destructive'} className="mt-4" onClick={handleDelete(data.id)}>Delete</Button>
                                                 </DialogDescription>
                                             </DialogHeader>
                                         </DialogContent>

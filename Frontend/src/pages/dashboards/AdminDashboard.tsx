@@ -1,7 +1,7 @@
 import { Table, TableBody, TableRow, TableHead, TableHeader, TableCell } from '@/components/table/Table';
 import { ScrollArea } from '@/components/scroll-area/ScrollArea';
 import { Badge } from '@/components/badge/Badge';
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import SideNav from '@/components/navbar/SideNav';
 import React, { useState, useEffect } from "react";
 // import { useParams } from "react-router-dom"
@@ -34,19 +34,34 @@ import {
     SelectValue,
 } from "@/components/select/Select"
 
-interface UserData {
+import { Input } from "@/components/input/Input";
+
+
+type CourseData = {
     id: string;
-    name: string;
-    role: 'student' | 'instructor' | 'admin';
+    name: string,
+    description: string,
+    course_code: string,
+    course_section: string,
 }
 
-const InstitutionUsers = () => {
+const AdminDashboard = () => {
     // const { id } = useParams<{ id: string }>()
-    const [users, setUsers] = useState<any[]>([]);
-    const [selectedRole, setSelectedRole] = useState<string>('');
+    const [courses, setCourses] = useState<any[]>([]);
+    const [instructors, setInstructors] = useState<any[]>([]);
+    const [selectedCourseCode, setSelectedCourseCode] = useState<string>('');
+    const [selectedCourseName, setSelectedCourseName] = useState<string>('');
+    const [selectedCourseSection, setSelectedCourseSection] = useState<string>('');
+    const [selectedCourseDescription, setSelectedCourseDescription] = useState<string>('');
+    const [assignedInstructor, setAssignedInstructor] = useState<string>('');
+    const [selectedCourseId, setSelectedCourseId] = useState<string>('');
+    const [open, setOpen] = useState(false);
 
-    const getAllUsers = async () => {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, {
+    const user = localStorage.getItem('user');
+    const userId = user ? JSON.parse(user).id : null;
+
+    const getAllCourses = async () => {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${userId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -56,55 +71,115 @@ const InstitutionUsers = () => {
         const json = await response.json();
 
         if (response.ok) {
-            setUsers(json);
+            setCourses(json);
+        } else {
+            console.log(json);
+        }
+    }
+    const getAllInstructors = async () => {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/instructors`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        const json = await response.json();
+
+        if (response.ok) {
+            setInstructors(json);
         } else {
             console.log(json);
         }
     }
 
     useEffect(() => {
-        getAllUsers();
+        getAllCourses();
+        getAllInstructors();
     }, []);
 
-    const handleDelete = (userId: string) => async () => {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/users`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                user_id: userId
-            })
-        });
+    const updateCourse = async () => {
 
-        const json = await response.json();
+        console.log("Update course")
 
-        if (response.ok) {
-            getAllUsers();
-        } else {
-            console.log(json);
+        if (!selectedCourseCode || !selectedCourseName || !selectedCourseSection || !selectedCourseDescription) {
+            setAssignedInstructor('');
+            setSelectedCourseCode('');
+            setSelectedCourseName('');
+            setSelectedCourseDescription('');
+            setSelectedCourseSection('');
+            return;
         }
-    }
 
-    const updateUserRole = (userId: string, role: string) => async () => {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/users` , {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${selectedCourseId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                id: userId,
-                role: role
+                course_code: selectedCourseCode,
+                name: selectedCourseName,
+                course_section: selectedCourseSection,
+                description: selectedCourseDescription
             })
         });
 
         const json = await response.json();
 
         if (response.ok) {
-            getAllUsers();
+            getAllCourses();
         } else {
             console.log(json);
         }
+
+        setOpen(false);
+
+        setAssignedInstructor('');
+        setSelectedCourseCode('');
+        setSelectedCourseName('');
+        setSelectedCourseDescription('');
+        setSelectedCourseSection('');
+    }
+
+    const addCourse = async () => {
+
+        console.log("Add course")
+
+        if (!selectedCourseCode || !selectedCourseName || !selectedCourseSection || !selectedCourseDescription || !assignedInstructor) {
+            setOpen(false);
+            return;
+        }
+
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                course_code: selectedCourseCode,
+                name: selectedCourseName,
+                course_section: selectedCourseSection,
+                description: selectedCourseDescription,
+                instructor: assignedInstructor
+            }),
+        });
+
+        const json = await response.json();
+
+        if (response.ok) {
+            console.log('Course added successfully');
+            console.log(json);
+            getAllCourses();
+        } else {
+            console.log(json);
+        }
+        setOpen(false);
+
+        setAssignedInstructor('');
+        setSelectedCourseCode('');
+        setSelectedCourseName('');
+        setSelectedCourseDescription('');
+        setSelectedCourseSection('');
     }
 
     return (
@@ -129,55 +204,77 @@ const InstitutionUsers = () => {
                 ]} />
                 <ScrollArea className="h-screen w-full rounded-md border pl-12 pr-12 pt-12">
                     <div className="flex justify-between items-center mt-2">
-                        <h1 className='text-xl font-bold'>Students</h1>
+                        <h1 className='text-xl font-bold'>Courses</h1>
+                        <Dialog open={open} onOpenChange={setOpen}>
+                            <DialogTrigger>
+                                <Button variant={'outline'}>
+                                    <FontAwesomeIcon icon={faPlusCircle} className="my-auto cursor-pointer" />
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Edit Course</DialogTitle>
+                                    <DialogDescription>
+                                        <Select onValueChange={inst => setAssignedInstructor(inst)}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select the Instructor" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectLabel>Instructors</SelectLabel>
+                                                    {instructors && instructors.map((instructor: any, index: number) => (
+                                                        <SelectItem key={index} value={instructor.id}>{instructor.name}</SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                        <Input className='my-4' type="text" placeholder="Course Code" onChange={(e) => setSelectedCourseCode(e.target.value)} />
+                                        <Input className='mb-4' type="text" placeholder="Course Name" onChange={(e) => setSelectedCourseName(e.target.value)} />
+                                        <Input className='mb-4' type="text" placeholder="Course Section" onChange={(e) => setSelectedCourseSection(e.target.value)} />
+                                        <Input className='mb-4' type="text" placeholder="Course Description" onChange={(e) => setSelectedCourseDescription(e.target.value)} />
+                                        <Button variant={'default'} className="mt-4" onClick={addCourse}>Add Course</Button>
+                                    </DialogDescription>
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                     <Table>
                         <TableHeader >
                             <TableRow>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Role</TableHead>
-                                <TableHead></TableHead>
+                                <TableHead>Course Code</TableHead>
+                                <TableHead>Course Name</TableHead>
+                                <TableHead>Course Section</TableHead>
+                                <TableHead>Action</TableHead>
                             </TableRow>
                         </TableHeader>
-                        {
-                            users.map((data: UserData, index: number) => (
+                        {courses &&
+                            courses.map((data: CourseData, index: number) => (
                                 <TableBody key={index}>
-                                <TableRow>
-                                    <TableCell>{data.name}</TableCell>
-                                    <TableCell>
-                                        <Badge className={`${data.role === 'student' ? 'bg-blue-600' : data.role === 'instructor' ? 'bg-yellow-600' : 'bg-green-600'}`}>{data.role}</Badge>
-                                    </TableCell>
-                                    <Dialog>
-                                        <DialogTrigger>
-                                            <Button variant={'outline'}>
-                                                <FontAwesomeIcon icon={faEllipsisV} className="my-auto cursor-pointer" />
-                                            </Button>
-                                        </DialogTrigger>
-                                        <DialogContent>
-                                            <DialogHeader>
-                                                <DialogTitle>Edit User</DialogTitle>
-                                                <DialogDescription>
-                                                <Select onValueChange={role => setSelectedRole(role)}>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Select user role" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectGroup>
-                                                        <SelectLabel>Roles</SelectLabel>
-                                                        <SelectItem value="Student">Student</SelectItem>
-                                                        <SelectItem value="Instructor">Instructor</SelectItem>
-                                                        <SelectItem value="Admin">Admin</SelectItem>
-                                                        </SelectGroup>
-                                                    </SelectContent>
-                                                </Select>
-                                                    <Button variant={'default'} className="mt-4" onClick={updateUserRole(data.id, selectedRole)}>Save</Button>
-                                                    <Button variant={'destructive'} className="mt-4" onClick={handleDelete(data.id)}>Delete</Button>
-                                                </DialogDescription>
-                                            </DialogHeader>
-                                        </DialogContent>
-                                    </Dialog>
-                                </TableRow>
-                            </TableBody>
+                                    <TableRow>
+                                        <TableCell>{data.course_code}</TableCell>
+                                        <TableCell>{data.name}</TableCell>
+                                        <TableCell>{data.course_section}</TableCell>
+                                        <Dialog  open={open} onOpenChange={setOpen}>
+                                            <DialogTrigger>
+                                                <Button variant={'outline'} onClick={() => {setSelectedCourseId(data.id)}}>
+                                                    <FontAwesomeIcon icon={faEllipsisV} className="my-auto cursor-pointer" />
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader>
+                                                    <DialogTitle>Edit Course</DialogTitle>
+                                                    <DialogDescription>
+                                                        <Input className="my-4" type="text" placeholder="Course Code" onChange={(e) => setSelectedCourseCode(e.target.value)} />
+                                                        <Input className="mb-4" type="text" placeholder="Course Name" onChange={(e) => setSelectedCourseName(e.target.value)} />
+                                                        <Input className="mb-4" type="text" placeholder="Course Section" onChange={(e) => setSelectedCourseSection(e.target.value)} />
+                                                        <Input className='mb-4' type="text" placeholder="Course Description" onChange={(e) => setSelectedCourseDescription(e.target.value)} />
+                                                        <Button variant={'default'} className="mt-4" onClick={updateCourse}>Save</Button>
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                            </DialogContent>
+                                        </Dialog>
+                                    </TableRow>
+                                </TableBody>
                             ))
                         }
 
@@ -188,4 +285,4 @@ const InstitutionUsers = () => {
     );
 };
 
-export default InstitutionUsers;
+export default AdminDashboard;

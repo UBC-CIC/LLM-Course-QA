@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom"
 import {
     Book,
     Settings,
+    Trash2Icon
 } from "lucide-react"
 
 import { Table, TableBody, TableRow, TableHead, TableHeader, TableCell } from '@/components/table/Table';
@@ -125,7 +126,7 @@ const UploadFile = () => {
                                     <TableRow>
                                         <TableCell><Checkbox /></TableCell>
                                         <TableCell className="font-medium">{data.name}</TableCell>
-                                        <TableCell><FontAwesomeIcon icon={faTrash} className="text-red-500 cursor-pointer" onClick={handleDelete(data.id)} /></TableCell>
+                                        <TableCell><Trash2Icon className="text-red-500 cursor-pointer" onClick={handleDelete(data.id)} /></TableCell>
                                     </TableRow>
                                 </TableBody>
                             ))

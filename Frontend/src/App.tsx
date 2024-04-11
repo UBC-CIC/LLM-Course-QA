@@ -9,6 +9,8 @@ import AdminSettings from './pages/settings/AdminSettings';
 import Signup from './pages/auth/Signup';
 import CourseUsers from './pages/users/CourseUsers';
 import { Navigate } from 'react-router-dom';
+import InstitutionUsers from './pages/users/InstitutionUsers';
+import Reports from './pages/Reports';
 
 function App() {
   // const { user } = useAuthContext();
@@ -27,7 +29,9 @@ function App() {
           <Route path="/chat" element={user ? (role === "Role.Student" ? <Chat /> : (role === "Role.Instructor" ? <Chat /> : <Navigate to="/"/>)) : <Navigate to="/"/>} />
           <Route path="/chat/:id" element={user ? (role === "Role.Student" ? <Chat /> : (role === "Role.Instructor" ? <Chat /> : <Navigate to="/"/>)) : <Navigate to="/"/>} />
           <Route path="/settings" element={<AdminSettings />} />
-          <Route path="/users/:id" element={user ? (role === "Role.Instructor" ? <CourseUsers /> : <Navigate to="/"/>) : <Navigate to="/"/>} />
+          <Route path="/users" element={user ? (role === "Role.Admin" ? <InstitutionUsers /> : <Navigate to="/"/>) : <Navigate to="/"/>} />
+          <Route path="/users/:id" element={user ? (role === "Role.Instructor" ? <CourseUsers /> : <Navigate to="/users"/>) : <Navigate to="/"/>} />
+          <Route path="/reports" element={user ? (role === "Role.Instructor" ? <Reports /> : <Navigate to="/"/>) : <Navigate to="/"/>} />
         </Routes>
       </Router>
     </>

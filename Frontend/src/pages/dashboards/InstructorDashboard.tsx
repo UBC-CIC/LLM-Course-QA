@@ -1,7 +1,8 @@
 import {
     Book,
-    Settings
-  } from "lucide-react"
+    Settings,
+    OctagonAlert
+} from "lucide-react"
 
 import {
     Dialog,
@@ -22,12 +23,6 @@ import React, { useState, useEffect } from "react";
 import { Input } from "@/components/input/Input";
 
 const InstructorDashboard = () => {
-    // type CourseData = {
-    //     courseCode: string;
-    //     courseSections: string;
-    //     courseName: string;
-    // }
-
     const [courses, setCourses] = useState<any[]>([]);
     const [courseName, setCourseName] = useState('');
     const [courseDescription, setCourseDescription] = useState('');
@@ -100,17 +95,22 @@ const InstructorDashboard = () => {
     return (
         <div className='flex flex-row' >
             <SideNav navItems={[
-          {
-            url: "/",
-            name: "Courses",
-            icon: <Book size={24} />,
-          },
-          {
-            url: "/settings",
-            name: "Settings",
-            icon: <Settings size={24} />,
-          },
-        ]}/>
+                {
+                    url: "/dashboard",
+                    name: "Courses",
+                    icon: <Book size={24} />,
+                },
+                {
+                    url: "/reports",
+                    name: "Reports",
+                    icon: <OctagonAlert size={24} />,
+                },
+                {
+                    url: "/settings",
+                    name: "Settings",
+                    icon: <Settings size={24} />,
+                },
+            ]} />
             <div className="my-0 mx-auto grid grid-cols-3 gap-24 p-12 overflow-auto h-screen">
                 <div>
                     <Dialog>
@@ -126,10 +126,10 @@ const InstructorDashboard = () => {
                                 <DialogDescription>
                                     Fill in the details of the course you want to add
                                 </DialogDescription>
-                                <Input type="text" placeholder="Course Code" value={courseCode} onChange={(e) => setCourseCode(e.target.value)}/>
-                                <Input type="text" placeholder="Course Name" value={courseName} onChange={(e) => setCourseName(e.target.value)}/>
-                                <Input type="text" placeholder="Course Section" value={courseSection} onChange={(e) => setCourseSection(e.target.value)}/>
-                                <Input type="text" placeholder="Course Description" value={courseDescription} onChange={(e) => setCourseDescription(e.target.value)}/>
+                                <Input type="text" placeholder="Course Code" value={courseCode} onChange={(e) => setCourseCode(e.target.value)} />
+                                <Input type="text" placeholder="Course Name" value={courseName} onChange={(e) => setCourseName(e.target.value)} />
+                                <Input type="text" placeholder="Course Section" value={courseSection} onChange={(e) => setCourseSection(e.target.value)} />
+                                <Input type="text" placeholder="Course Description" value={courseDescription} onChange={(e) => setCourseDescription(e.target.value)} />
                                 <Button variant="default" className="w-full mt-4" onClick={handleAddCourse}>Add Course</Button>
                             </DialogHeader>
                         </DialogContent>

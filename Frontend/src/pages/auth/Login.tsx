@@ -24,7 +24,7 @@ const Login = () => {
                 <img src="/hand-wave.svg" alt="Hand Wave" className='hand-wave' />
                 <p className='text-center text-4xl font-medium leading-[60px] tracking-tighter ml-4'>Welcome to the CourseQA!</p>
             </div>
-            <p className='text-2xl font-medium leading-9 text-center mt-4'>Log in to your account</p>
+            <p className='text-2xl font-medium leading-9 text-center my-4'>Log in to your account</p>
             <div className="w-64">
                 <Input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="mb-4" />
                 <Input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mb-4" />

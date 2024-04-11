@@ -25,7 +25,7 @@ const Signup  = () => {
                 <p className='text-center text-4xl font-medium leading-[60px] tracking-tighter ml-4'>Sign up for CourseQA!</p>
             </div>
 
-            <p className='text-2xl font-medium leading-9 text-center mt-4'>Sign up</p>
+            <p className='text-2xl font-medium leading-9 text-center my-4'>Sign up</p>
             <div className="w-64">
                 <Input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} className="mb-4" />
                 <Input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="mb-4" />

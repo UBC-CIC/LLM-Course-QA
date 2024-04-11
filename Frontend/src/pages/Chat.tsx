@@ -2,6 +2,7 @@ import {
   Book,
   Settings,
   Bot,
+  OctagonAlert
 } from "lucide-react"
 import SideNav from "@/components/navbar/SideNav"
 import { Separator } from "@/components/separator/Separator"
@@ -24,9 +25,20 @@ import {
   TooltipTrigger,
 } from "@/components/tooltip/Tooltip"
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription
+} from "@/components/dialog/Dialog"
+
+
 export type Message = {
   role: string;
   message: string;
+  sources?: any[];
 }
 
 export type Conversation = {
@@ -42,6 +54,9 @@ const Chat = () => {
   const [input, setInput] = React.useState("")
   const [courseName, setCourseName] = useState("")
   const [bubbles, setBubbles] = useState(false)
+  const [reason, setReason] = useState("")
+  const [open, setOpen] = useState(false)
+  const [sources, setSources] = useState<any[]>([])
 
   const inputLength = input.trim().length
 
@@ -70,10 +85,12 @@ const Chat = () => {
         {
           role: "llm",
           message: json.response,
+          sources: json.sources
         },
       ])
 
-      if(json.conversation_id != conversation_id) {
+
+      if (json.conversation_id != conversation_id) {
         setConversationId(json.conversation_id);
         setConversations([{
           conversation_id: json.conversation_id,
@@ -104,14 +121,15 @@ const Chat = () => {
           role: "user",
           message: message.question
         },
-        {
-          role: "llm",
-          message: message.answer
-        }
+          {
+            role: "llm",
+            message: message.answer
+          }
         );
       });
 
       setMessages(msgs);
+      setSources(json.sources);
     }
   }
 
@@ -136,6 +154,27 @@ const Chat = () => {
       setConversationId(convo_id);
       getMessages(convo_id);
     }
+  }
+
+  const handleSendReport = async () => {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/reports`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "reason": reason,
+        "conversation_id": conversation_id
+      })
+    });
+
+    if (response.ok) {
+      console.log('Report sent successfully');
+    } else {
+      console.log('Report failed');
+    }
+
+    setOpen(false);
   }
 
   const handleNewChat = async () => {
@@ -165,9 +204,9 @@ const Chat = () => {
       />
 
       <div className="flex h-screen w-screen">
-        <div className="text-white w-64 flex-none">
+        <div className="text-white w-1/6 flex-none">
           <>
-            <aside className="text-black w-64 flex-none h-screen overflow-y-auto p-5">
+            <aside className="text-black w-full flex-none h-screen overflow-y-auto p-5">
               <h2 className="text-xl">Chat History</h2>
               <ul>
                 <Separator className="my-4" />
@@ -210,19 +249,25 @@ const Chat = () => {
                   </TooltipProvider>
                 </CardHeader>
 
-                <CardContent className="flex-1 overflow-auto">
+                <CardContent className="overflow-auto w-full">
                   <div className="space-y-4">
                     {messages.map((message, index) => (
                       <div
                         key={index}
                         className={cn(
-                          "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
+                          "flex w-max max-w-[50%] flex-col rounded-lg px-3 py-2 text-sm",
                           message.role === "user"
                             ? "ml-auto bg-primary text-primary-foreground"
                             : "bg-muted"
                         )}
                       >
                         {message.message}
+                        {message.sources && message.role !== "user" && <Separator className="my-4" />}
+                        {message.sources && message.role !== "user" && <div className="flex flex-row p-4">
+                          {message.sources && message.sources.map((source: any, index: number) => (
+                            <a type="_blank" href={source}>Source {index+1}&nbsp;&nbsp;&nbsp;</a>
+                          ))}
+                        </div>}
                       </div>
                     ))}
                   </div>
@@ -245,7 +290,7 @@ const Chat = () => {
                     className="flex w-full items-center space-x-2"
                   >
                     <div className="flex w-full items-center space-x-2">
-                      <Bot size={32} className={`${bubbles ? "motion-safe:animate-bounce" : ""}`}/>
+                      <Bot size={32} className={`${bubbles ? "motion-safe:animate-bounce" : ""}`} />
                       <Input
                         id="message"
                         placeholder="Type your message..."
@@ -258,6 +303,22 @@ const Chat = () => {
                         <Send className="h-4 w-4" />
                         <span className="sr-only">Send</span>
                       </Button>
+                      <Dialog open={open} onOpenChange={setOpen}>
+                        <DialogTrigger>
+                          <OctagonAlert size={32} className="hover:animate-pulse text-red-500" />
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Add Course</DialogTitle>
+                            <DialogDescription>
+                              What is the reason you are reporting this conversation?
+                            </DialogDescription>
+                            <Input type="text" placeholder="Reason" onChange={(e) => setReason(e.target.value)} />
+                            <Button variant="default" className="w-full mt-4 bg-red-500" disabled={conversation_id ? false : true} onClick={handleSendReport}>Send Report</Button>
+                          </DialogHeader>
+                        </DialogContent>
+                      </Dialog>
+
                     </div>
                   </form>
                 </CardFooter>
