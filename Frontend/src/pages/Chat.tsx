@@ -1,22 +1,14 @@
 import {
   Book,
   Settings,
-  SquareUser,
-  Bot, 
-  BotMessageSquare
+  Bot,
 } from "lucide-react"
 import SideNav from "@/components/navbar/SideNav"
 import { Separator } from "@/components/separator/Separator"
-import { CardsChat } from "../components/chat/Chat"
 import { useParams } from "react-router-dom"
 import React, { useEffect, useState } from "react"
-import { Check, Plus, Send } from "lucide-react"
+import { Plus, Send } from "lucide-react"
 import { cn } from "@/lib/utils"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/avatar/Avatar"
 import { Button } from "@/components/button/Button"
 import {
   Card,
@@ -24,22 +16,6 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/card.tsx"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/command/Command"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/dialog/Dialog"
 import { Input } from "@/components/input/Input"
 import {
   Tooltip,

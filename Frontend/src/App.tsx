@@ -9,7 +9,6 @@ import AdminSettings from './pages/settings/AdminSettings';
 import Signup from './pages/auth/Signup';
 import CourseUsers from './pages/users/CourseUsers';
 import { Navigate } from 'react-router-dom';
-import { useAuthContext } from './hooks/useAuthContext.ts'
 
 function App() {
   // const { user } = useAuthContext();
@@ -29,7 +28,7 @@ function App() {
           <Route path="/chat/:id" element={user ? (role === "Role.Student" ? <Chat /> : (role === "Role.Instructor" ? <Chat /> : <Navigate to="/"/>)) : <Navigate to="/"/>} />
           <Route path="/settings" element={<AdminSettings />} />
           <Route path="/users/:id" element={user ? (role === "Role.Instructor" ? <CourseUsers /> : <Navigate to="/"/>) : <Navigate to="/"/>} />
-        </Routes> 
+        </Routes>
       </Router>
     </>
   )

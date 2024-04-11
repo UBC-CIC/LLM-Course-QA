@@ -17,10 +17,6 @@ type CardProps = {
 const CourseCard = (props: CardProps) => {
     const navigate = useNavigate();
 
-    const handleButtonClick = () => {
-        navigate('/upload');
-    };
-
     return (
         <div className='rounded-lg shadow-lg w-96 h-52 p-6'>
             <h1 className='text-xl font-bold'>{props.courseCode} - {props.courseSection}</h1>
