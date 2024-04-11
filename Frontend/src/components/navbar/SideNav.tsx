@@ -23,6 +23,7 @@ const SideNav = (props: SideNavProps) => {
     const onLogout = () => {
         localStorage.removeItem('user')
         navigate('/')
+        window.location.reload()
     }
 
     return (

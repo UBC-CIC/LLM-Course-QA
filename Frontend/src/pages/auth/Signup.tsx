@@ -16,6 +16,7 @@ const Signup  = () => {
     const handleSignup = async () => {
         await signup(name, email, password, 'Student' );
         navigate('/')
+        window.location.reload();
     };
 
     return (
