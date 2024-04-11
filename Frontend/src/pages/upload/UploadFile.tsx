@@ -3,23 +3,10 @@ import { useParams } from "react-router-dom"
 import {
     Book,
     Settings,
-    SquareUser,
 } from "lucide-react"
 
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/dialog/Dialog"
-
-import { Input } from "@/components/input/Input";
-import { faSignIn } from '@fortawesome/free-solid-svg-icons';
 import { Table, TableBody, TableRow, TableHead, TableHeader, TableCell } from '@/components/table/Table';
 import { ScrollArea } from '@/components/scroll-area/ScrollArea';
-import { Badge } from '@/components/badge/Badge';
 import { Checkbox } from '@/components/checkbox/Checkbox';
 import { Button } from '@/components/button/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -37,12 +24,7 @@ type CourseData = {
 
 const UploadFile = () => {
     const { id } = useParams<{ id: string }>()
-
-    const [selectedFile, setSelectedFile] = useState<any>(null);
-    const [isDraggingOver, setIsDraggingOver] = useState(false);
     const [files, setFiles] = useState<any[]>([]);
-    const [hover, setHover] = useState('#fda29b');
-    const [uploadProgress, setUploadProgress] = useState(0); // New state for upload progress
 
     useEffect(() => {
         const getFiles = async () => {

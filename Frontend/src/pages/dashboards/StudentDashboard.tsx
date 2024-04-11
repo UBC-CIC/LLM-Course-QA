@@ -1,8 +1,3 @@
-import {
-    Book,
-    Settings,
-    SquareUser,
-  } from "lucide-react"
 import CourseCard from "@/components/card/CourseCard";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignIn } from '@fortawesome/free-solid-svg-icons';
@@ -11,7 +6,6 @@ import { Button } from "@/components/button/Button";
 import SideNav, { NavItem } from '@/components/navbar/SideNav';
 import { MdOutlineLibraryBooks, MdOutlineSettings } from "react-icons/md";
 import { Input } from "@/components/input/Input";
-import { useNavigate } from 'react-router-dom'
 import {
     Dialog,
     DialogContent,
@@ -21,7 +15,6 @@ import {
     DialogTrigger,
 } from "@/components/dialog/Dialog"
 import React, { useState, useEffect } from "react";
-
 
 const navItems: NavItem[] = [
     {
@@ -37,11 +30,8 @@ const navItems: NavItem[] = [
 ]
 
 const StudentDashboard = () => {
-    const [modal, setModal] = useState(false)
     const [courses, setCourses] = useState<any[]>([]);
-    const [showModal, setShowModal] = useState(false);
     const [courseAccessCode, setCourseAccessCode] = useState('');
-    const navigate = useNavigate();
     const getCourses = async () => {
         const user = localStorage.getItem('user');
         const userId = user ? JSON.parse(user).id : null;
@@ -49,7 +39,7 @@ const StudentDashboard = () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${userId}`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'  
+                'Content-Type': 'application/json'
             },
         });
 
@@ -82,7 +72,7 @@ const StudentDashboard = () => {
                 access_code: courseAccessCode,
             }),
         });
-        
+
         const json = await response.json();
 
         if (response.ok) {
@@ -91,12 +81,6 @@ const StudentDashboard = () => {
             setCourses([...courses, ...json]);
         }
         setCourseAccessCode('');
-    }
-
-    type CourseData = {
-        courseCode: string;
-        courseSections: string;
-        courseName: string;
     }
 
     return (

@@ -22,11 +22,11 @@ import React, { useState, useEffect } from "react";
 import { Input } from "@/components/input/Input";
 
 const InstructorDashboard = () => {
-    type CourseData = {
-        courseCode: string;
-        courseSections: string;
-        courseName: string;
-    }
+    // type CourseData = {
+    //     courseCode: string;
+    //     courseSections: string;
+    //     courseName: string;
+    // }
 
     const [courses, setCourses] = useState<any[]>([]);
     const [courseName, setCourseName] = useState('');

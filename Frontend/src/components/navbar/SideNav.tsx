@@ -1,4 +1,3 @@
-import { MdPeopleOutline, MdOutlineSettings, MdOutlineLibraryBooks } from 'react-icons/md'
 import '../../../public/ubclogo.png'
 import {
     LogOut
@@ -25,7 +24,7 @@ const SideNav = (props: SideNavProps) => {
         localStorage.removeItem('user')
         navigate('/')
     }
-        
+
     return (
         <div
             className='h-screen w-28 border-r border-gray-200'>

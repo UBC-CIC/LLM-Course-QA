@@ -2,7 +2,7 @@ import { Table, TableBody, TableRow, TableHead, TableHeader, TableCell } from '@
 import { ScrollArea } from '@/components/scroll-area/ScrollArea';
 import { Badge } from '@/components/badge/Badge';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
-import SideNav, { NavItem } from '@/components/navbar/SideNav';
+import SideNav from '@/components/navbar/SideNav';
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom"
 
@@ -171,7 +171,7 @@ const InstitutionUsers = () => {
                                                     </SelectContent>
                                                 </Select>
                                                     <Button variant={'default'} className="mt-4" onClick={updateUserRole(data.id, selectedRole)}>Save</Button>
-                                                    <Button variant={'destructive'} className="mt-4" onClick={handleDelete(data.id)}>Delete</Button> 
+                                                    <Button variant={'destructive'} className="mt-4" onClick={handleDelete(data.id)}>Delete</Button>
                                                 </DialogDescription>
                                             </DialogHeader>
                                         </DialogContent>

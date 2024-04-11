@@ -1,7 +1,7 @@
 import { Button } from "@/components/button/Button";
 import SideNav from '@/components/navbar/SideNav';
 import { Input } from "@/components/input/Input";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/dialog/Dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/dialog/Dialog";
 import {
     Book,
     Settings,
@@ -14,8 +14,6 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/popover/Popover"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignIn } from '@fortawesome/free-solid-svg-icons';
 
 const AdminSettings = () => {
     const [color, setColor] = React.useState('#000000');
