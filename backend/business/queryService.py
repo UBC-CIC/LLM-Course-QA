@@ -48,14 +48,11 @@ def query_llm(query_data):
     for source in llm_response["source_documents"]:
         s3_presigned_data = split_s3_url(source.metadata['source'])
         presigned_url = s3.generate_presigned_url('get_object', Params={'Bucket': s3_presigned_data['bucket_name'], 'Key': s3_presigned_data['object_name']}, ExpiresIn=3600)
-        file_name = s3_presigned_data['object_name'].split('/')[-1]
-        sources.append({
-            'file_name': file_name,
-            'presigned_url': presigned_url
-        })
+        if presigned_url not in sources:
+            sources.append(presigned_url)
 
     response = {
-        "result": llm_response,
+        "result": llm_response['result'],
         "conversation_id": conversation_id,
         "sources": sources
     }

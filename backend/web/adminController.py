@@ -31,7 +31,6 @@ def update_config():
 
 @adminBp.route('/users', methods=['PUT'])
 def update_users():
-    print("update_users")
     data = request.get_json()
 
     update_user_data = {

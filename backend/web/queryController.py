@@ -15,7 +15,7 @@ def query_llm():
     }
     query_response = queryService.query_llm(query_data)
     if query_response:
-        return jsonify({'response': query_response["result"], 'conversation_id' : query_response['conversation_id']}), 200
+        return jsonify({'response': query_response["result"], 'conversation_id' : query_response['conversation_id'], 'sources': query_response["sources"]}), 200
     else:
         return jsonify({'error': 'Error creating response'}), 400
 
@@ -36,9 +36,6 @@ def query_list(conversationId):
 @queryBp.route('/<courseId>/conversations/<userId>', methods=['GET'])
 def conversation_history(courseId, userId):
     # TODO: Validate data
-    print("courseId", courseId)
-    print("userId", userId)
-
     query_data = {
         'course_id': courseId,
         'user_id': userId, # add by middleware TODO

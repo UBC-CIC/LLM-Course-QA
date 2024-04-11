@@ -14,6 +14,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/dialog/Dialog"
+import {
+    Book,
+    Settings
+  } from "lucide-react"
 import React, { useState, useEffect } from "react";
 
 const navItems: NavItem[] = [
@@ -83,7 +87,18 @@ const StudentDashboard = () => {
 
     return (
         <div className='flex flex-row' >
-            <SideNav navItems={navItems} />
+            <SideNav navItems={[
+            {
+                url: "/",
+                name: "Courses",
+                icon: <Book size={24} />,
+            },
+            {
+                url: "/settings",
+                name: "Settings",
+                icon: <Settings size={24} />,
+            },
+            ]}/>
             <div className="my-0 mx-auto grid grid-cols-3 gap-24 p-12 overflow-auto h-screen">
                 <div>
                     <Dialog>

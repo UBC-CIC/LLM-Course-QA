@@ -111,7 +111,6 @@ def join_course():
 @courseBp.route('/<courseId>/documents', methods=['GET'])
 # @login_required
 def get_course_documents(courseId):
-    print("courseId", courseId)
     list_course_documents_data = {
         'course_id': courseId
     }

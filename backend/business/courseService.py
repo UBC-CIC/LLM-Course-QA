@@ -145,7 +145,7 @@ def delete_course_document(course_document_data):
         db.session.delete(document)
         db.session.commit()
         # remove from vector store
-        thread = threading.Thread(target=delete_document_vectors, args=(course_id, s3_url,))
+        thread = threading.Thread(target=delete_document_vectors, args=(course_id, s3_url))
         thread.start()
         return True
     return False
