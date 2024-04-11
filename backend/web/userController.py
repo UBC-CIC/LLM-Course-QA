@@ -12,7 +12,7 @@ def register():
     if user_id:
         return jsonify({'id': user_id}), 201
     else:
-        return jsonify({'error': 'User already exists'}), 400 
+        return jsonify({'error': 'User already exists'}), 400
 
 @userBp.route('/login', methods=['POST'])
 def login():
@@ -36,7 +36,7 @@ def logout():
         return jsonify({'message': 'User logged out'}), 200
     else:
         return jsonify({'error': 'Logout failed'}), 400
-    
+
 @userBp.route('', methods=['PUT'])
 def change_password():
     data = request.get_json()

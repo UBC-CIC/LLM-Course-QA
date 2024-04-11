@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_cors import CORS
-from .data.models.user import *
 from .web.courseController import courseBp
 from .web.queryController import queryBp
 from .web.userController import userBp

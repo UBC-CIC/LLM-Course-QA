@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 from ..business import queryService
-from flask_login import login_required
 
 queryBp = Blueprint('query', __name__, url_prefix='/queries')
 
@@ -19,7 +18,7 @@ def query_llm():
         return jsonify({'response': query_response["result"], 'conversation_id' : query_response['conversation_id']}), 200
     else:
         return jsonify({'error': 'Error creating response'}), 400
-    
+
 @queryBp.route('/conversations/<conversationId>', methods=['GET'])
 def query_list(conversationId):
     # TODO: Validate data
@@ -33,7 +32,7 @@ def query_list(conversationId):
         return jsonify({'queries': response["result"]}), 200
     else:
         return jsonify({'error': 'Error getting queries'}), 400
-    
+
 @queryBp.route('/<courseId>/conversations/<userId>', methods=['GET'])
 def conversation_history(courseId, userId):
     # TODO: Validate data

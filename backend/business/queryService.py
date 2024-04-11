@@ -1,14 +1,11 @@
 from langchain_community.vectorstores import Chroma
-from langchain_community.retrievers import AmazonKendraRetriever
 from langchain.chains import RetrievalQA
 from ..data.models.conversation import Conversation
 from ..data.models.query import Query
-import boto3
 from ..extensions import db, vecdb
 from .embeddingService import query_embedding
 from .generationService import llm_open, prompt
 from .courseService import get_course
-import time
 
 def query_llm(query_data):
     question = query_data['question']
@@ -28,8 +25,8 @@ def query_llm(query_data):
                                   verbose=True,
                                   chain_type_kwargs={"prompt": prompt})
     llm_response = qa_chain(question)
-    
-    if (conversation_id == None):
+
+    if (conversation_id is None):
         conversation = Conversation(
             name = question,
             user_id = user_id,
@@ -46,11 +43,11 @@ def query_llm(query_data):
     )
     db.session.add(query)
     db.session.commit()
-    
+
     # sources = []
     # for source in llm_response["source_documents"]:
     #     sources.append(source.metadata['source'])
-    
+
     response = {
         "result": llm_response,
         "conversation_id": conversation_id

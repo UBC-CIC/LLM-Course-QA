@@ -37,7 +37,7 @@ def login(login_data):
     if bcrypt.check_password_hash(user.password, login_data['password']):
         login_user(user)
         return {"id": user.id, "role": user.role}
-    
+
     return None
 
 # Changes user password
@@ -52,7 +52,7 @@ def change_password(change_password_data):
 # Logs out user and invalidates the session
 def logout():
     logout_user()
-    return True  
+    return True
 
 # Adds course to admins
 def add_course_to_admins(course):
@@ -79,7 +79,7 @@ def get_users():
             'name': user.name,
             'role': role
         })
-        
+
     return user_objects
 
 

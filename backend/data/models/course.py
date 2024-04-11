@@ -1,8 +1,6 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from .courseUsers import course_user_association
 import uuid
 from ...extensions import db
 

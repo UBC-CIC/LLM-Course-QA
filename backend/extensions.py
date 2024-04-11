@@ -5,7 +5,7 @@ import boto3
 import chromadb
 
 db = SQLAlchemy()
-login_manager = LoginManager() 
+login_manager = LoginManager()
 bcrypt = Bcrypt()
 vecdb = chromadb.PersistentClient(path="./vecdb.db")
 profile_name = '' # input for local testing with sso
