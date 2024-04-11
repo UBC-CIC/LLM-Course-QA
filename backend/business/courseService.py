@@ -38,11 +38,11 @@ def create_course(create_course_data):
         db.session.commit()
         add_course_to_admins(course)
 
-        # # Creates s3 bucket for course
+        # Creates s3 bucket for course
         s3 = session.client('s3')
         s3.put_object(Bucket='institutionname', Key=str(course.id) + "/")
-        # # Creates collection in vector store
-        # vecdb.create_collection(str(course.id))
+        # Creates collection in vector store
+        vecdb.create_collection(str(course.id))
     except:
         db.session.rollback()
         return None
