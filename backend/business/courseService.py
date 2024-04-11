@@ -7,7 +7,6 @@ from . import extractionService
 from .embeddingService import embedding
 from sqlalchemy import and_
 import random
-import boto3
 import threading
 
 def create_course(create_course_data):
@@ -110,13 +109,13 @@ def upload_course_document(course_document_data):
                           ExtraArgs={'Metadata': {'course_id': str(document.course_id),
                                                   'document_id': str(document.id)}})
 
-        s3_url = "s3://institutionname/" + str(course_document_data['course_id']) + "/" + file.filename        
+        s3_url = "s3://institutionname/" + str(course_document_data['course_id']) + "/" + file.filename
         # add document to vector store
         thread = threading.Thread(target=vectorize_documents, args=(str(document.course_id), s3_url, str(document.id),))
         thread.start()
     except:
         return False
-    
+
     # return file name and id
     file_data = {
         'name': new_filename,
@@ -231,8 +230,7 @@ def remove_student_from_course(remove_student_data):
         course.users.remove(student)
         db.session.commit()
         return True
-    
-    return False
-    
 
-   
+    return False
+
+

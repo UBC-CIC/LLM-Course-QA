@@ -1,12 +1,11 @@
 import json
 from ..data.models.user import User, Role
-from ..extensions import db, bcrypt
+from ..extensions import db
 
 def get_config():
     logo = open('core/config/logo.svg', 'rb').read()
     with open('core/config/colours.json') as f:
         colour_config = json.load(f)
-    
     primary_colour = colour_config['primaryColour']
 
     return {
