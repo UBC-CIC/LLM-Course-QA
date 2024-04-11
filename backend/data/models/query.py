@@ -1,7 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, String, DateTime, ForeignKey, Text
+from sqlalchemy import Column, DateTime, ForeignKey, Text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
 import uuid
 from ...extensions import db
 

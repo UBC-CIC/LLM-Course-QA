@@ -11,7 +11,7 @@ def create_course():
     # TODO: Ensure only admins and instructors can create courses
     # if not current_user.is_instructor():
     #     return jsonify({'error': 'Unauthorized'}), 401
-    
+
     createCourseData = request.get_json()
     # createCourseData['instructor'] = current_user.id
 
@@ -29,7 +29,7 @@ def create_course():
 def delete_course(courseId):
     if not current_user.is_admin() and not current_user.is_instructor():
         return jsonify({'error': 'Unauthorized'}), 401
-    
+
     deleteCourseData = {
         'course_id': courseId
     }
@@ -38,7 +38,7 @@ def delete_course(courseId):
         if not delete_course:
             return jsonify({'error': 'Course does not exist'}), 400
         return jsonify({'message': 'Course deleted'}), 200
-            
+
     except:
         return jsonify({'error': 'Internal Server Error'}), 500
 
@@ -46,7 +46,7 @@ def delete_course(courseId):
 def upload_document(courseId):
     if 'document' not in request.files:
         return jsonify({'error': 'No file part'}), 400
-    
+
     file = request.files['document']
 
     uploadDocumentData = {
@@ -58,7 +58,7 @@ def upload_document(courseId):
         upload_document = courseService.upload_course_document(uploadDocumentData)
         if not upload_document:
             return jsonify({'error': 'Error uploading document'}), 400
-        
+
         return jsonify({'message': 'Document uploaded', 'file_data' : upload_document}), 201
     except:
         return jsonify({'error': 'Internal Server Error'}), 500
@@ -84,7 +84,7 @@ def get_courses(userId):
     }
 
     courses = courseService.list_courses(list_courses_data)
-    
+
     return jsonify(courses), 200
 
 # Adds the user to the course
@@ -97,7 +97,7 @@ def join_course():
         'access_code': data['access_code'],
         'user_id': data['user_id']
     }
-    
+
     try:
         join_course = courseService.join_course(join_course_data)
         if not join_course:

@@ -3,23 +3,10 @@ import { useParams } from "react-router-dom"
 import {
     Book,
     Settings,
-    SquareUser,
 } from "lucide-react"
 
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/dialog/Dialog"
-
-import { Input } from "@/components/input/Input";
-import { faSignIn } from '@fortawesome/free-solid-svg-icons';
 import { Table, TableBody, TableRow, TableHead, TableHeader, TableCell } from '@/components/table/Table';
 import { ScrollArea } from '@/components/scroll-area/ScrollArea';
-import { Badge } from '@/components/badge/Badge';
 import { Checkbox } from '@/components/checkbox/Checkbox';
 import { Button } from '@/components/button/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -37,16 +24,11 @@ type CourseData = {
 
 const UploadFile = () => {
     const { id } = useParams<{ id: string }>()
-
-    const [selectedFile, setSelectedFile] = useState<any>(null);
-    const [isDraggingOver, setIsDraggingOver] = useState(false);
     const [files, setFiles] = useState<any[]>([]);
-    const [hover, setHover] = useState('#fda29b');
-    const [uploadProgress, setUploadProgress] = useState(0); // New state for upload progress
 
     useEffect(() => {
         const getFiles = async () => {
-            const response = await fetch('http://127.0.0.1:5000' + '/courses/' + id + '/documents', {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/documents`, {
                 method: 'GET',
             });
 
@@ -74,7 +56,7 @@ const UploadFile = () => {
         if (file) {
             const formData = new FormData();
             formData.append('document', file);
-            const response = await fetch('http://127.0.0.1:5000/courses/' + id + '/documents', {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/documents`, {
                 method: 'POST',
                 body: formData,
             });
@@ -92,7 +74,7 @@ const UploadFile = () => {
 
     const handleDelete = (documentId: string) => async () => {
         console.log('Deleting document with id: ' + documentId);
-        const response = await fetch('http:///127.0.0.1:5000/courses/' + id + '/documents/' + documentId, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/documents/${documentId}`, {
             method: 'DELETE',
         });
 

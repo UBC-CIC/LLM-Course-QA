@@ -8,7 +8,7 @@ def get_config():
     try:
         config = adminService.get_config()
         return jsonify(config), 200
-    
+
     except:
         return jsonify({'error': 'Internal Server Error'}), 500
 
@@ -28,7 +28,7 @@ def update_config():
         return jsonify({'message': 'Configuration updated'}), 200
     except:
         return jsonify({'error': 'Internal Server Error'}), 500
-    
+
 @adminBp.route('/users', methods=['PUT'])
 def update_users():
     print("update_users")
@@ -44,7 +44,7 @@ def update_users():
         return jsonify({'message': 'User updated'}), 200
     except:
         return jsonify({'error': 'Internal Server Error'}), 500
-    
+
 @adminBp.route('/users', methods=['DELETE'])
 def delete_user():
     print("deleting user")

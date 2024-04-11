@@ -3,7 +3,6 @@ import { Button } from '../button/Button';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 type CardProps = {
@@ -15,12 +14,6 @@ type CardProps = {
 }
 
 const CourseCard = (props: CardProps) => {
-    const navigate = useNavigate();
-
-    const handleButtonClick = () => {
-        navigate('/upload');
-    };
-
     return (
         <div className='rounded-lg shadow-lg w-96 h-52 p-6'>
             <h1 className='text-xl font-bold'>{props.courseCode} - {props.courseSection}</h1>

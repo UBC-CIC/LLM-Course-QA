@@ -3,14 +3,12 @@ from typing import Dict
 from langchain_community.llms.sagemaker_endpoint import LLMContentHandler, SagemakerEndpoint
 from langchain.prompts import PromptTemplate
 from ..extensions import profile_name, region_name, llm_endpoint_name, llm_inference_component_name
-from langchain_community.llms import Ollama
 
 class ContentHandler(LLMContentHandler):
     content_type = "application/json"
     accepts = "application/json"
 
     def transform_input(self, prompt: str, model_kwargs: Dict) -> bytes:
-        
         input_str = json.dumps({"inputs": prompt, "parameters": model_kwargs})
         return input_str.encode("utf-8")
 
@@ -19,6 +17,7 @@ class ContentHandler(LLMContentHandler):
         return response_json[0]["generated_text"]
 
 content_handler = ContentHandler()
+
 
 parameters = {
     "max_new_tokens": 1024,

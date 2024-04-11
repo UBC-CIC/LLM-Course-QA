@@ -1,18 +1,14 @@
 import { Table, TableBody, TableRow, TableHead, TableHeader, TableCell } from '@/components/table/Table';
 import { ScrollArea } from '@/components/scroll-area/ScrollArea';
 import { Badge } from '@/components/badge/Badge';
-import ActionDropDown from '@/components/dropDown/ActionDropDown';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
-import SideNav, { NavItem } from '@/components/navbar/SideNav';
+import SideNav from '@/components/navbar/SideNav';
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom"
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { faPlus, faCopy } from '@fortawesome/free-solid-svg-icons';
 
 import {
     Book,
     Settings,
-    SquareUser,
 } from "lucide-react"
 
 import {
@@ -25,7 +21,6 @@ import {
 } from "@/components/dialog/Dialog"
 
 import { Button } from "@/components/button/Button";
-import { Input } from "@/components/input/Input";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import {
@@ -49,7 +44,7 @@ const InstitutionUsers = () => {
     const [users, setUsers] = useState<any[]>([]);
 
     const getAllUsers = async () => {
-        const response = await fetch('http://127.0.0.1:5000/users', {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -71,7 +66,7 @@ const InstitutionUsers = () => {
 
     const handleDelete = (userId: string) => async () => {
         console.log(userId);
-        const response = await fetch(`http://127.0.0.1:5000/courses/${id}/users/${userId}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/users/${userId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -150,7 +145,7 @@ const InstitutionUsers = () => {
                                                     </SelectContent>
                                                 </Select>
                                                     <Button variant={'default'} className="mt-4" onClick={updateUserRole(data.id, data.role)}>Save</Button>
-                                                    <Button variant={'destructive'} className="mt-4">Delete</Button> 
+                                                    <Button variant={'destructive'} className="mt-4">Delete</Button>
                                                 </DialogDescription>
                                             </DialogHeader>
                                         </DialogContent>
@@ -163,7 +158,6 @@ const InstitutionUsers = () => {
                     </Table>
                 </ScrollArea>
             </div>
-
         </>
     );
 };

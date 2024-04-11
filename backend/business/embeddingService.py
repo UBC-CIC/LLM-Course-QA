@@ -4,7 +4,7 @@ from langchain_community.embeddings import SagemakerEndpointEmbeddings
 from langchain_community.embeddings.sagemaker_endpoint import EmbeddingsContentHandler
 from ..extensions import profile_name, embedding_endpoint_name, region_name
 # embedding model object
-# ref: 
+# ref:
 class ContentHandler(EmbeddingsContentHandler):
     content_type = "application/json"
     accepts = "application/json"
@@ -16,8 +16,9 @@ class ContentHandler(EmbeddingsContentHandler):
     def transform_output(self, output: bytes) -> List[List[float]]:
         response_json = json.loads(output.read().decode("utf-8"))
         return response_json["embedding"]
-         
+
 content_handler = ContentHandler()
+
 
 # Conditionally include credentials_profile_name based on profile_name
 embedding_args = {
@@ -45,8 +46,9 @@ class QueryContentHandler(EmbeddingsContentHandler):
     def transform_output(self, output: bytes) -> List[List[float]]:
         response_json = json.loads(output.read().decode("utf-8"))
         return response_json["embedding"]
-         
+
 query_content_handler = QueryContentHandler()
+
 
 # Conditionally include credentials_profile_name based on profile_name
 query_embedding_args = {
