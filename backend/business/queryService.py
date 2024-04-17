@@ -1,11 +1,17 @@
 from langchain_community.vectorstores import Chroma
 from langchain.chains import RetrievalQA
+from langchain_openai import ChatOpenAI
+
+
 from ..data.models.conversation import Conversation
 from ..data.models.query import Query
 from ..extensions import db, vecdb, session
 from .embeddingService import query_embedding
-from .generationService import llm_open, prompt
+from .generationService import prompt
 from .courseService import get_course
+from langchain import hub
+from langchain_openai import OpenAIEmbeddings
+
 
 def query_llm(query_data):
     question = query_data['question']
@@ -15,10 +21,15 @@ def query_llm(query_data):
     question = question
 
     # use chroma and sagemaker embeddings to get documents
-    vectordb = Chroma(client=vecdb, collection_name = course_id ,embedding_function=query_embedding)
+    vectordb = Chroma(client=vecdb, collection_name = course_id ,embedding_function=OpenAIEmbeddings())
     retriever = vectordb.as_retriever()
 
-    qa_chain = RetrievalQA.from_chain_type(llm=llm_open,
+    openai_llm = ChatOpenAI(model='gpt-4-turbo')
+
+    # prompt = hub.pull("rlm/rag-prompt")
+
+
+    qa_chain = RetrievalQA.from_chain_type(llm=openai_llm,
                                   chain_type="stuff",
                                   retriever=retriever,
                                   return_source_documents=True,

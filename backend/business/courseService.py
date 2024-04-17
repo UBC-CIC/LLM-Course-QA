@@ -1,5 +1,5 @@
 from ..data.models.course import Course
-from ..data.models.user import User
+from ..data.models.user import User, Role
 from ..data.models.document import Document, StatusEnum
 from ..extensions import db, vecdb, session
 from langchain_community.vectorstores import Chroma
@@ -8,6 +8,8 @@ from .embeddingService import embedding
 from sqlalchemy import and_
 import random
 import threading
+
+from langchain_openai import OpenAIEmbeddings
 
 def create_course(create_course_data):
     from .userService import add_course_to_admins, get_user
@@ -195,10 +197,11 @@ def get_course(course_id):
 
 def vectorize_documents(course_id, s3_url, document_id):
     documents = extractionService.extract_text(s3_url, document_id)
+
     vectordb = Chroma(
     client=vecdb,
     collection_name=course_id,
-    embedding_function=embedding,
+    embedding_function=OpenAIEmbeddings(),
     )
     # add document to vector store
     vectordb.add_documents(documents=documents)
@@ -220,6 +223,8 @@ def list_enrolled_students(list_enrolled_students_data):
 
     student_objects = []
     for student in students:
+        if student.role != Role.Student:
+            continue
         student_objects.append({
             'id': student.id,
             'name': student.name,
