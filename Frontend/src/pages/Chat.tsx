@@ -195,11 +195,11 @@ const Chat = () => {
             name: "Courses",
             icon: <Book size={24} />,
           },
-          {
-            url: "/settings",
-            name: "Settings",
-            icon: <Settings size={24} />,
-          },
+          // {
+          //   url: "/settings",
+          //   name: "Settings",
+          //   icon: <Settings size={24} />,
+          // },
         ]}
       />
 

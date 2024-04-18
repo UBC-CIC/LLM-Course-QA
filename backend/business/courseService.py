@@ -9,8 +9,6 @@ from sqlalchemy import and_
 import random
 import threading
 
-from langchain_openai import OpenAIEmbeddings
-
 def create_course(create_course_data):
     from .userService import add_course_to_admins, get_user
 
@@ -197,11 +195,10 @@ def get_course(course_id):
 
 def vectorize_documents(course_id, s3_url, document_id):
     documents = extractionService.extract_text(s3_url, document_id)
-
     vectordb = Chroma(
     client=vecdb,
     collection_name=course_id,
-    embedding_function=OpenAIEmbeddings(),
+    embedding_function=embedding,
     )
     # add document to vector store
     vectordb.add_documents(documents=documents)

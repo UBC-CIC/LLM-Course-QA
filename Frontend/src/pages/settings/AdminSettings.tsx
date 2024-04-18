@@ -26,6 +26,29 @@ const AdminSettings = () => {
         setColor(color.hex);
     }
 
+    const getInstitutionConfig = async () => {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        const json = await response.json();
+
+        if (response.ok) {
+            setColor(json.colours);
+        } else {
+            console.log(json);
+        }
+    }
+
+    React.useEffect(() => {
+        getInstitutionConfig();
+    }, []);
+
+
+
     const handleChangePassword = () => {
 
         if (currentPassword === '' || newPassword === '' || comparePassword === '') {
@@ -86,11 +109,11 @@ const AdminSettings = () => {
                     name: "Users",
                     icon: <SquareUser size={24} />,
                 },
-                {
-                    url: "/settings",
-                    name: "Settings",
-                    icon: <Settings size={24} />,
-                },
+                // {
+                //     url: "/settings",
+                //     name: "Settings",
+                //     icon: <Settings size={24} />,
+                // },
             ]} />
             <div className="p-6 pt-12 w-screen">
                 <div className="flex justify-between items-center">

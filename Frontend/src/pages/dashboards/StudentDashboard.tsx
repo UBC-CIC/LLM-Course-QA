@@ -81,6 +81,7 @@ const StudentDashboard = () => {
             console.log('Course added successfully');
             console.log(json);
             setCourses([...courses, ...json]);
+            window.location.reload();
         }
         setCourseAccessCode('');
     }
@@ -93,11 +94,11 @@ const StudentDashboard = () => {
                 name: "Courses",
                 icon: <Book size={24} />,
             },
-            {
-                url: "/settings",
-                name: "Settings",
-                icon: <Settings size={24} />,
-            },
+            // {
+            //     url: "/settings",
+            //     name: "Settings",
+            //     icon: <Settings size={24} />,
+            // },
             ]}/>
             <div className="my-0 mx-auto grid grid-cols-3 gap-24 p-12 overflow-auto h-screen">
                 <div>

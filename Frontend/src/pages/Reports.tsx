@@ -145,6 +145,7 @@ const Reports = () => {
             setCourseName("");
             setReason("");
             setMessages([]);
+            window.location.reload();
         } else {
             console.error('Failed to delete report');
         }
@@ -167,11 +168,11 @@ const Reports = () => {
                     name: "Reports",
                     icon: <OctagonAlert size={24} />,
                 },
-                {
-                    url: "/settings",
-                    name: "Settings",
-                    icon: <Settings size={24} />,
-                },
+                // {
+                //     url: "/settings",
+                //     name: "Settings",
+                //     icon: <Settings size={24} />,
+                // },
             ]} />
 
             <div className="flex h-screen w-screen">

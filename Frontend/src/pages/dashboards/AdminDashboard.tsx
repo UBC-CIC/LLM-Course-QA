@@ -196,11 +196,11 @@ const AdminDashboard = () => {
                         name: "Users",
                         icon: <SquareUser size={24} />,
                     },
-                    {
-                        url: "/settings",
-                        name: "Settings",
-                        icon: <Settings size={24} />,
-                    },
+                    // {
+                    //     url: "/settings",
+                    //     name: "Settings",
+                    //     icon: <Settings size={24} />,
+                    // },
                 ]} />
                 <ScrollArea className="h-screen w-full rounded-md border pl-12 pr-12 pt-12">
                     <div className="flex justify-between items-center mt-2">

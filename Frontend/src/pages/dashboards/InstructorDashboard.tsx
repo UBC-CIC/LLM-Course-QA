@@ -84,6 +84,7 @@ const InstructorDashboard = () => {
         if (response.ok) {
             console.log('Course added successfully');
             console.log(json);
+            window.location.reload();
         }
 
         setCourseName('');
@@ -107,11 +108,11 @@ const InstructorDashboard = () => {
                     name: "Reports",
                     icon: <OctagonAlert size={24} />,
                 },
-                {
-                    url: "/settings",
-                    name: "Settings",
-                    icon: <Settings size={24} />,
-                },
+                // {
+                //     url: "/settings",
+                //     name: "Settings",
+                //     icon: <Settings size={24} />,
+                // },
             ]} />
             <div className="my-0 mx-auto grid grid-cols-3 gap-24 p-12 overflow-auto h-screen">
                 <div>
