@@ -87,6 +87,7 @@ def join_course(join_course_data):
 
 # Uploads course document to s3
 def upload_course_document(course_document_data):
+    print(course_document_data)
     file = course_document_data['document']
     if not file or file.content_type != 'application/pdf':
         return False
@@ -123,7 +124,8 @@ def upload_course_document(course_document_data):
         # add document to vector store
         thread = threading.Thread(target=vectorize_documents, args=(str(document.course_id), s3_url, str(document.id),))
         thread.start()
-    except:
+    except Exception as e:
+        print(e)
         return False
 
     # return file name and id
@@ -200,19 +202,22 @@ def vectorize_documents(course_id, s3_url, document_id):
     collection_name=course_id,
     embedding_function=embedding,
     )
-    # add document to vector store
+
     vectordb.add_documents(documents=documents)
-    # update document status
-    document = Document.query.get(document_id)
-    document.upload_status = StatusEnum.COMPLETE
-    db.session.commit()
+    print("Vectorized")
 
 def delete_document_vectors(course_id, document_id):
-    # delete document from vector store
-    collection = vecdb.get_collection(name=course_id)
-    collection.delete_documents(
-        where={"source": document_id}
+    vectordb = Chroma(
+    client=vecdb,
+    collection_name=course_id,
+    embedding_function=embedding,
     )
+
+    # Ref: https://github.com/langchain-ai/langchain/discussions/9495#discussioncomment-7337796
+    document_ids = vectordb.get(where = {'source': document_id})['ids']
+
+    vectordb.delete(ids=document_ids)
+    print("Deleted")
 
 def list_enrolled_students(list_enrolled_students_data):
     course = Course.query.get(list_enrolled_students_data['course_id'])
