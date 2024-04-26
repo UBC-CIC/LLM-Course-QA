@@ -22,6 +22,8 @@ After an instructor uploads a course document, it processes the content and stor
 ## System Overview
 
 This section will describe the 4 main systems in our project: the frontend, backend, data ingestion and retrieval pipelines, and the large language model (LLM).
+
+
 ![System Overview Diagram](./images/System_architecture.drawio)
 
 
@@ -51,7 +53,7 @@ The purpose of the data ingestion pipeline is to extract, process, and store the
 
 The RAG pipeline implements the RAG process which, based on the student query, retrieves course information that is similar and generates a response using that context.
 
-![RAG process](./images/RAG_Process.drawio).
+![RAG process](./images/RAG_Process.drawio)
 
 The vectorizing stage takes in the student query and vectorizes it using the same embedding model as the text processing stage.
 
