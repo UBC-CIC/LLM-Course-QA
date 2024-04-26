@@ -1,6 +1,7 @@
 import json
 from ..data.models.user import User, Role
 from ..extensions import db
+from .courseService import get_courses
 
 def get_config():
     logo = open('core/config/logo.svg', 'rb').read()
@@ -36,6 +37,7 @@ def update_users(update_user_data):
 
     if update_user_data['role'] == 'Admin':
         user.role = Role.Admin
+        user.courses = get_courses()
     elif update_user_data['role'] == 'Instructor':
         user.role = Role.Instructor
     elif update_user_data['role'] == 'Student':
