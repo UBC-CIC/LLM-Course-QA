@@ -3,7 +3,7 @@ This project is a prototype question-answering system that leverages Large Langu
 # High Level Architecture
 This project is split into 4 main systems: frontend, backend, data ingestion and retrieval pipelines, and the large language model. The diagram below shows the resources used to deploy the application. For an in-depth description of our system architecture see the [High Level Architecture](./docs/HighLevelArchitecture.md)
 
-![System Overview Diagram](./images/System_architecture.drawio.png)
+![System Overview Diagram](./docs/images/System_architecture.drawio.png)
 # Deployment Guide
 To learn how to deploy the application on AWS, see the [Deployment Guide](./docs/DeploymentGuide.md)
 # User guide
