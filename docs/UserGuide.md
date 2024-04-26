@@ -46,6 +46,13 @@ The admin can change the role of a user by clicking on the button at the end of 
 ![Institution Users Page](images/edit-role.png)
 
 ## Instructor View
+**Courses Screen**
+Upon signing in with an "Instructor" account, the instructor can view the courses they are teaching.
+![Instructor Courses Page](images/instructor-courses.png)
+
+Clicking on the "Add Course" button allows the user to create a new course.
+![Create Course Page](images/instructor-add-course.png)
+
 ## Student View
 
 
