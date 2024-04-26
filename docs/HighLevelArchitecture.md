@@ -22,6 +22,8 @@ After an instructor uploads a course document, it processes the content and stor
 ## System Overview
 
 This section will describe the 4 main systems in our project: the frontend, backend, data ingestion and retrieval pipelines, and the large language model (LLM).
+
+
 ![System Overview Diagram](./images/System_architecture.drawio.png)
 
 
