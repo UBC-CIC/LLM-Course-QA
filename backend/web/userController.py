@@ -1,13 +1,13 @@
 from flask import Blueprint, request, jsonify
 from ..business import userService
 from flask_login import login_required
+from ..core.utils.decodeJwt import get_user_id
 
 userBp = Blueprint('user', __name__, url_prefix='/users')
 
 @userBp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    # TODO: Validate data
     user_id = userService.register(data)
     if user_id:
         return jsonify({'id': user_id}), 201
@@ -36,6 +36,23 @@ def logout():
         return jsonify({'message': 'User logged out'}), 200
     else:
         return jsonify({'error': 'Logout failed'}), 400
+
+# get user role
+@userBp.route('/<user_id>/role', methods=['GET'])
+def get_role(user_id):
+    user_role_data = {
+        'user_id': user_id,
+    }
+    role = userService.get_role(user_role_data)
+
+    print(role)
+
+    if role:
+        return jsonify({'role': role}), 200
+    else:
+        return jsonify({'error': 'Invalid password'}), 400
+
+
 
 @userBp.route('', methods=['PUT'])
 def change_password():
