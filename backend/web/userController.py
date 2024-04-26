@@ -41,13 +41,10 @@ def logout():
 @userBp.route('/role', methods=['GET'])
 @login_required
 def get_role(user):
-    print(user)
     user_role_data = {
         'user_id': user.id,
     }
     role = userService.get_role(user_role_data)
-
-    print(role)
 
     if role:
         return jsonify({'role': role}), 200
@@ -57,10 +54,11 @@ def get_role(user):
 
 
 @userBp.route('', methods=['PUT'])
-def change_password():
+@login_required
+def change_password(user):
     data = request.get_json()
     change_password_data = {
-        'user_id': data['user_id'],
+        'user_id': user.id,
         'old_password': data['old_password'],
         'new_password': data['new_password']
     }

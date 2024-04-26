@@ -35,47 +35,6 @@ const Reports = () => {
     const [bubbles, setBubbles] = useState(false)
     const [reason, setReason] = useState("")
 
-    const inputLength = input.trim().length
-
-    const handleSendMessage = async () => {
-        setBubbles(true);
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/queries`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token,
-            },
-            body: JSON.stringify({
-                "question": input,
-                "course_id": id,
-                "user_id": userId,
-                "report_id": report_id
-            })
-        });
-
-        const json = await response.json();
-
-        setBubbles(false);
-
-        if (response.ok) {
-            setMessages(messages => [
-                ...messages,
-                {
-                    role: "llm",
-                    message: json.response,
-                },
-            ])
-
-            if (json.report_id != report_id) {
-                setReportId(json.report_id);
-                setReports([{
-                    report_id: json.report_id,
-                    name: input
-                }, ...reports]);
-            }
-        }
-    }
-
     const user = localStorage.getItem('user');
     const userId = user ? JSON.parse(user).id : null;
     const token = localStorage.getItem('token');
@@ -111,7 +70,7 @@ const Reports = () => {
     }
 
     const getReports = async () => {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/reports/${userId}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/reports`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

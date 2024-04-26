@@ -1,19 +1,26 @@
 from flask import Blueprint, request, jsonify
 from ..business import courseService
-from flask_login import login_required, current_user
+from ..core.utils.authDecorator import login_required
 
 courseBp = Blueprint('course', __name__, url_prefix='/courses')
 
 # Create a course
 @courseBp.route('', methods=['POST'])
-# @login_required
-def create_course():
-    # TODO: Ensure only admins and instructors can create courses
-    # if not current_user.is_instructor():
-    #     return jsonify({'error': 'Unauthorized'}), 401
+@login_required
+def create_course(user):
+    data = request.get_json()
 
-    createCourseData = request.get_json()
-    # createCourseData['instructor'] = current_user.id
+    instructor_id = user.id
+    if 'instructor' in data:
+        instructor_id = data['instructor']
+
+    createCourseData = {
+        'course_code': data['course_code'],
+        'course_section': data['course_section'],
+        'name': data['name'],
+        'description': data['description'],
+        'instructor_id': instructor_id
+    }
 
     try:
         create_course_id = courseService.create_course(createCourseData)
@@ -26,11 +33,7 @@ def create_course():
         return jsonify({'error': 'Internal Server Error'}), 500
 
 @courseBp.route('/<courseId>', methods=['DELETE'])
-# @login_required
 def delete_course(courseId):
-    if not current_user.is_admin() and not current_user.is_instructor():
-        return jsonify({'error': 'Unauthorized'}), 401
-
     deleteCourseData = {
         'course_id': courseId
     }
@@ -77,11 +80,11 @@ def delete_course_document(courseId, documentId):
     return jsonify({'message': 'Document deleted'}), 200
 
 # get all courses
-@courseBp.route('/<userId>', methods=['GET'])
-# @login_required
-def get_courses(userId):
+@courseBp.route('', methods=['GET'])
+@login_required
+def get_courses(user):
     list_courses_data = {
-        'user_id': userId
+        'user_id': user.id
     }
 
     courses = courseService.list_courses(list_courses_data)
@@ -90,13 +93,13 @@ def get_courses(userId):
 
 # Adds the user to the course
 @courseBp.route('/join', methods=['POST'])
-# @login_required
-def join_course():
+@login_required
+def join_course(user):
     data = request.get_json()
 
     join_course_data = {
         'access_code': data['access_code'],
-        'user_id': data['user_id']
+        'user_id': user.id
     }
 
     try:

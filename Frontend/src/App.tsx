@@ -22,7 +22,7 @@ function App() {
     if (user) {
       const userId = user ? JSON.parse(user).id : null;
       const getUserRole = async () => {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${userId}/role`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/role`, {
           method: 'GET',
           headers: {
               'Content-Type': 'application/json',

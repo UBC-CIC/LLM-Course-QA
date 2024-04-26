@@ -79,7 +79,7 @@ const AdminSettings = () => {
             new_password: newPassword,
         }
 
-        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, {
+        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, { 
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

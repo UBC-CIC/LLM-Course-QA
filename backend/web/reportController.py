@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from ..business import reportService
+from ..core.utils.authDecorator import login_required
 
 reportBp = Blueprint('report', __name__, url_prefix='/reports')
 
@@ -19,10 +20,11 @@ def report():
     else:
         return jsonify({'error': 'Report already exists'}), 400
 
-@reportBp.route('/<instructor_id>', methods=['GET'])
-def list_reports(instructor_id):
+@reportBp.route('', methods=['GET'])
+@login_required
+def list_reports(user):
     report_data = {
-        'instructor_id': instructor_id
+        'instructor_id': user.id
     }
 
     reports = reportService.list_reports(report_data)

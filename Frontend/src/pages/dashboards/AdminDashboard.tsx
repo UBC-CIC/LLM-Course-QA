@@ -62,7 +62,7 @@ const AdminDashboard = () => {
     const token = localStorage.getItem('token');
 
     const getAllCourses = async () => {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${userId}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
