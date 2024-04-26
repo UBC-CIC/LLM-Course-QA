@@ -11,3 +11,4 @@ amazon-textract-caller
 amazon-textract-response-parser
 amazon-textract-textractor
 psycopg2-binary
+pyjwt

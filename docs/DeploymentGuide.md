@@ -8,7 +8,6 @@
     -   [Pre-Deployment](#pre-deployment)
         -   [Step 1: Set up GitHub](#step-1-set-up-github)
         -   [Step 2: (Optional) Set up docker container for backend](#step-2-optional-set-up-docker-container-for-backend)
-        -   [Step 3: Set up AWS Secrets](#step-3-set-up-aws-secrets)
     -   [Deployment](#deployment)
         -   [Step 1: Deploy LLM and Embedding model on Sagemaker](#step-1-deploy-llm-and-embedding-model-on-sagemaker)
         -   [Step 2: Deploy Infrastructure through CloudFormation](#step-2-deploy-infrastructure-through-cloudformation)
@@ -39,15 +38,6 @@ The front end is going to be hosted on AWS amplify and to do that we need to set
 2. Select the Account or Organization to which the repository was forked
 3. Click 'Only select repositories' and select the forked repository name and complete installation.
 
-#### Getting GitHub Personal Access Token
-
-1. Navigate to the [developer settings](https://github.com/settings/apps) of your github account settings.
-2. Select 'Personal Access Tokens' > 'Fine-grained tokens' > 'Generate New Token'
-3. Enter Name and Expiration of your choice.
-4. In the 'Repository access' section, click 'Only select repositories' and select the forked repository name.
-5. Set the following permissions: Contents > Read Only, Webhooks > Read and Write
-6. Generate the token and store it somewhere safe.
-
 ### Step 2: (Optional) Set up docker container for backend
 
 You can use a container with the latest code, already hosted on dockerhub or optionally, you can set up your own docker container for deploying the backend. To set up your own container for the backend:
@@ -66,23 +56,6 @@ docker push account_name/repo_name
 ```
 
 This will dockerize the backend and push it to dockerhub.
-
-### Step 3: Set up AWS Secrets
-
-We can use the AWS Secrets Manager to securely store the github access token and the master username and password of the postgres database.
-Note: These secrets will directly be used in Cloudformation Template if you use the same name and key as mentioned in this guide. If you choose a new name, you have to change the cloudformation code to reflect the new name and keys
-To store the keys securely:
-
-1. Navigate to the Secrets Manager console in AWS console
-2. Click 'Store a new secret'
-3. Click 'Other type of secret'
-4. Add 2 mores rows to make it 3 pairs in total
-5. Set the first Key to 'GitHubPAT' and set the value to the personal access token you got from GitHub.
-6. Set the second Key to 'DBUser' and set the value to the master username for the database.
-7. Set the third key to 'DBPassword' and set the value to the master password for the database
-8. Click Next
-9. Set Secret name to 'courseqa'
-10. Click Next, Next and Store
 
 ## Deployment
 
@@ -130,4 +103,36 @@ For Deploying Embedding Model:
    (Note: LLMInference is the model name environment variable value from sagemaker)
 9. Click Next and then Next again and click the checkbox asking for acknowledgement and then click submit.
 10. Wait for all resources to deploy.
-11. Click outputs and click the url value of AppURL key for accessing the web application.
+11. Click Outputs and keep the window open as the outputs are the environment variables for the frontend
+
+### Step 3: Deploy Frontend on Amplify
+
+1. In the AWS console, navigate to Amplify console
+2. Click Create App > Host Web App
+3. Click GitHub and then Continue
+4. Authorize Amplify to access your forked repository
+5. Click the branch you want to deploy
+6. Click the 'monorepo' checkbox and enter Frontend as the source directory
+7. Click the Advanced setting dropdown and add the following environment variables (Right hand side is cloudformation outputs) :
+
+```
+VITE_BACKEND_API_URL  -> BackendAPIURL
+VITE_USER_POOL_ID     -> UserPoolId
+VITE_CLIENT_ID        -> UserPoolClientId
+```
+
+8. Click Save and Deploy
+9. After the app has started building, click 'Rewrites and redirects' in app settings.
+10. Add the following rule to your rewrites and redirects.
+
+```
+Source Address: `</^[^.]+$|\.(?!(css|gif|ico|jpg|js|png|txt|svg|woff|woff2|ttf|map|json)$)([^.]+$)/>`
+
+Target Address: `/`
+
+Type: `200 (Rewrite)`
+```
+
+Then hit save.
+
+#### You can find the webapp url under Hosting Environments in the Amplify App window
