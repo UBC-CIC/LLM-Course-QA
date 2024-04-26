@@ -1,14 +1,20 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
+import boto3
 import chromadb
 
 db = SQLAlchemy()
-login_manager = LoginManager() 
+login_manager = LoginManager()
 bcrypt = Bcrypt()
-vecdb = chromadb.PersistentClient(path="/vecdb.db")
-profile_name = 'parithi' # input for local testing with sso
-embedding_endpoint_name = 'cic-emb' # input
+vecdb = chromadb.PersistentClient(path="./vecdb.db")
+profile_name = '' # input for local testing with sso
+embedding_endpoint_name = '' # input
 llm_endpoint_name = '' # input
 llm_inference_component_name = '' # input
-region_name = 'us-west-2' # input
+region_name = '' # input
+
+if profile_name != '':
+    session = boto3.Session(profile_name=profile_name)
+else:
+    session = boto3.Session()

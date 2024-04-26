@@ -1,9 +1,3 @@
-import {
-    Book,
-    Settings,
-    SquareUser,
-  } from "lucide-react"
-
 import CourseCard from "@/components/card/CourseCard";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignIn } from '@fortawesome/free-solid-svg-icons';
@@ -20,12 +14,15 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/dialog/Dialog"
-import React, { useState } from "react";
-
+import {
+    Book,
+    Settings
+  } from "lucide-react"
+import React, { useState, useEffect } from "react";
 
 const navItems: NavItem[] = [
     {
-        url: "/",
+        url: "/dashboard",
         name: "Courses",
         icon: <MdOutlineLibraryBooks size={'1.75rem'} />
     },
@@ -36,55 +33,73 @@ const navItems: NavItem[] = [
     }
 ]
 
-
-
-
 const StudentDashboard = () => {
-    const [modal, setModal] = useState(false)
+    const [courses, setCourses] = useState<any[]>([]);
+    const [courseAccessCode, setCourseAccessCode] = useState('');
+    const getCourses = async () => {
+        const user = localStorage.getItem('user');
+        const userId = user ? JSON.parse(user).id : null;
 
-    type CourseData = {
-        courseCode: string;
-        courseSections: string;
-        courseName: string;
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        const json = await response.json();
+
+        if (response.ok) {
+            console.log('Courses fetched successfully');
+            console.log(json);
+            setCourses(json);
+        }
     }
 
+    useEffect(() => {
+        getCourses();
+    }, []);
 
-    const sampleData: CourseData[] = [
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
-        },
-        {
-            courseCode: 'CPEN 491',
-            courseSections: '101',
-            courseName: 'Capstone Design Project'
+    const handleJoinCourse = async () => {
+        const user = localStorage.getItem('user');
+        const userId = user ? JSON.parse(user).id : null;
+
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/join`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                access_code: courseAccessCode,
+            }),
+        });
+
+        const json = await response.json();
+
+        if (response.ok) {
+            console.log('Course added successfully');
+            console.log(json);
+            setCourses([...courses, ...json]);
+            window.location.reload();
         }
-    ]
+        setCourseAccessCode('');
+    }
 
     return (
         <div className='flex flex-row' >
-            <SideNav navItems={navItems} />
+            <SideNav navItems={[
+            {
+                url: "/",
+                name: "Courses",
+                icon: <Book size={24} />,
+            },
+            // {
+            //     url: "/settings",
+            //     name: "Settings",
+            //     icon: <Settings size={24} />,
+            // },
+            ]}/>
             <div className="my-0 mx-auto grid grid-cols-3 gap-24 p-12 overflow-auto h-screen">
                 <div>
                     <Dialog>
@@ -100,15 +115,15 @@ const StudentDashboard = () => {
                                 <DialogDescription>
                                     Enter the share link to join a course
                                 </DialogDescription>
-                                <Input type="text" placeholder="Course Link" />
-                                <Button variant="default" className="w-full mt-4">Join Course</Button>
+                                <Input type="text" placeholder="Access Code" value={courseAccessCode} onChange={(e) => setCourseAccessCode(e.target.value)}/>
+                                <Button variant="default" className="w-full mt-4" onClick={handleJoinCourse}>Join Course</Button>
                             </DialogHeader>
                         </DialogContent>
                     </Dialog>
                 </div>
-                {sampleData.map((course) => (
+                {courses.map((course) => (
                     <div>
-                        <CourseCard courseCode={course.courseCode} courseSection={course.courseSections} courseName={course.courseName} isInstructor={true} />
+                        <CourseCard courseId={course.id} courseCode={course.course_code} courseSection={course.course_section} courseName={course.name} isInstructor={false} />
                     </div>
                 ))}
             </div>

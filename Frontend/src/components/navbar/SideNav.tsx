@@ -1,5 +1,10 @@
-import { MdPeopleOutline, MdOutlineSettings, MdOutlineLibraryBooks } from 'react-icons/md'
 import '../../../public/ubclogo.png'
+import {
+    LogOut
+  } from "lucide-react"
+
+import { useNavigate } from 'react-router-dom';
+
 
 export type NavItem = {
     url: string;
@@ -12,6 +17,15 @@ interface SideNavProps {
 }
 
 const SideNav = (props: SideNavProps) => {
+
+    const navigate = useNavigate();
+
+    const onLogout = () => {
+        localStorage.removeItem('user')
+        navigate('/')
+        window.location.reload()
+    }
+
     return (
         <div
             className='h-screen w-28 border-r border-gray-200'>
@@ -28,8 +42,11 @@ const SideNav = (props: SideNavProps) => {
                             {data.icon}
                             {data.name}
                         </a>
-
                     ))}
+                    <a
+                        className="flex flex-col items-center p-3 hover:bg-gray-200 transition duration-200" onClick={onLogout}>
+                        <LogOut size={24} />
+                    </a>
                 </nav>
             </div>
         </div>

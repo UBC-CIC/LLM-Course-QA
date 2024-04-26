@@ -1,12 +1,13 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams } from "react-router-dom"
 import {
     Book,
     Settings,
-    SquareUser,
-  } from "lucide-react"
+    Trash2Icon
+} from "lucide-react"
 
 import { Table, TableBody, TableRow, TableHead, TableHeader, TableCell } from '@/components/table/Table';
 import { ScrollArea } from '@/components/scroll-area/ScrollArea';
-import { Badge } from '@/components/badge/Badge';
 import { Checkbox } from '@/components/checkbox/Checkbox';
 import { Button } from '@/components/button/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,61 +16,98 @@ import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import SideNav from '@/components/navbar/SideNav';
 
 type CourseData = {
-    Filename: string;
+    id: string;
+    name: string;
     status: 'Processing' | 'Uploaded';
     fileType: 'Class Slide' | 'Syllabus' | 'Class Notes' | 'Announcement' | 'Resources';
 }
 
-const sampleData: CourseData[] = [
-    {
-        Filename: 'syllabus.pdf',
-        status: 'Uploaded',
-        fileType: 'Class Slide'
-    },
-    {
-        Filename: 'class-notes.pdf',
-        status: 'Processing',
-        fileType: 'Class Notes'
-    },
-    {
-        Filename: 'announcement.pdf',
-        status: 'Uploaded',
-        fileType: 'Announcement'
-    },
-    {
-        Filename: 'resources.pdf',
-        status: 'Processing',
-        fileType: 'Resources'
-    }
-]
 
 const UploadFile = () => {
+    const { id } = useParams<{ id: string }>()
+    const [files, setFiles] = useState<any[]>([]);
+
+    useEffect(() => {
+        const getFiles = async () => {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/documents`, {
+                method: 'GET',
+            });
+
+            const json = await response.json();
+
+            if (response.ok) {
+                setFiles([...files, ...json]);
+            } else {
+                console.error('Failed to fetch files');
+            }
+        }
+
+        getFiles();
+    }, []);
+
+    const inputFile = useRef<HTMLInputElement>(null);
+    const handleUpload = () => {
+        if (inputFile.current) {
+            inputFile.current.click();
+        }
+    };
+
+    const handleFileChange = async (event: any) => {
+        const file = event.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('document', file);
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/documents`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const json = await response.json();
+            console.log(json);
+
+            if (response.ok) {
+                setFiles([...files, json.file_data]);
+            } else {
+                console.error('Failed to upload document');
+            }
+        }
+    }
+
+    const handleDelete = (documentId: string) => async () => {
+        console.log('Deleting document with id: ' + documentId);
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/documents/${documentId}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            console.log('Document deleted successfully');
+            setFiles(files.filter((file) => file.id !== documentId));
+        } else {
+            console.error('Failed to delete document');
+        }
+    }
+
     return (
         <>
             <div className='flex flex-row' >
                 <SideNav navItems={[
                     {
-                        url: "/",
+                        url: "/dashboard",
                         name: "Courses",
                         icon: <Book size={24} />,
                     },
-                    {
-                        url: "/users",
-                        name: "Users",
-                        icon: <SquareUser size={24} />,
-                    },
-                    {
-                        url: "/settings",
-                        name: "Settings",
-                        icon: <Settings size={24} />,
-                    },
+                    // {
+                    //     url: "/settings",
+                    //     name: "Settings",
+                    //     icon: <Settings size={24} />,
+                    // },
                 ]} />
                 <ScrollArea className="h-screen w-full rounded-md border pl-12 pr-12 ">
                     <div className="flex justify-between items-center mt-2">
                         <h1 className='text-xl font-bold'>Documents</h1>
                         <div>
-                            <Button variant={'outline'} className='mr-2'><FontAwesomeIcon icon={faUpload} className='mr-2' /> Upload</Button>
-
+                            <Button variant={'outline'} className='mr-2' onClick={handleUpload}><FontAwesomeIcon icon={faUpload} className='mr-2' /> Upload</Button>
+                            <input type='file' ref={inputFile} onChange={handleFileChange} className='hidden' />
                             <Button variant={'destructive'} className='hidden'>Delete</Button>
                         </div>
                     </div>
@@ -79,20 +117,16 @@ const UploadFile = () => {
                             <TableRow>
                                 <TableHead><Checkbox /></TableHead>
                                 <TableHead>Filename</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>File Type</TableHead>
                                 <TableHead></TableHead>
                             </TableRow>
                         </TableHeader>
                         {
-                            sampleData.map((data: CourseData) => (
+                            files.map((data: CourseData) => (
                                 <TableBody>
                                     <TableRow>
                                         <TableCell><Checkbox /></TableCell>
-                                        <TableCell className="font-medium">{data.Filename}</TableCell>
-                                        <TableCell>{data.status}</TableCell>
-                                        <TableCell><Badge>{data.fileType}</Badge></TableCell>
-                                        <TableCell><FontAwesomeIcon icon={faTrash} className="text-red-500 cursor-pointer" /></TableCell>
+                                        <TableCell className="font-medium">{data.name}</TableCell>
+                                        <TableCell><Trash2Icon className="text-red-500 cursor-pointer" onClick={handleDelete(data.id)} /></TableCell>
                                     </TableRow>
                                 </TableBody>
                             ))

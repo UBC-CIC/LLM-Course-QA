@@ -1,5 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, String, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, String, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
@@ -22,10 +21,11 @@ class User(db.Model, UserMixin):
     password = Column(String, nullable=False)
     role = Column(Enum(Role), nullable=False)
     courses = relationship('Course', secondary=course_user_association, backref='users')
-    # conversations = relationship('Conversations', backref='users')
+    conversations = relationship('Conversation', backref='users')
+    reports = relationship('Report', backref='users')
 
     def is_admin(self):
         return self.role == Role.Admin
-    
+
     def is_instructor(self):
         return self.role == Role.Instructor

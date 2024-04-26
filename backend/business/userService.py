@@ -1,20 +1,18 @@
 from flask_login import login_user, logout_user
 
-from ..data.models.user import User
+from ..data.models.user import User, Role
 from ..extensions import db, bcrypt
+from .courseService import get_course
 
 # Registers a user
 def register(create_user_data):
     from .courseService import get_courses
-
-    user = User.query.filter_by(username=create_user_data['username']).first()
+    user = User.query.filter_by(id=create_user_data['userId']).first()
     if user:
         return None
-    hashed_password = bcrypt.generate_password_hash(create_user_data['password']).decode('utf-8')
+
     user = User(
-        name=create_user_data['name'],
-        username=create_user_data['username'],
-        password=hashed_password,
+        id = create_user_data['userId'],
         role=create_user_data['role']
     )
 
@@ -37,16 +35,33 @@ def login(login_data):
     if bcrypt.check_password_hash(user.password, login_data['password']):
         login_user(user)
         return {"id": user.id, "role": user.role}
-    
+
     return None
+
+# Changes user password
+def change_password(change_password_data):
+    user = User.query.get(change_password_data['user_id'])
+    if bcrypt.check_password_hash(user.password, change_password_data['old_password']):
+        user.password = bcrypt.generate_password_hash(change_password_data['new_password']).decode('utf-8')
+        db.session.commit()
+        return True
+    return False
+
+def get_role(get_role_data):
+    user = User.query.get(get_role_data['user_id'])
+
+    role = "Admin" if str(user.role) == 'Role.Admin' else "instructor" if str(user.role) == 'Role.Instructor' else "Role.Student"
+
+    return role
 
 # Logs out user and invalidates the session
 def logout():
     logout_user()
-    return True  
+    return True
 
+# Adds course to admins
 def add_course_to_admins(course):
-    users = User.query.filter_by(role='Admin').all()
+    users = User.query.filter_by(role=Role.Admin).all()
     for user in users:
         user.courses.append(course)
     db.session.commit()
@@ -56,4 +71,40 @@ def get_user(user_id):
     user = User.query.get(user_id)
     return user
 
+# Gets all users
+def get_users():
+    print("Get all users")
+    users = User.query.all()
+    user_objects = []
+    for user in users:
+        role = "Admin" if str(user.role) == 'Role.Admin' else "instructor" if str(user.role) == 'Role.Instructor' else "Role.student"
 
+        user_objects.append({
+            'id': user.id,
+            'name': user.name,
+            'role': role
+        })
+
+    return user_objects
+
+# Gets all instructors
+def get_instructors():
+    users = User.query.filter_by(role=Role.Instructor).all()
+    user_objects = []
+    for user in users:
+        user_objects.append({
+            'id': user.id,
+            'name': user.name,
+        })
+
+    return user_objects
+
+# Adds a user to a course
+def add_user_to_course(add_user_data):
+    user = User.query.get(add_user_data['user_id'])
+    course = get_course(add_user_data['course_id'])
+    if user and course:
+        user.courses.append(course)
+        db.session.commit()
+        return True
+    return False
