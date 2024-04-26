@@ -7,7 +7,7 @@ from .courseService import get_course
 # Registers a user
 def register(create_user_data):
     from .courseService import get_courses
-    user = User.query.filter_by(id=create_user_data['userId']).first()
+    user = User.query.get(create_user_data['userId'])
     if user:
         return None
 
@@ -55,7 +55,7 @@ def change_password(change_password_data):
 
 def get_role(get_role_data):
     user = User.query.get(get_role_data['user_id'])
-    role = "Admin" if str(user.role) == 'Role.Admin' else "instructor" if str(user.role) == 'Role.Instructor' else "Role.Student"
+    role = "Admin" if str(user.role) == 'Role.Admin' else "Instructor" if str(user.role) == 'Role.Instructor' else "Student"
 
     return role
 

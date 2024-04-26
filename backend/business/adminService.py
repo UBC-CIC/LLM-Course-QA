@@ -2,16 +2,24 @@ import json
 from ..data.models.user import User, Role
 from ..extensions import db
 from .courseService import get_courses
+import base64
 
 def get_config():
-    logo = open('core/config/logo.svg', 'rb').read()
-    with open('core/config/colours.json') as f:
-        colour_config = json.load(f)
-    primary_colour = colour_config['primaryColour']
+    try:
+        print("getting config")
+        with open('core/config/logo.png', 'rb') as image_file:
+            encoded_logo = base64.b64encode(image_file.read()).decode('utf-8')
+
+        with open('core/config/colours.json') as f:
+            colour_config = json.load(f)
+        primary_colour = colour_config['primaryColour']
+    except Exception as e:
+        print(e)
+
 
     return {
-        'logo': logo,
-        'colours': primary_colour
+        'logo': encoded_logo,
+        'colour': primary_colour
     }
 
 def update_config(update_config_data):
