@@ -10,6 +10,7 @@
 
 ## Authentication Page
 **Signup Screen**
+
 The first user who signs up is granted "Admin" privileges. Subsequent users are registered as "Students" to ensure they have the lowest permissions.
 ![Sign Up Page](images/signup.png)
 
@@ -17,6 +18,8 @@ Once the user has signed up, they must enter the verification code sent to the r
 ![Verification Popup](images/verify.png)
 
 **Login Screen**
+
+
 After successfully signing up and verifying their email, the user can login using their credentials.
 ![Verification Popup](images/login.png)
 
