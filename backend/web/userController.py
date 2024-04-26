@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from ..business import userService
 from flask_login import login_required
-from ..core.utils.decodeJwt import get_user_id
+from ..core.utils.authDecorator import login_required
 
 userBp = Blueprint('user', __name__, url_prefix='/users')
 
@@ -38,14 +38,13 @@ def logout():
         return jsonify({'error': 'Logout failed'}), 400
 
 # get user role
-@userBp.route('/<user_id>/role', methods=['GET'])
-def get_role(user_id):
+@userBp.route('/role', methods=['GET'])
+@login_required
+def get_role(user):
     user_role_data = {
-        'user_id': user_id,
+        'user_id': user.id,
     }
     role = userService.get_role(user_role_data)
-
-    print(role)
 
     if role:
         return jsonify({'role': role}), 200
@@ -55,10 +54,11 @@ def get_role(user_id):
 
 
 @userBp.route('', methods=['PUT'])
-def change_password():
+@login_required
+def change_password(user):
     data = request.get_json()
     change_password_data = {
-        'user_id': data['user_id'],
+        'user_id': user.id,
         'old_password': data['old_password'],
         'new_password': data['new_password']
     }

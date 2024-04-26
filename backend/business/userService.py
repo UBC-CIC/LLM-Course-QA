@@ -7,13 +7,20 @@ from .courseService import get_course
 # Registers a user
 def register(create_user_data):
     from .courseService import get_courses
-    user = User.query.filter_by(id=create_user_data['userId']).first()
+    user = User.query.get(create_user_data['userId'])
     if user:
         return None
 
+    # get all users, if count is 0, make user admin
+    users = get_users()
+    role = Role.Student
+    if len(users) == 0:
+        role = Role.Admin
+
     user = User(
         id = create_user_data['userId'],
-        role=create_user_data['role']
+        name = create_user_data['name'],
+        role = role
     )
 
     if user.role == 'Admin':
@@ -28,7 +35,6 @@ def register(create_user_data):
 # Logs in user and creates a session
 def login(login_data):
     user = User.query.filter_by(username=login_data['username']).first()
-    print(user.is_admin())
     if user is None:
         return None
 
@@ -49,8 +55,7 @@ def change_password(change_password_data):
 
 def get_role(get_role_data):
     user = User.query.get(get_role_data['user_id'])
-
-    role = "Admin" if str(user.role) == 'Role.Admin' else "instructor" if str(user.role) == 'Role.Instructor' else "Role.Student"
+    role = "Admin" if str(user.role) == 'Role.Admin' else "Instructor" if str(user.role) == 'Role.Instructor' else "Student"
 
     return role
 

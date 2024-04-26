@@ -71,7 +71,6 @@ const Chat = () => {
       body: JSON.stringify({
         "question": input,
         "course_id": id,
-        "user_id": userId,
         "conversation_id": conversation_id
       })
     });
@@ -137,7 +136,7 @@ const Chat = () => {
   }
 
   const getChatHistory = async () => {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/queries/${id}/conversations/${userId}`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/queries/${id}/conversations`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

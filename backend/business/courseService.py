@@ -16,7 +16,7 @@ def create_course(create_course_data):
     if course:
         return None
 
-    instructor = get_user(create_course_data['instructor'])
+    instructor = get_user(create_course_data['instructor_id'])
 
     if not instructor:
         return None

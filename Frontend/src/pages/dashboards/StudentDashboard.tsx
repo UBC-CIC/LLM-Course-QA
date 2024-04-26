@@ -41,7 +41,7 @@ const StudentDashboard = () => {
         const userId = user ? JSON.parse(user).id : null;
         const token = localStorage.getItem('token');
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${userId}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -73,7 +73,6 @@ const StudentDashboard = () => {
                 'Authorization': 'Bearer ' + token,
             },
             body: JSON.stringify({
-                user_id: userId,
                 access_code: courseAccessCode,
             }),
         });

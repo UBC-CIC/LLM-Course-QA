@@ -1,16 +1,18 @@
 from flask import Blueprint, request, jsonify
 from ..business import queryService
+from ..core.utils.authDecorator import login_required
 
 queryBp = Blueprint('query', __name__, url_prefix='/queries')
 
 @queryBp.route('', methods=['POST'])
-def query_llm():
+@login_required
+def query_llm(user):
     data = request.get_json()
     # TODO: Validate data
     query_data = {
         'question': data['question'],
         'course_id': data['course_id'],
-        'user_id': data['user_id'], # add by middleware TODO
+        'user_id': user.id, # add by middleware TODO
         'conversation_id': data['conversation_id']
     }
     query_response = queryService.query_llm(query_data)
@@ -23,8 +25,6 @@ def query_llm():
 def query_list(conversationId):
     # TODO: Validate data
     query_data = {
-        # 'course_id': courseId,
-        # 'user_id': userId, # add by middleware TODO
         'conversation_id': conversationId,
     }
     response = queryService.query_list(query_data)
@@ -33,12 +33,13 @@ def query_list(conversationId):
     else:
         return jsonify({'error': 'Error getting queries'}), 400
 
-@queryBp.route('/<courseId>/conversations/<userId>', methods=['GET'])
-def conversation_history(courseId, userId):
+@queryBp.route('/<courseId>/conversations', methods=['GET'])
+@login_required
+def conversation_history(user, courseId):
     # TODO: Validate data
     query_data = {
         'course_id': courseId,
-        'user_id': userId, # add by middleware TODO
+        'user_id': user.id, # add by middleware TODO
     }
     response = queryService.conversation_history(query_data)
     if response:
