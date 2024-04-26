@@ -207,6 +207,9 @@ def delete_document_vectors(course_id, document_id):
 
 def list_enrolled_students(list_enrolled_students_data):
     course = Course.query.get(list_enrolled_students_data['course_id'])
+    if not course:
+        return None
+    
     students = course.users
 
     student_objects = []
@@ -228,9 +231,10 @@ def remove_student_from_course(remove_student_data):
     course = Course.query.get(remove_student_data['course_id'])
     if course:
         student = User.query.get(remove_student_data['student_id'])
-        course.users.remove(student)
-        db.session.commit()
-        return True
+        if student:
+            course.users.remove(student)
+            db.session.commit()
+            return True
     
     return False
     

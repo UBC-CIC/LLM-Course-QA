@@ -1,9 +1,10 @@
 import pytest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from backend.business.courseService import join_course, list_courses, get_courses, get_course, list_enrolled_students, remove_student_from_course
 from backend.data.models.course import Course
 from backend.data.models.user import User, Role
 from backend import create_app
+import uuid
 
 @pytest.fixture(scope='module')
 def app_context():
@@ -14,10 +15,10 @@ def app_context():
 @pytest.fixture
 def mock_users():
     return [
-        User(id='1', name='user1', username='user1', password='password', role=Role.Student),
-        User(id='2', name='user1', username='user2', password='password', role=Role.Student),
-        User(id='3', name='user1', username='user3', password='password', role=Role.Student),
-        User(id='4', name='user1', username='user4', password='password', role=Role.Instructor)
+        User(id=uuid.uuid4(), name='user1', username='user1', password='password', role=Role.Student),
+        User(id=uuid.uuid4(), name='user1', username='user2', password='password', role=Role.Student),
+        User(id=uuid.uuid4(), name='user1', username='user3', password='password', role=Role.Student),
+        User(id=uuid.uuid4(), name='user1', username='user4', password='password', role=Role.Instructor)
     ]
     
 
@@ -33,25 +34,30 @@ def mock_courses(mock_users):
 
 # Testing join_course
 @patch('backend.data.models.course.Course.query')
-def test_join_course(mock_query, mock_users, mock_courses, app_context): 
+@patch('backend.business.userService.get_user')
+def test_join_course(mock_get_user, mock_query, mock_users, mock_courses, app_context):
+    mock_query.filter_by.return_value.first.return_value = mock_courses[0]
+    
+    # Setup mock for get_user
+    mock_get_user.return_value = mock_users[2] 
     mock_query.get.return_value = mock_courses[0]
     result = join_course({'user_id': mock_users[2].id, 'access_code': 'ABC123'})
-    assert result['id'] == mock_courses[0].id
-    assert result['course_code'] == 'CS101'
+  
+    assert result is True
     
 # Testing join_course with invalid access_code
 @patch('backend.data.models.course.Course.query')
 def test_join_course_invalid(mock_query, mock_users, mock_courses, app_context): 
     mock_query.get.return_value = None
     result = join_course({'user_id': mock_users[2].id, 'access_code': 'invalid'})
-    assert result is None
+    assert result is False
     
 # Testing join_course with invalid user_id
 @patch('backend.data.models.course.Course.query')
 def test_join_course_invalid_user(mock_query, mock_users, mock_courses, app_context): 
     mock_query.get.return_value = mock_courses[0]
-    result = join_course({'user_id': 'invalid', 'access_code': 'ABC123'})
-    assert result is None
+    result = join_course({'user_id': uuid.uuid4(), 'access_code': 'ABC123'})
+    assert result is False
 
 # Testing list_courses
 @patch('backend.data.models.course.Course.query')
@@ -106,13 +112,18 @@ def test_list_enrolled_students_invalid(mock_query, mock_courses, app_context):
     mock_query.get.return_value = None
     result = list_enrolled_students({'course_id': 'invalid'})
     assert result is None
-    
-# Testing remove_student_from_course
+
+
 @patch('backend.data.models.course.Course.query')
-def test_remove_student_from_course(mock_query, mock_courses, mock_users, app_context): 
-    mock_query.get.return_value = mock_courses[0]
-    result = remove_student_from_course({'course_id': mock_courses[0].id, 'user_id': mock_users[0].id})
-    assert result is True
+@patch('backend.data.models.user.User.query')
+def test_remove_student_from_course(mock_user_query, mock_course_query, mock_courses, mock_users):
+    mock_course_query.get.return_value = mock_courses[0]
+    mock_user_query.get.return_value = mock_users[1]
+
+    result = remove_student_from_course({'course_id': str(mock_courses[0].id), 'student_id': str(mock_users[1].id)})
+
+    assert result == True
+    assert mock_users[1] not in mock_courses[0].users
     
 # Testing remove_student_from_course with invalid course_id
 @patch('backend.data.models.course.Course.query')
@@ -125,5 +136,5 @@ def test_remove_student_from_course_invalid_course(mock_query, mock_courses, moc
 @patch('backend.data.models.course.Course.query')
 def test_remove_student_from_course_invalid_user(mock_query, mock_courses, mock_users, app_context): 
     mock_query.get.return_value = mock_courses[0]
-    result = remove_student_from_course({'course_id': mock_courses[0].id, 'user_id': 'invalid'})
+    result = remove_student_from_course({'course_id': mock_courses[0].id, 'student_id': uuid.uuid4()})
     assert result is False

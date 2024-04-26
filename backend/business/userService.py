@@ -30,7 +30,6 @@ def register(create_user_data):
 # Logs in user and creates a session
 def login(login_data):
     user = User.query.filter_by(username=login_data['username']).first()
-    print(user.is_admin())
     if user is None:
         return None
 
