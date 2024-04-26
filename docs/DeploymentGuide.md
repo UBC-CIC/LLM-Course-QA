@@ -80,6 +80,9 @@ To store the keys securely:
 5. Set the first Key to 'GitHubPAT' and set the value to the personal access token you got from GitHub.
 6. Set the second Key to 'DBUser' and set the value to the master username for the database.
 7. Set the third key to 'DBPassword' and set the value to the master password for the database
+8. Click Next
+9. Set Secret name to 'courseqa'
+10. Click Next, Next and Store
 
 ## Deployment
 
@@ -100,9 +103,10 @@ For Deploying LLM:
 1. Search Mistral-7B-Instruct (Recommended model)
 2. Click Deploy
 3. Set custom endpoint name to something simple like cic-llm
-4. Set maximum instance count to 1 so that you do not get charged for an extra instance
-5. Open the Advanced Options and get the 'model name' environment variable value and store it (needs to be added to CloudFormation template)
-6. Click Deploy
+4. Set Instance type to ml.g5.2xlarge
+5. Set maximum instance count to 1 so that you do not get charged for an extra instance
+6. Open the Advanced Options and get the 'model name' environment variable value and store it (needs to be added to CloudFormation template)
+7. Click Deploy
 
 For Deploying Embedding Model:
 
