@@ -3,8 +3,9 @@ This project is a prototype question-answering system that leverages Large Langu
 # High Level Architecture
 For an in-depth description of our system architecture see the [High Level Architecture](./docs/HighLevelArchitecture.md)
 # Deployment Guide
-
+To learn how to deploy the application on AWS, see the [Deployment Guide](./docs/DeploymentGuide.md)
 # User guide
+To learn how to use the application, see the [User Guide](./docs/UserGuide.md)
 
 # Pricing Estimate
 
