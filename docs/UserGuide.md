@@ -54,5 +54,21 @@ Clicking on the "Add Course" button allows the user to create a new course.
 ![Create Course Page](images/instructor-add-course.png)
 
 ## Student View
+**Courses Screen**
+Upon signing in with a "Student" account, the student can view the courses they are enrolled in.
+![Student Courses Page](images/student-courses.png)
+
+The user can click on "Join Course" and provide the access code to a course sent by an instructor.
+![Student Join Page](images/join-course.png)
+
+**Chat Screen**
+After clicking on the chat button from the courses screen, the student can ask course specific questions to the chat interface. The response returns the source where the information was found.
+![Chat Page](images/chat.png)
+
+If the response is not what the student was expecting, they can report the conversation by clicking on the octagon button located at the lower right corner.
+![Report Page](images/report.png)
+
+
+
 
 
