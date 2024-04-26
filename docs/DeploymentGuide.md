@@ -11,6 +11,7 @@
     -   [Deployment](#deployment)
         -   [Step 1: Deploy LLM and Embedding model on Sagemaker](#step-1-deploy-llm-and-embedding-model-on-sagemaker)
         -   [Step 2: Deploy Infrastructure through CloudFormation](#step-2-deploy-infrastructure-through-cloudformation)
+        -   [Step 3: Deploy Frontend on Amplify](#step-3-deploy-frontend-on-amplify)
 
 ## Requirements
 
