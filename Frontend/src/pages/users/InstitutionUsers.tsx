@@ -44,12 +44,14 @@ const InstitutionUsers = () => {
     // const { id } = useParams<{ id: string }>()
     const [users, setUsers] = useState<any[]>([]);
     const [selectedRole, setSelectedRole] = useState<string>('');
+    const token = localStorage.getItem('token');
 
     const getAllUsers = async () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
             },
         });
 
@@ -70,7 +72,8 @@ const InstitutionUsers = () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/users`, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
             },
             body: JSON.stringify({
                 user_id: userId
@@ -90,7 +93,8 @@ const InstitutionUsers = () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/users` , {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
             },
             body: JSON.stringify({
                 id: userId,

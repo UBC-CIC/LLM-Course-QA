@@ -39,18 +39,19 @@ const StudentDashboard = () => {
     const getCourses = async () => {
         const user = localStorage.getItem('user');
         const userId = user ? JSON.parse(user).id : null;
+        const token = localStorage.getItem('token');
 
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${userId}`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
             },
         });
 
         const json = await response.json();
 
         if (response.ok) {
-            console.log('Courses fetched successfully');
             console.log(json);
             setCourses(json);
         }
@@ -63,11 +64,13 @@ const StudentDashboard = () => {
     const handleJoinCourse = async () => {
         const user = localStorage.getItem('user');
         const userId = user ? JSON.parse(user).id : null;
+        const token = localStorage.getItem('token');
 
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/join`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
             },
             body: JSON.stringify({
                 user_id: userId,

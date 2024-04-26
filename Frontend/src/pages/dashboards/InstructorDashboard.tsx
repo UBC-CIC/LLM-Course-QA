@@ -32,11 +32,13 @@ const InstructorDashboard = () => {
     const getCourses = async () => {
         const user = localStorage.getItem('user');
         const userId = user ? JSON.parse(user).id : null;
+        const token = localStorage.getItem('token');
 
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${userId}`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
             },
         });
 
@@ -64,11 +66,13 @@ const InstructorDashboard = () => {
         setCourses([...courses, newCourse]);
         const user = localStorage.getItem('user');
         const userId = user ? JSON.parse(user).id : null;
+        const token = localStorage.getItem('token');
 
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
             },
             body: JSON.stringify({
                 name: courseName,

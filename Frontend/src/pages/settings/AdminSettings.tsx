@@ -65,6 +65,7 @@ const AdminSettings = () => {
 
         const user = localStorage.getItem('user');
         const userId = user ? JSON.parse(user).id : null;
+        const token = localStorage.getItem('token');
 
         if (!userId) {
             console.log('User not found');
@@ -82,6 +83,7 @@ const AdminSettings = () => {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
             },
             body: JSON.stringify(reqData),
         })

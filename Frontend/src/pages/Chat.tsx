@@ -65,7 +65,8 @@ const Chat = () => {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/queries`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
       },
       body: JSON.stringify({
         "question": input,
@@ -102,13 +103,15 @@ const Chat = () => {
 
   const user = localStorage.getItem('user');
   const userId = user ? JSON.parse(user).id : null;
+  const token = localStorage.getItem('token');
 
   const getMessages = async (conversation_id: string) => {
     setMessages([]);
     const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/queries/conversations/${conversation_id}`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
       },
     });
 
@@ -137,7 +140,8 @@ const Chat = () => {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/queries/${id}/conversations/${userId}`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
       },
     });
 
@@ -160,7 +164,8 @@ const Chat = () => {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/reports`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
       },
       body: JSON.stringify({
         "reason": reason,
