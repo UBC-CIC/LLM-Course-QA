@@ -57,17 +57,20 @@ Clicking on the "Add Course" button allows the user to create a new course.
 **Upload Screen**
 
 After clicking on the upload button for a given course, the user can upload course specific documents which will form the knowledge base of the chat bot.
-![Create Course Page](images/upload.png)
+![Upload Page](images/upload.png)
 
-**Upload Screen**
+**Enrolled Students Screen**
 
 After clicking on the invite button for a given course, the user can view the list of students enrolled in the course.
-![Create Course Page](images/upload.png)
+![Enrolled Students Page](images/enrolled-students.png)
+
+Clicking on the "Invite Users" button allows the instructor to copy an access code which should be distributed to the students of the course.
+![Create Course Page](images/invite-user.png)
 
 **Report Screen**
 
 After clicking on the reports tab on the side navigation bar, the instructor can view reported conversations and make changes to the course documents accordingly.
-![Create Course Page](images/view-report.png)
+![View Reports Page](images/view-report.png)
 
 
 ## Student View
