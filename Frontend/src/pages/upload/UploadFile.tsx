@@ -26,11 +26,16 @@ type CourseData = {
 const UploadFile = () => {
     const { id } = useParams<{ id: string }>()
     const [files, setFiles] = useState<any[]>([]);
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
         const getFiles = async () => {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/documents`, {
                 method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
             });
 
             const json = await response.json();
@@ -60,6 +65,10 @@ const UploadFile = () => {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/documents`, {
                 method: 'POST',
                 body: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': 'Bearer ' + token
+                }
             });
 
             const json = await response.json();
@@ -77,6 +86,10 @@ const UploadFile = () => {
         console.log('Deleting document with id: ' + documentId);
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/documents/${documentId}`, {
             method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
+            }
         });
 
         if (response.ok) {

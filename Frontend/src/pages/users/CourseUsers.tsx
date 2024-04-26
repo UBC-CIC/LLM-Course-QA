@@ -33,13 +33,14 @@ const CourseUsers = () => {
     const { id } = useParams<{ id: string }>()
     const [users, setUsers] = useState<any[]>([]);
     const [accessCode, setAccessCode] = useState<string>('');
-
+    const token = localStorage.getItem('token');
 
     const getEnrolledStudents = async () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/users`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
             },
         });
 
@@ -62,7 +63,8 @@ const CourseUsers = () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/users/${studentId}`, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
             },
         });
 

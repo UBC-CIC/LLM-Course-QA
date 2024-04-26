@@ -4,6 +4,7 @@ import {
   } from "lucide-react"
 
 import { useNavigate } from 'react-router-dom';
+import userpool from '@/lib/userpool';
 
 
 export type NavItem = {
@@ -21,6 +22,13 @@ const SideNav = (props: SideNavProps) => {
     const navigate = useNavigate();
 
     const onLogout = () => {
+        const user = userpool.getCurrentUser()
+
+        if (user) {
+            user.signOut()
+        }
+
+        localStorage.removeItem('token')
         localStorage.removeItem('user')
         navigate('/')
         window.location.reload()

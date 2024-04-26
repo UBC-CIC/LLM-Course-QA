@@ -4,12 +4,12 @@ export const useSignup = () => {
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
 
-    const signup = async (name: string, username: string, password: string, role: string) => {
+    const signup = async (userId: string, role: string) => {
         setIsLoading(true)
 
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/register`, {
             method: 'POST',
-            body: JSON.stringify({ name, username, password, role }),
+            body: JSON.stringify({ userId, role }),
             headers: {
                 'Content-Type': 'application/json'
             }

@@ -4,6 +4,8 @@ import React from 'react';
 import './Login.css';
 import {useLogin} from "../../hooks/useLogin";
 import { useNavigate } from 'react-router-dom'
+import {CognitoUserSession} from 'amazon-cognito-identity-js';
+import userpool from '@/lib/userpool';
 
 const Login = () => {
     const [email, setEmail] = React.useState('');
@@ -13,11 +15,36 @@ const Login = () => {
 
     const handleLogin = async () => {
         await login(email, password);
-        if(localStorage.getItem('user')) {
-            navigate('/dashboard');
-            window.location.reload();
+        let cognitoUser = getUser();
+
+        if(cognitoUser){
+            let userId;
+            // get user id from user
+            cognitoUser.getSession(function(err: Error | null, session: CognitoUserSession) {
+                if (err) {
+                    alert(err.message || JSON.stringify(err));
+                    return;
+                }
+                userId = session.getIdToken().payload.sub;
+                localStorage.setItem('token', session.getIdToken().getJwtToken());
+            });
+
+            if(userId != undefined){
+                // await setUser(userId)
+                const user_data = {
+                    id: userId,
+                }
+                localStorage.setItem('user', JSON.stringify(user_data));
+                navigate('/dashboard');
+                window.location.reload();
+            }
         }
+
     };
+
+    const getUser = () => {
+        return userpool.getCurrentUser()
+    }
 
     return (
         <div className="flex flex-col items-center justify-center h-screen">

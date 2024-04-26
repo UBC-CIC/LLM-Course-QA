@@ -42,7 +42,8 @@ const Reports = () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/queries`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
             },
             body: JSON.stringify({
                 "question": input,
@@ -77,13 +78,15 @@ const Reports = () => {
 
     const user = localStorage.getItem('user');
     const userId = user ? JSON.parse(user).id : null;
+    const token = localStorage.getItem('token');
 
     const getReportConversation = async (report_id: string) => {
         setMessages([]);
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/queries/conversations/${report_id}`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
             },
         });
 
@@ -111,7 +114,8 @@ const Reports = () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/reports/${userId}`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
             },
         });
 
@@ -135,7 +139,8 @@ const Reports = () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/reports/${report_id}`, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
             },
         });
 

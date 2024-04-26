@@ -59,12 +59,14 @@ const AdminDashboard = () => {
 
     const user = localStorage.getItem('user');
     const userId = user ? JSON.parse(user).id : null;
+    const token = localStorage.getItem('token');
 
     const getAllCourses = async () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${userId}`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
             },
         });
 
@@ -80,7 +82,8 @@ const AdminDashboard = () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/instructors`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
             },
         });
 
@@ -114,7 +117,8 @@ const AdminDashboard = () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${selectedCourseId}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
             },
             body: JSON.stringify({
                 course_code: selectedCourseCode,
@@ -153,7 +157,8 @@ const AdminDashboard = () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
             },
             body: JSON.stringify({
                 course_code: selectedCourseCode,
