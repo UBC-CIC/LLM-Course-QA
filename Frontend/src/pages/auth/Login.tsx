@@ -30,11 +30,6 @@ const Login = () => {
             });
 
             if(userId != undefined){
-                // await setUser(userId)
-                const user_data = {
-                    id: userId,
-                }
-                localStorage.setItem('user', JSON.stringify(user_data));
                 navigate('/dashboard');
                 window.location.reload();
             }

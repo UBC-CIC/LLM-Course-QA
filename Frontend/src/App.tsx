@@ -14,31 +14,29 @@ import Reports from './pages/Reports';
 import { useState, useEffect } from 'react';
 
 function App() {
-  const [role, setRole] = useState<any>(null);
-  const user = localStorage.getItem('user');
+  const [role, setRole] = useState(localStorage.getItem('role'));
   const token = localStorage.getItem('token');
 
-  useEffect(() => {
-    if (user) {
-      const userId = user ? JSON.parse(user).id : null;
-      const getUserRole = async () => {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/role`, {
-          method: 'GET',
-          headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + token
-          },
-        });
+  if (!role && token) {
+    const getUserRole = async () => {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/role`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+      });
+      const json = await response.json();
+      if (response.ok) {
+        console.log('Role fetched successfully: ' + json.role);
+        setRole(json.role);
+        localStorage.setItem('role', json.role);
+      }
+    };
+    getUserRole();
+  }
 
-        const json = await response.json();
-        if (response.ok) {
-          console.log('Role fetched successfully: ' + json.role);
-          setRole(json.role);
-        }
-      };
-      getUserRole();
-    }
-  }, []);
+  console.log("role: " + role)
 
   return (
     <>
@@ -47,14 +45,14 @@ function App() {
           <Route path="/" element={!role ? <Navigate to="/login" /> : <Navigate to="/dashboard" />} />
           <Route path="/login" element={!role ? <Login /> : <Navigate to="/dashboard" />} />
           <Route path="/signup" element={!role ? <Signup /> : <Navigate to="/dashboard" />} />
-          <Route path="/dashboard" element={role ? (role === "Role.Student" ? <StudentDashboard /> : (role === "Role.Instructor" ? <InstructorDashboard /> : <AdminDashboard />)) : <Navigate to="/" />} />
-          <Route path="/upload/:id" element={role ? (role === "Role.Instructor" ? <UploadFile /> : <Navigate to="/" />) : <Navigate to="/" />} />
-          <Route path="/chat" element={role ? (role === "Role.Student" ? <Chat /> : (role === "Role.Instructor" ? <Chat /> : <Navigate to="/" />)) : <Navigate to="/" />} />
-          <Route path="/chat/:id" element={role ? (role === "Role.Student" ? <Chat /> : (role === "Role.Instructor" ? <Chat /> : <Navigate to="/" />)) : <Navigate to="/" />} />
+          <Route path="/dashboard" element={role ? (role === "Student" ? <StudentDashboard /> : (role === "Instructor" ? <InstructorDashboard /> : <AdminDashboard />)) : <Navigate to="/" />} />
+          <Route path="/upload/:id" element={role ? (role === "Instructor" ? <UploadFile /> : <Navigate to="/" />) : <Navigate to="/" />} />
+          <Route path="/chat" element={role ? (role === "Student" ? <Chat /> : (role === "Instructor" ? <Chat /> : <Navigate to="/" />)) : <Navigate to="/" />} />
+          <Route path="/chat/:id" element={role ? (role === "Student" ? <Chat /> : (role === "Instructor" ? <Chat /> : <Navigate to="/" />)) : <Navigate to="/" />} />
           <Route path="/settings" element={<AdminSettings />} />
-          <Route path="/users" element={role ? (role === "Role.Admin" ? <InstitutionUsers /> : <Navigate to="/" />) : <Navigate to="/" />} />
-          <Route path="/users/:id" element={role ? (role === "Role.Instructor" ? <CourseUsers /> : <Navigate to="/users" />) : <Navigate to="/" />} />
-          <Route path="/reports" element={role ? (role === "Role.Instructor" ? <Reports /> : <Navigate to="/" />) : <Navigate to="/" />} />
+          <Route path="/users" element={role ? (role === "Admin" ? <InstitutionUsers /> : <Navigate to="/" />) : <Navigate to="/" />} />
+          <Route path="/users/:id" element={role ? (role === "Instructor" ? <CourseUsers /> : <Navigate to="/users" />) : <Navigate to="/" />} />
+          <Route path="/reports" element={role ? (role === "Instructor" ? <Reports /> : <Navigate to="/" />) : <Navigate to="/" />} />
         </Routes>
       </Router>
     </>
