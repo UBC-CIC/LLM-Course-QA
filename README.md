@@ -1,7 +1,9 @@
 # LLM-Course-QA
-This project is a prototype question-answering system that leverages Large Language Models (LLMs) to provide a platform for higher-education students to pose queries and receive answers. The system uses information in course documents uploaded by instructors as its sources when responding to these queries. 
+This project is a question-answering system that leverages Large Language Models (LLMs) to provide a platform for higher-education students to receive answers to course specific questions. The system uses information in course documents uploaded by instructors as its sources when responding to these queries. 
 # High Level Architecture
-This project is split into 4 main systems: frontend, backend, data ingestion and retrieval pipelines, and the large language model. The diagram below shows the resources used to deploy the application. For an in-depth description of our system architecture see the [High Level Architecture](./docs/HighLevelArchitecture.md)
+This project is split into 4 main systems: frontend, backend, data ingestion and retrieval pipelines, and the large language model. 
+
+The diagram below shows the resources used to deploy the application. For an in-depth description of our system architecture see the [High Level Architecture](./docs/HighLevelArchitecture.md)
 
 ![System Overview Diagram](./docs/images/System_architecture.drawio.png)
 # Deployment Guide
