@@ -45,6 +45,8 @@ Assumption: 100 courses in the institution, storing 2 GB of files each.
 
 Estimated Cost: 0.006 $/hour
 
+<br>
+<br>
 
 **Final Estimated Cost**
 
