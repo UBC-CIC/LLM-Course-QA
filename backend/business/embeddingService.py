@@ -2,7 +2,7 @@ import json
 from typing import Dict, List
 from langchain_community.embeddings import SagemakerEndpointEmbeddings
 from langchain_community.embeddings.sagemaker_endpoint import EmbeddingsContentHandler
-from ..extensions import profile_name, embedding_endpoint_name, region_name
+from ..extensions import profile_name, embedding_endpoint_name, region_name, environment
 # embedding model object
 # ref:
 class ContentHandler(EmbeddingsContentHandler):
@@ -28,7 +28,7 @@ embedding_args = {
     "endpoint_kwargs": {"CustomAttributes": "accept_eula=true"}
 }
 
-if profile_name != '':
+if environment != 'production':
     embedding_args["credentials_profile_name"] = profile_name
 
 embedding = SagemakerEndpointEmbeddings(**embedding_args)
@@ -58,7 +58,7 @@ query_embedding_args = {
     "endpoint_kwargs": {"CustomAttributes": "accept_eula=true"}
 }
 
-if profile_name != '':
+if environment != 'production':
     query_embedding_args["credentials_profile_name"] = profile_name
 
 query_embedding = SagemakerEndpointEmbeddings(**query_embedding_args)
