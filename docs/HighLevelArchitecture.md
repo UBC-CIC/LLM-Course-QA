@@ -82,3 +82,7 @@ Solution:
 
 ### Cloud Architecture
 
+The frontend of the application is hosted on AWS Amplify. The frontend then connects to an Amazon API Gateway which is a proxy to the backend hosted on an Amazon EC2 instance. The PostgreSQL database is hosted on Amazon RDS. The backend then utilizes Amazon S3 buckets to store course documents. Amazon Cognito is used for managing authentication on both the frontend and backend. Finally, Amazon Sagemaker is used to host the LLM as defined in section 5.2. 
+
+The cloud architecture of the deployed resources can be seen below: ![System Overview Diagram](./images/cloud-diagram.png)
+
