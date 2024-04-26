@@ -1,5 +1,5 @@
 # User Guide
-**Before Continuing with this User Guide, please make sure you have deployed the application**
+**Before continuing with this User Guide, please follow the steps outlined in the deployment guide.**
 - [Deployment Guide](./DeploymentGuide.md)
 
 | Index                                       | Description                                                               |
