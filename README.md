@@ -14,5 +14,4 @@ To learn how to use the application, see the [User Guide](./docs/UserGuide.md)
 # Pricing Estimate
 To view a pricing estimate breakdown, see the [Pricing Estimate](./docs/PricingEstimate.md)
 
-# Post-proof of concept considerations
 
