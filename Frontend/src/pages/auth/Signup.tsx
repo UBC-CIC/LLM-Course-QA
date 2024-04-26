@@ -54,7 +54,7 @@ const Signup  = () => {
 
             if (result) {
                 let userId = result.userSub;
-                await signup(userId);
+                await signup(userId, name);
                 setOpen(true);
             }
         }

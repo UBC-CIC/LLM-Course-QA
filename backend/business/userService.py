@@ -19,6 +19,7 @@ def register(create_user_data):
 
     user = User(
         id = create_user_data['userId'],
+        name = create_user_data['name'],
         role = role
     )
 
