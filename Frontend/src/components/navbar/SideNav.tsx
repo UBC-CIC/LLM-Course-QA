@@ -29,7 +29,7 @@ const SideNav = (props: SideNavProps) => {
         }
 
         localStorage.removeItem('token')
-        localStorage.removeItem('user')
+        localStorage.removeItem('role')
         navigate('/')
         window.location.reload()
     }

@@ -56,6 +56,8 @@ const AdminDashboard = () => {
     const [assignedInstructor, setAssignedInstructor] = useState<string>('');
     const [selectedCourseId, setSelectedCourseId] = useState<string>('');
     const [open, setOpen] = useState(false);
+    const [openAddCourse, setOpenAddCourse] = useState(false);
+
 
     const user = localStorage.getItem('user');
     const userId = user ? JSON.parse(user).id : null;
@@ -178,7 +180,7 @@ const AdminDashboard = () => {
         } else {
             console.log(json);
         }
-        setOpen(false);
+        setOpenAddCourse(false);
 
         setAssignedInstructor('');
         setSelectedCourseCode('');
@@ -210,7 +212,7 @@ const AdminDashboard = () => {
                 <ScrollArea className="h-screen w-full rounded-md border pl-12 pr-12 pt-12">
                     <div className="flex justify-between items-center mt-2">
                         <h1 className='text-xl font-bold'>Courses</h1>
-                        <Dialog open={open} onOpenChange={setOpen}>
+                        <Dialog open={openAddCourse} onOpenChange={setOpenAddCourse}>
                             <DialogTrigger>
                                 <Button variant={'outline'}>
                                     <FontAwesomeIcon icon={faPlusCircle} className="my-auto cursor-pointer" />
