@@ -22,9 +22,7 @@ After an instructor uploads a course document, it processes the content and stor
 ## System Overview
 
 This section will describe the 4 main systems in our project: the frontend, backend, data ingestion and retrieval pipelines, and the large language model (LLM).
-
-
-![System Overview Diagram](./images/System_architecture.drawio)
+![System Overview Diagram](./images/System_architecture.drawio.png)
 
 
 ### Frontend
@@ -36,7 +34,7 @@ The frontend is essentially the user interface which users interact with for aut
 
 The backend hosts the application programming interface (API) endpoints which acts as an intermediary between the frontend, database, data ingestion and retrieval system, and the large language model. The backend of our application follows a layered architecture, composed of a web layer, business logic layer, and a data layer.
 
-![Backend Architecture Diagram](./images/Backend%20Architecture)
+![Backend Architecture Diagram](./images/Backend%20Architecture.drawio.png)
 
 The web layer is responsible for allowing the frontend to communicate with the backend. It receives authentication, course management, and student query HTTP requests. Upon receiving a request, the web layer validates that the received data is in the correct format and sends this data down to the business logic layer to be further processed.
 
@@ -53,7 +51,7 @@ The purpose of the data ingestion pipeline is to extract, process, and store the
 
 The RAG pipeline implements the RAG process which, based on the student query, retrieves course information that is similar and generates a response using that context.
 
-![RAG process](./images/RAG_Process.drawio)
+![RAG process](./images/RAG_Process.drawio.png).
 
 The vectorizing stage takes in the student query and vectorizes it using the same embedding model as the text processing stage.
 
