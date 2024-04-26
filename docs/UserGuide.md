@@ -54,6 +54,22 @@ Upon signing in with an "Instructor" account, the instructor can view the course
 Clicking on the "Add Course" button allows the user to create a new course.
 ![Create Course Page](images/instructor-add-course.png)
 
+**Upload Screen**
+
+After clicking on the upload button for a given course, the user can upload course specific documents which will form the knowledge base of the chat bot.
+![Create Course Page](images/upload.png)
+
+**Upload Screen**
+
+After clicking on the invite button for a given course, the user can view the list of students enrolled in the course.
+![Create Course Page](images/upload.png)
+
+**Report Screen**
+
+After clicking on the reports tab on the side navigation bar, the instructor can view reported conversations and make changes to the course documents accordingly.
+![Create Course Page](images/view-report.png)
+
+
 ## Student View
 **Courses Screen**
 
