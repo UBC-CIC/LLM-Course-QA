@@ -1,24 +1,22 @@
-FROM python:3.9
+# Use an official Python runtime as a parent image
+FROM python:3.10-slim
 
-# Switch working directory
+# Set the working directory in the container
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 COPY . /app
 
-RUN apt update && apt install -y build-essential && apt-get install -y postgresql postgresql-contrib
+# Install any needed dependencies specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-ENV PGDATA=/var/lib/postgresql/data
-RUN mkdir -p $PGDATA && chown -R postgres:postgres $PGDATA
-VOLUME $PGDATA
-
-RUN service postgresql start && \
-    su - postgres -c "psql -c \"ALTER USER postgres WITH PASSWORD 'postgres';\"" && \
-    su - postgres -c "createdb course-qa -O postgres"
-
-# install the dependencies and packages in the requirements file
-RUN pip install --no-cache-dir -r /app/requirements.txt
-
+# Make port 5000 available to the world outside this container
 EXPOSE 5000
+EXPOSE 5432
 
-CMD service postgresql start && flask run
+# Define environment variable
+ENV FLASK_APP=app.py
+ENV environment=production
+
+# Start Flask application
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
