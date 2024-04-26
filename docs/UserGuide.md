@@ -1,6 +1,6 @@
 # User Guide
 **Before Continuing with this User Guide, please make sure you have deployed the application**
-- [Deployment Guides](./DeploymentGuide.md)
+- [Deployment Guide](./DeploymentGuide.md)
 
 | Index                                       | Description                                                               |
 | :------------------------------------------ | :---------------------------------------------------------------- |
@@ -47,6 +47,7 @@ The admin can change the role of a user by clicking on the button at the end of 
 
 ## Instructor View
 **Courses Screen**
+
 Upon signing in with an "Instructor" account, the instructor can view the courses they are teaching.
 ![Instructor Courses Page](images/instructor-courses.png)
 
@@ -55,6 +56,7 @@ Clicking on the "Add Course" button allows the user to create a new course.
 
 ## Student View
 **Courses Screen**
+
 Upon signing in with a "Student" account, the student can view the courses they are enrolled in.
 ![Student Courses Page](images/student-courses.png)
 
@@ -62,6 +64,7 @@ The user can click on "Join Course" and provide the access code to a course sent
 ![Student Join Page](images/join-course.png)
 
 **Chat Screen**
+
 After clicking on the chat button from the courses screen, the student can ask course specific questions to the chat interface. The response returns the source where the information was found.
 ![Chat Page](images/chat.png)
 
