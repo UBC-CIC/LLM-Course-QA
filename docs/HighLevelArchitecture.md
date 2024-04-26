@@ -51,6 +51,8 @@ The data ingestion and retrieval pipelines are responsible for intaking course d
 
 The purpose of the data ingestion pipeline is to extract, process, and store the content present in documents that instructors upload to a course in order to facilitate the RAG process. The data extraction process takes the uploaded course documents and converts them to plain text using optical character recognition (OCR). After extracting the documents into plain text, it is converted into vectors (a mathematical representation of the text) using an embedding model. The vectorized document along with the source document metadata is uploaded to a vector database to be later retrieved by the RAG process.
 
+![Data ingestion process](./images/data-ingestion.png)
+
 The RAG pipeline implements the RAG process which, based on the student query, retrieves course information that is similar and generates a response using that context.
 
 ![RAG process](./images/RAG_Process.drawio.png)
