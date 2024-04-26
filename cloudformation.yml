@@ -1,0 +1,369 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Stack for setting up EC2, RDS, and API Gateway
+
+Parameters:
+    DBInstanceClass:
+        Type: String
+        Default: db.t3.micro
+        Description: RDS instance class
+    DBName:
+        Type: String
+        Default: courseQA
+        Description: RDS database name
+    LLMEndpointName:
+        Type: String
+        Description: LLM endpoint name
+    EmbeddingEndpointName:
+        Type: String
+        Description: Embedding endpoint name
+    RegionName:
+        Type: String
+        Default: us-west-2
+        Description: Region name
+    LLMInference:
+        Type: String
+        Description: LLM inference component name
+    DockerImageName:
+        Type: String
+        Default: ilamparithi10/cic-course-qa-backend
+        Description: Docker image name
+    DBUser:
+        Type: String
+        Description: RDS master username
+    DBPassword:
+        Type: String
+        Description: RDS master password
+
+Resources:
+    MyIAMRole:
+        Type: AWS::IAM::Role
+        Properties:
+            RoleName: MyIAMRole
+            AssumeRolePolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                    - Effect: Allow
+                      Principal:
+                          Service: ec2.amazonaws.com
+                      Action: sts:AssumeRole
+            Policies:
+                - PolicyName: S3FullAccessPolicy
+                  PolicyDocument:
+                      Version: "2012-10-17"
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - s3:*
+                            Resource: "*"
+                - PolicyName: TextractFullAccessPolicy
+                  PolicyDocument:
+                      Version: "2012-10-17"
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - textract:*
+                            Resource: "*"
+                - PolicyName: SageMakerFullAccessPolicy
+                  PolicyDocument:
+                      Version: "2012-10-17"
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - sagemaker:*
+                            Resource: "*"
+                - PolicyName: RDSFullAccessPolicy
+                  PolicyDocument:
+                      Version: "2012-10-17"
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - rds:*
+                            Resource: "*"
+
+    MyInstanceProfile:
+        Type: AWS::IAM::InstanceProfile
+        Properties:
+            Path: "/"
+            Roles:
+                - !Ref MyIAMRole
+
+    VPC:
+        Type: AWS::EC2::VPC
+        Properties:
+            CidrBlock: 10.0.0.0/16
+            EnableDnsHostnames: true
+            EnableDnsSupport: true
+            InstanceTenancy: default
+
+    InternetGateway:
+        Type: AWS::EC2::InternetGateway
+        Properties:
+            Tags:
+                - Key: Name
+                  Value: MyInternetGateway
+
+    InternetGatewayAttachment:
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+            VpcId: !Ref VPC
+            InternetGatewayId: !Ref InternetGateway
+
+    Subnet1RouteTable:
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId: !Ref VPC
+
+    Subnet1Route:
+        Type: AWS::EC2::Route
+        DependsOn: Subnet1RouteTable
+        Properties:
+            RouteTableId: !Ref Subnet1RouteTable
+            DestinationCidrBlock: 0.0.0.0/0
+            GatewayId: !Ref InternetGateway
+
+    Subnet1RouteTableAssociation:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref Subnet1
+            RouteTableId: !Ref Subnet1RouteTable
+    Subnet1:
+        Type: AWS::EC2::Subnet
+        Properties:
+            VpcId: !Ref VPC
+            CidrBlock: 10.0.0.0/24
+            MapPublicIpOnLaunch: true
+            AvailabilityZone: !Select
+                - 0
+                - !GetAZs ""
+
+    Subnet2:
+        Type: AWS::EC2::Subnet
+        Properties:
+            VpcId: !Ref VPC
+            CidrBlock: 10.0.1.0/24
+            MapPublicIpOnLaunch: true
+            AvailabilityZone: !Select
+                - 1
+                - !GetAZs ""
+
+    RDSInstanceSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: "Security group for RDS instance"
+            VpcId: !Ref VPC
+            SecurityGroupIngress:
+                - IpProtocol: tcp
+                  FromPort: 5432
+                  ToPort: 5432
+                  SourceSecurityGroupId: !GetAtt EC2SecurityGroup.GroupId
+
+    DBSubnetGroup:
+        Type: AWS::RDS::DBSubnetGroup
+        Properties:
+            DBSubnetGroupDescription: Subnets available for the RDS instance
+            SubnetIds:
+                - !Ref Subnet1
+                - !Ref Subnet2
+
+    DBInstance:
+        Type: AWS::RDS::DBInstance
+        Properties:
+            DBName: !Ref DBName
+            Engine: "postgres"
+            DBInstanceClass: !Ref DBInstanceClass
+            AllocatedStorage: "20"
+            MasterUsername: !Ref DBUser
+            MasterUserPassword: !Ref DBPassword
+            DBSubnetGroupName: !Ref DBSubnetGroup
+            MultiAZ: false
+            VPCSecurityGroups:
+                - !Ref RDSInstanceSecurityGroup
+
+    EC2Instance:
+        Type: AWS::EC2::Instance
+        Properties:
+            KeyName: EC2
+            ImageId: "ami-0395649fbe870727e"
+            SubnetId: !Ref Subnet1
+            InstanceType: "t2.micro"
+            SecurityGroupIds:
+                - !GetAtt EC2SecurityGroup.GroupId
+            UserData:
+                Fn::Base64: !Sub |
+                    #!/bin/bash
+                    sudo yum update -y
+                    sudo yum install -y docker
+                    sudo systemctl start docker
+                    sudo docker pull ilamparithi10/cic-course-qa-backend
+                    sudo docker run -d \
+                        -e postgres_username=${DBUser} \
+                        -e postgres_password=${DBPassword} \
+                        -e postgres_hostname=${DBInstance.Endpoint.Address} \
+                        -e postgres_port=5432 \
+                        -e postgres_database_name=${DBName} \
+                        -e llm_endpoint_name=${LLMEndpointName} \
+                        -e embedding_endpoint_name=${EmbeddingEndpointName} \
+                        -e region_name=${RegionName} \
+                        -e llm_inference_component_name=${LLMInference} \
+                        -p 80:5000 \
+                        -p 5432:5432 \
+                        ${DockerImageName}
+            IamInstanceProfile: !Ref MyInstanceProfile
+
+    EC2SecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: "Enable outbound access to PostgreSQL port"
+            VpcId: !Ref VPC
+            SecurityGroupIngress:
+                - IpProtocol: tcp
+                  FromPort: 22
+                  ToPort: 22
+                  CidrIp: 0.0.0.0/0
+                - IpProtocol: tcp
+                  FromPort: 80
+                  ToPort: 80
+                  CidrIp: 0.0.0.0/0
+            SecurityGroupEgress:
+                - IpProtocol: tcp
+                  FromPort: 22
+                  ToPort: 22
+                  CidrIp: 0.0.0.0/0
+                - IpProtocol: tcp
+                  FromPort: 80
+                  ToPort: 80
+                  CidrIp: 0.0.0.0/0
+                - IpProtocol: tcp
+                  FromPort: 443
+                  ToPort: 443
+                  CidrIp: 0.0.0.0/0
+                - IpProtocol: tcp
+                  FromPort: 5432
+                  ToPort: 5432
+                  CidrIp: 10.0.0.0/16
+
+    UserPool:
+        Type: AWS::Cognito::UserPool
+        Properties:
+            UserPoolName: UserPool
+            UsernameAttributes:
+                - email
+            Schema:
+                - Name: email
+                  AttributeDataType: String
+                  Mutable: false
+                  Required: true
+                - Name: name
+                  AttributeDataType: String
+                  Mutable: true
+                  Required: true
+            Policies:
+                PasswordPolicy:
+                    MinimumLength: 8
+                    RequireLowercase: true
+                    RequireNumbers: true
+                    RequireSymbols: true
+                    RequireUppercase: true
+            AutoVerifiedAttributes:
+                - email
+            EmailVerificationSubject: "Your verification code"
+            EmailVerificationMessage: "Please use the following code to verify your email address: {####}"
+
+    UserPoolClient:
+        Type: AWS::Cognito::UserPoolClient
+        Properties:
+            UserPoolId: !Ref UserPool
+            ClientName: UserPoolClient
+            ExplicitAuthFlows:
+                - ALLOW_REFRESH_TOKEN_AUTH
+                - ALLOW_USER_SRP_AUTH
+            GenerateSecret: false
+
+    CogAuthorizer:
+        Type: AWS::ApiGateway::Authorizer
+        Properties:
+            Name: CognitoAuthorizer
+            RestApiId:
+                Ref: Api
+            Type: COGNITO_USER_POOLS
+            IdentitySource: method.request.header.Authorization
+            ProviderARNs:
+                - Fn::GetAtt:
+                      - UserPool
+                      - Arn
+
+    Api:
+        Type: "AWS::ApiGateway::RestApi"
+        Properties:
+            Name: ProxyApi
+            BinaryMediaTypes:
+                - application/pdf
+                - text/html
+                - multipart/form-data
+
+    Resource:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            ParentId: !GetAtt Api.RootResourceId
+            RestApiId: !Ref Api
+            PathPart: "{proxy+}"
+    UserResource:
+        Type: AWS::ApiGateway::Resource
+        Properties:
+            ParentId: !GetAtt Api.RootResourceId
+            RestApiId: !Ref Api
+            PathPart: "users"
+
+    RegisterResource:
+        Type: AWS::ApiGateway::Resource
+        Properties:
+            ParentId: !Ref UserResource
+            RestApiId: !Ref Api
+            PathPart: "register"
+
+    ProxyMethod:
+        Type: "AWS::ApiGateway::Method"
+        Properties:
+            HttpMethod: ANY
+            ResourceId: !Ref Resource
+            RestApiId: !Ref Api
+            AuthorizationType: COGNITO_USER_POOLS
+            AuthorizerId: !Ref CogAuthorizer
+            RequestParameters:
+                method.request.path.proxy: true
+            Integration:
+                CacheKeyParameters:
+                    - "method.request.path.proxy"
+                RequestParameters:
+                    integration.request.path.proxy: "method.request.path.proxy"
+                IntegrationHttpMethod: ANY
+                Type: HTTP_PROXY
+                Uri: !Sub http://${EC2Instance.PublicIp}/{proxy}
+
+    RegisterMethod:
+        Type: AWS::ApiGateway::Method
+        Properties:
+            HttpMethod: POST
+            ResourceId: !Ref RegisterResource
+            RestApiId: !Ref Api
+            AuthorizationType: NONE
+            Integration:
+                IntegrationHttpMethod: POST
+                Type: HTTP_PROXY
+                Uri: !Sub http://${EC2Instance.PublicIp}/users/register
+
+    Deployment:
+        DependsOn:
+            - ProxyMethod
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref Api
+            StageName: Prod
+
+Outputs:
+    BackendAPIURL:
+        Value: !Sub "https://${Api}.execute-api.${RegionName}.amazonaws.com/Prod"
+    UserPoolId:
+        Value: !Ref UserPool
+    UserPoolClientId:
+        Value: !Ref UserPoolClient
