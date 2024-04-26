@@ -8,4 +8,6 @@ langchain
 requests
 chromadb
 amazon-textract-caller
-psycopg2
+amazon-textract-response-parser
+amazon-textract-textractor
+psycopg2-binary

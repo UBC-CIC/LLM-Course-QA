@@ -2,7 +2,7 @@ import json
 from typing import Dict
 from langchain_community.llms.sagemaker_endpoint import LLMContentHandler, SagemakerEndpoint
 from langchain.prompts import PromptTemplate
-from ..extensions import profile_name, region_name, llm_endpoint_name, llm_inference_component_name
+from ..extensions import profile_name, region_name, llm_endpoint_name, llm_inference_component_name, environment
 
 class ContentHandler(LLMContentHandler):
     content_type = "application/json"
@@ -35,7 +35,7 @@ llm_open_args = {
     "content_handler": content_handler
 }
 
-if profile_name != '':
+if environment != 'production':
     llm_open_args["credentials_profile_name"] = profile_name
 
 llm_open = SagemakerEndpoint(**llm_open_args)
