@@ -17,5 +17,5 @@ To view a pricing estimate breakdown, see the [Pricing Estimate](./docs/PricingE
 # Credits
 This application was architected by Daniel Johnson, Hasan Embabi, Ilamparithi Imayavaramban, Ripdaman Malhans, and Shibo Jin with guidance from Professor Paul Lusina and the UBC Cloud Innovation Centre.
 
-# LICENSE
+# License
 This project is distributed under the [MIT License](./LICENSE).
