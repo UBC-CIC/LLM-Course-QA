@@ -11,7 +11,6 @@ def register(create_user_data):
     if user:
         return None
 
-    # get all users, if count is 0, make user admin
     users = get_users()
     role = Role.Student
     if len(users) == 0:
@@ -82,7 +81,7 @@ def get_users():
     users = User.query.all()
     user_objects = []
     for user in users:
-        role = "Admin" if str(user.role) == 'Role.Admin' else "instructor" if str(user.role) == 'Role.Instructor' else "Role.student"
+        role = "Admin" if str(user.role) == 'Role.Admin' else "Instructor" if str(user.role) == 'Role.Instructor' else "Student"
 
         user_objects.append({
             'id': user.id,

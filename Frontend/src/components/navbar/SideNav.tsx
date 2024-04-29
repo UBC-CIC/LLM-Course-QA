@@ -40,7 +40,7 @@ const SideNav = (props: SideNavProps) => {
         if (response.ok) {
             setLogo(`data:image/png;base64,${json.logo}`);
             setColour(json.colour);
-            console.log("logo: " + logo);
+            console.log("logo: " + json.logo);
         }
     }
 
@@ -66,7 +66,7 @@ const SideNav = (props: SideNavProps) => {
             className='h-screen w-28 border-r border-gray-200' style={{backgroundColor: colour}}>
             <div>
                 <div className="text-lg border-b p-2">
-                    <img src={logo} alt="Logo" />
+                    <img src={logo ? logo : "courseqa-logo.png"} alt="Logo" />
                 </div>
                 <nav>
                     {props.navItems.map((data) => (

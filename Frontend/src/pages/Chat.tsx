@@ -33,6 +33,7 @@ import {
   DialogTrigger,
   DialogDescription
 } from "@/components/dialog/Dialog"
+import Loading from "@/components/loading/Loading"
 
 
 export type Message = {
@@ -57,6 +58,8 @@ const Chat = () => {
   const [reason, setReason] = useState("")
   const [open, setOpen] = useState(false)
   const [sources, setSources] = useState<any[]>([])
+  const [loading, setLoading] = useState(true);
+  const [loadingFade, setLoadingFade] = useState(false);
 
   const inputLength = input.trim().length
 
@@ -103,6 +106,7 @@ const Chat = () => {
   const user = localStorage.getItem('user');
   const userId = user ? JSON.parse(user).id : null;
   const token = localStorage.getItem('token');
+
 
   const getMessages = async (conversation_id: string) => {
     setMessages([]);
@@ -188,6 +192,10 @@ const Chat = () => {
 
   useEffect(() => {
     getChatHistory();
+    setTimeout(() => {
+      setLoadingFade(true)
+      setTimeout(() => setLoading(false), 250)
+    }, 1000)
   }, [])
 
   return (
@@ -269,7 +277,7 @@ const Chat = () => {
                         {message.sources && message.role !== "user" && <Separator className="my-4" />}
                         {message.sources && message.role !== "user" && <div className="flex flex-row p-4">
                           {message.sources && message.sources.map((source: any, index: number) => (
-                            <a type="_blank" href={source}>Source {index+1}&nbsp;&nbsp;&nbsp;</a>
+                            <a type="_blank" href={source}>Source {index + 1}&nbsp;&nbsp;&nbsp;</a>
                           ))}
                         </div>}
                       </div>
@@ -331,7 +339,7 @@ const Chat = () => {
           </div>
         </div>
       </div>
-
+      {loading ? <Loading loadingFade={loadingFade} /> : ''}           
     </div>
 
   )
