@@ -17,8 +17,10 @@ import {
 import {
     Book,
     Settings
-  } from "lucide-react"
+} from "lucide-react"
 import React, { useState, useEffect } from "react";
+import Loading from "@/components/loading/Loading";
+
 
 const navItems: NavItem[] = [
     {
@@ -36,6 +38,9 @@ const navItems: NavItem[] = [
 const StudentDashboard = () => {
     const [courses, setCourses] = useState<any[]>([]);
     const [courseAccessCode, setCourseAccessCode] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [loadingFade, setLoadingFade] = useState(false);
+
     const getCourses = async () => {
         const user = localStorage.getItem('user');
         const userId = user ? JSON.parse(user).id : null;
@@ -59,6 +64,10 @@ const StudentDashboard = () => {
 
     useEffect(() => {
         getCourses();
+        setTimeout(() => {
+            setLoadingFade(true)
+            setTimeout(() => setLoading(false), 250)
+        }, 1000)
     }, []);
 
     const handleJoinCourse = async () => {
@@ -89,47 +98,50 @@ const StudentDashboard = () => {
     }
 
     return (
-        <div className='flex flex-row' >
-            <SideNav navItems={[
-            {
-                url: "/",
-                name: "Courses",
-                icon: <Book size={24} />,
-            },
-            // {
-            //     url: "/settings",
-            //     name: "Settings",
-            //     icon: <Settings size={24} />,
-            // },
-            ]}/>
-            <div className="my-0 mx-auto grid grid-cols-3 gap-24 p-12 overflow-auto h-screen">
-                <div>
-                    <Dialog>
-                        <DialogTrigger>
-                            <Button variant={'outline'} className='flex flex-col justify-center rounded-lg shadow-lg w-96 h-52 col-span-1'>
-                                <FontAwesomeIcon icon={faSignIn} size="2x" />
-                                <p className="text-center mt-2">Join Course</p>
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Join Course</DialogTitle>
-                                <DialogDescription>
-                                    Enter the share link to join a course
-                                </DialogDescription>
-                                <Input type="text" placeholder="Access Code" value={courseAccessCode} onChange={(e) => setCourseAccessCode(e.target.value)}/>
-                                <Button variant="default" className="w-full mt-4" onClick={handleJoinCourse}>Join Course</Button>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
-                </div>
-                {courses.map((course) => (
+        <>
+            <div className='flex flex-row' >
+                <SideNav navItems={[
+                    {
+                        url: "/",
+                        name: "Courses",
+                        icon: <Book size={24} />,
+                    },
+                    // {
+                    //     url: "/settings",
+                    //     name: "Settings",
+                    //     icon: <Settings size={24} />,
+                    // },
+                ]} />
+                <div className="my-0 mx-auto grid grid-cols-3 gap-24 p-12 overflow-auto h-screen">
                     <div>
-                        <CourseCard courseId={course.id} courseCode={course.course_code} courseSection={course.course_section} courseName={course.name} isInstructor={false} />
+                        <Dialog>
+                            <DialogTrigger>
+                                <Button variant={'outline'} className='flex flex-col justify-center rounded-lg shadow-lg w-96 h-52 col-span-1'>
+                                    <FontAwesomeIcon icon={faSignIn} size="2x" />
+                                    <p className="text-center mt-2">Join Course</p>
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Join Course</DialogTitle>
+                                    <DialogDescription>
+                                        Enter the share link to join a course
+                                    </DialogDescription>
+                                    <Input type="text" placeholder="Access Code" value={courseAccessCode} onChange={(e) => setCourseAccessCode(e.target.value)} />
+                                    <Button variant="default" className="w-full mt-4" onClick={handleJoinCourse}>Join Course</Button>
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
                     </div>
-                ))}
-            </div>
-        </div >
+                    {courses.map((course) => (
+                        <div>
+                            <CourseCard courseId={course.id} courseCode={course.course_code} courseSection={course.course_section} courseName={course.name} isInstructor={false} />
+                        </div>
+                    ))}
+                </div>
+            </div >
+            {loading ? <Loading loadingFade={loadingFade} /> : ''}
+        </>
     );
 };
 
