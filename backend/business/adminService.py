@@ -6,7 +6,6 @@ import base64
 
 def get_config():
     try:
-        print("getting config")
         with open('core/config/logo.png', 'rb') as image_file:
             encoded_logo = base64.b64encode(image_file.read()).decode('utf-8')
 
@@ -23,11 +22,18 @@ def get_config():
     }
 
 def update_config(update_config_data):
-    if 'logo' in update_config_data:
-        with open('core/config/logo.svg', 'wb') as f:
-            f.write(update_config_data['logo'])
+    if 'logo' in update_config_data and update_config_data['logo'] is not None:
+        logo_base64 = update_config_data['logo']
+        if logo_base64.startswith('data:image/png;base64,'):
+            logo_base64 = logo_base64.replace('data:image/png;base64,', '')
+        else:
+            return False
 
-    if 'primaryColour' in update_config_data:
+        logo_base64 = base64.b64decode(logo_base64)
+        with open('core/config/logo.png', 'wb') as f:
+            f.write(logo_base64)
+
+    if 'primaryColour' in update_config_data and update_config_data['primaryColour'] is not None:
         with open('core/config/colours.json', 'r') as f:
             colour_config = json.load(f)
 

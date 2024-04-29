@@ -6,19 +6,16 @@ from .web.queryController import queryBp
 from .web.userController import userBp
 from .web.adminController import adminBp
 from .web.reportController import reportBp
-from .extensions import db, login_manager, bcrypt, environment
+from .extensions import db, login_manager, bcrypt
+from .config import Config
 
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     CORS(app, resources={r"/*": {"origins": "*"}})
+    app.config['SQLALCHEMY_DATABASE_URI'] = Config.SQLALCHEMY_DATABASE_URI
     os.environ.get('FLASK_ENV')
-    app.secret_key = 'pl40'
-    if environment == 'production':
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://' + os.environ.get('postgres_username') + ':' + os.environ.get('postgres_password') + '@' + os.environ.get('postgres_hostname') + ':' + os.environ.get('postgres_port') + '/' + os.environ.get('postgres_database_name')
-    else:
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/course-qa'
     app.register_blueprint(courseBp)
     app.register_blueprint(queryBp)
     app.register_blueprint(userBp)

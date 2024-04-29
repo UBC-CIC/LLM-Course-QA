@@ -1,5 +1,4 @@
 from flask_login import login_user, logout_user
-
 from ..data.models.user import User, Role
 from ..extensions import db, bcrypt
 from .courseService import get_course

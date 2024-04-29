@@ -1,5 +1,5 @@
 # User Guide
-**Before Continuing with this User Guide, please make sure you have deployed the application**
+**Before continuing with this User Guide, please follow the steps outlined in the deployment guide.**
 - [Deployment Guide](./DeploymentGuide.md)
 
 | Index                                       | Description                                                               |
@@ -53,6 +53,25 @@ Upon signing in with an "Instructor" account, the instructor can view the course
 
 Clicking on the "Add Course" button allows the user to create a new course.
 ![Create Course Page](images/instructor-add-course.png)
+
+**Upload Screen**
+
+After clicking on the upload button for a given course, the user can upload course specific documents which will form the knowledge base of the chat bot.
+![Upload Page](images/upload.png)
+
+**Enrolled Students Screen**
+
+After clicking on the invite button for a given course, the user can view the list of students enrolled in the course.
+![Enrolled Students Page](images/enrolled-students.png)
+
+Clicking on the "Invite Users" button allows the instructor to copy an access code which should be distributed to the students of the course.
+![Create Course Page](images/invite-user.png)
+
+**Report Screen**
+
+After clicking on the reports tab on the side navigation bar, the instructor can view reported conversations and make changes to the course documents accordingly.
+![View Reports Page](images/view-report.png)
+
 
 ## Student View
 **Courses Screen**
