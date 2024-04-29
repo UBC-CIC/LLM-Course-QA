@@ -79,7 +79,7 @@ const AdminSettings = () => {
             new_password: newPassword,
         }
 
-        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, { 
+        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -111,11 +111,11 @@ const AdminSettings = () => {
                     name: "Users",
                     icon: <SquareUser size={24} />,
                 },
-                // {
-                //     url: "/settings",
-                //     name: "Settings",
-                //     icon: <Settings size={24} />,
-                // },
+                {
+                    url: "/settings",
+                    name: "Settings",
+                    icon: <Settings size={24} />,
+                },
             ]} />
             <div className="p-6 pt-12 w-screen">
                 <div className="flex justify-between items-center">
@@ -146,31 +146,6 @@ const AdminSettings = () => {
                                 <BlockPicker color={color} onChange={handleColorChange} />
                             </PopoverContent>
                         </Popover>
-                    </div>
-                </div>
-
-                <div className="border-b border-gray-200 mt-6">
-                    <div className="flex items-center mt-8">
-                        <h3 className="text-lg mr-6 w-40">Username</h3>
-                        <Input className="w-70" placeholder="admin01" />
-                    </div>
-                    <div >
-                        <Dialog open={open} onOpenChange={setOpen}>
-                            <DialogTrigger>
-                                <Button variant={'outline'} className='w-64 my-8'>
-                                    <p className="text-center">Change Password</p>
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>Change Password</DialogTitle>
-                                    <Input type="text" placeholder="Current Password" onChange={(e) => setCurrentPassword(e.target.value)} />
-                                    <Input type="text" placeholder="New Password" onChange={(e) => setNewPassword(e.target.value)} />
-                                    <Input type="text" placeholder="Re-Enter Password" onChange={(e) => setComparePassword(e.target.value)} />
-                                    <Button variant="default" className="w-full mt-4" onClick={handleChangePassword}>Change Password</Button>
-                                </DialogHeader>
-                            </DialogContent>
-                        </Dialog>
                     </div>
                 </div>
             </div>

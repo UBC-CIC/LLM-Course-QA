@@ -66,7 +66,7 @@ const SideNav = (props: SideNavProps) => {
             className='h-screen w-28 border-r border-gray-200' style={{backgroundColor: colour}}>
             <div>
                 <div className="text-lg border-b p-2">
-                    <img src="/ubclogo.png" alt="Logo" />
+                    <img src={logo} alt="Logo" />
                 </div>
                 <nav>
                     {props.navItems.map((data) => (
