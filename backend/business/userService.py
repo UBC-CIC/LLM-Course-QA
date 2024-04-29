@@ -81,7 +81,7 @@ def get_users():
     users = User.query.all()
     user_objects = []
     for user in users:
-        role = "Admin" if str(user.role) == 'Role.Admin' else "instructor" if str(user.role) == 'Role.Instructor' else "Role.student"
+        role = "Admin" if str(user.role) == 'Role.Admin' else "Instructor" if str(user.role) == 'Role.Instructor' else "Student"
 
         user_objects.append({
             'id': user.id,
