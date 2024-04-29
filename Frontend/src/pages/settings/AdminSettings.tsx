@@ -22,6 +22,7 @@ const AdminSettings = () => {
     const [error, setError] = React.useState(false);
     const [loading, setLoading] = React.useState(true);
     const [loadingFade, setLoadingFade] = React.useState(false);
+    const token = localStorage.getItem('token');
 
     const handleColorChange = (color: any) => {
         setColor(color.hex);
@@ -64,6 +65,8 @@ const AdminSettings = () => {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
+
             },
             body: JSON.stringify(requestBody),
         });
@@ -82,7 +85,8 @@ const AdminSettings = () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
             },
         });
 

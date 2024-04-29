@@ -38,7 +38,7 @@ import Loading from '@/components/loading/Loading';
 interface UserData {
     id: string;
     name: string;
-    role: 'student' | 'instructor' | 'admin';
+    role: 'Student' | 'Instructor' | 'Admin';
 }
 
 const InstitutionUsers = () => {
@@ -72,7 +72,7 @@ const InstitutionUsers = () => {
         setTimeout(() => {
             setLoadingFade(true)
             setTimeout(() => setLoading(false), 250)
-        }, 1000)    
+        }, 1200)
     }, []);
 
     const handleDelete = (userId: string) => async () => {
@@ -156,7 +156,7 @@ const InstitutionUsers = () => {
                                 <TableRow>
                                     <TableCell>{data.name}</TableCell>
                                     <TableCell>
-                                        <Badge className={`${data.role === 'student' ? 'bg-blue-600' : data.role === 'instructor' ? 'bg-yellow-600' : 'bg-green-600'}`}>{data.role}</Badge>
+                                        <Badge className={`${data.role === 'Student' ? 'bg-blue-600' : data.role === 'Instructor' ? 'bg-yellow-600' : 'bg-green-600'}`}>{data.role}</Badge>
                                     </TableCell>
                                     <Dialog>
                                         <DialogTrigger>

@@ -195,7 +195,7 @@ const Chat = () => {
     setTimeout(() => {
       setLoadingFade(true)
       setTimeout(() => setLoading(false), 250)
-    }, 1000)
+    }, 1200)
   }, [])
 
   return (
@@ -339,7 +339,7 @@ const Chat = () => {
           </div>
         </div>
       </div>
-      {loading ? <Loading loadingFade={loadingFade} /> : ''}           
+      {loading ? <Loading loadingFade={loadingFade} /> : ''}
     </div>
 
   )

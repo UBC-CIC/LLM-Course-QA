@@ -67,7 +67,7 @@ const StudentDashboard = () => {
         setTimeout(() => {
             setLoadingFade(true)
             setTimeout(() => setLoading(false), 250)
-        }, 1000)
+        }, 1200)
     }, []);
 
     const handleJoinCourse = async () => {
