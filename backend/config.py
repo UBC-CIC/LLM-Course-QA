@@ -13,7 +13,7 @@ class Config:
         REGION_NAME = '' # input for local testing
         BUCKET_NAME = '' # input for local testing
         SESSION = boto3.Session(profile_name=PROFILE_NAME, region_name=REGION_NAME)
-        SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost/course-qa'
+        SQLALCHEMY_DATABASE_URI = ''
     else:
         REGION_NAME = os.environ.get('region_name')
         SESSION = boto3.Session(region_name=REGION_NAME)
