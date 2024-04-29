@@ -34,12 +34,20 @@ Parameters:
     SecretId:
         Type: String
         Description: Secret manager secret id
+    DBUserKey:
+        Type: String
+        Default: DBUser
+        Description: Secret manager key for DB user
+    DBPasswordKey:
+        Type: String
+        Default: DBPassword
+        Description: Secret manager key for DB password
 
 Resources:
-    MyIAMRole:
+    IAMRole:
         Type: AWS::IAM::Role
         Properties:
-            RoleName: MyIAMRole
+            RoleName: CourseQA
             AssumeRolePolicyDocument:
                 Version: "2012-10-17"
                 Statement:
@@ -89,12 +97,12 @@ Resources:
                                 - secretsmanager:*
                             Resource: "*"
 
-    MyInstanceProfile:
+    InstanceProfile:
         Type: AWS::IAM::InstanceProfile
         Properties:
             Path: "/"
             Roles:
-                - !Ref MyIAMRole
+                - !Ref IAMRole
 
     VPC:
         Type: AWS::EC2::VPC
@@ -103,6 +111,36 @@ Resources:
             EnableDnsHostnames: true
             EnableDnsSupport: true
             InstanceTenancy: default
+
+    Subnet1:
+        Type: AWS::EC2::Subnet
+        Properties:
+            VpcId: !Ref VPC
+            CidrBlock: 10.0.0.0/24
+            MapPublicIpOnLaunch: true
+            AvailabilityZone: !Select
+                - 0
+                - !GetAZs ""
+
+    Subnet2:
+        Type: AWS::EC2::Subnet
+        Properties:
+            VpcId: !Ref VPC
+            CidrBlock: 10.0.1.0/24
+            MapPublicIpOnLaunch: true
+            AvailabilityZone: !Select
+                - 0
+                - !GetAZs ""
+
+    Subnet3:
+        Type: AWS::EC2::Subnet
+        Properties:
+            VpcId: !Ref VPC
+            CidrBlock: 10.0.2.0/24
+            MapPublicIpOnLaunch: true
+            AvailabilityZone: !Select
+                - 1
+                - !GetAZs ""
 
     InternetGateway:
         Type: AWS::EC2::InternetGateway
@@ -136,36 +174,6 @@ Resources:
             SubnetId: !Ref Subnet1
             RouteTableId: !Ref Subnet1RouteTable
 
-    Subnet1:
-        Type: AWS::EC2::Subnet
-        Properties:
-            VpcId: !Ref VPC
-            CidrBlock: 10.0.0.0/24
-            MapPublicIpOnLaunch: true
-            AvailabilityZone: !Select
-                - 0
-                - !GetAZs ""
-
-    Subnet2:
-        Type: AWS::EC2::Subnet
-        Properties:
-            VpcId: !Ref VPC
-            CidrBlock: 10.0.1.0/24
-            MapPublicIpOnLaunch: true
-            AvailabilityZone: !Select
-                - 0
-                - !GetAZs ""
-
-    Subnet3:
-        Type: AWS::EC2::Subnet
-        Properties:
-            VpcId: !Ref VPC
-            CidrBlock: 10.0.1.0/24
-            MapPublicIpOnLaunch: true
-            AvailabilityZone: !Select
-                - 1
-                - !GetAZs ""
-
     RDSInstanceSecurityGroup:
         Type: AWS::EC2::SecurityGroup
         Properties:
@@ -192,8 +200,8 @@ Resources:
             Engine: "postgres"
             DBInstanceClass: !Ref DBInstanceClass
             AllocatedStorage: "20"
-            MasterUsername: !Sub "{{resolve:secretsmanager:${SecretId}:SecretString:DBUser}}"
-            MasterUserPassword: !Sub "{{resolve:secretsmanager:${SecretId}:SecretString:DBPassword}}"
+            MasterUsername: !Sub "{{resolve:secretsmanager:${SecretId}:SecretString:${DBUserKey}}}"
+            MasterUserPassword: !Sub "{{resolve:secretsmanager:${SecretId}:SecretString:${DBPasswordKey}}}"
             DBSubnetGroupName: !Ref DBSubnetGroup
             MultiAZ: false
             VPCSecurityGroups:
@@ -202,7 +210,6 @@ Resources:
     EC2Instance:
         Type: AWS::EC2::Instance
         Properties:
-            KeyName: EC2
             ImageId: "ami-0395649fbe870727e"
             SubnetId: !Ref Subnet1
             InstanceType: "t2.micro"
@@ -217,6 +224,8 @@ Resources:
                     sudo docker pull ilamparithi10/cic-course-qa-backend
                     sudo docker run -d \
                         -e secret_id=${SecretId} \
+                        -e db_user_key=${DBUserKey} \
+                        -e db_password_key=${DBPasswordKey} \
                         -e postgres_hostname=${DBInstance.Endpoint.Address} \
                         -e postgres_port=5432 \
                         -e postgres_database_name=${DBName} \
@@ -228,7 +237,7 @@ Resources:
                         -p 80:5000 \
                         -p 5432:5432 \
                         ${DockerImageName}
-            IamInstanceProfile: !Ref MyInstanceProfile
+            IamInstanceProfile: !Ref InstanceProfile
 
     EC2SecurityGroup:
         Type: AWS::EC2::SecurityGroup
@@ -358,7 +367,7 @@ Resources:
                     integration.request.path.proxy: "method.request.path.proxy"
                 IntegrationHttpMethod: ANY
                 Type: HTTP_PROXY
-                Uri: !Sub http://34.213.63.0:5000/{proxy}
+                Uri: !Sub http://${EC2Instance.PublicIp}/{proxy}
 
     RegisterMethod:
         Type: "AWS::ApiGateway::Method"
@@ -370,7 +379,7 @@ Resources:
             Integration:
                 IntegrationHttpMethod: POST
                 Type: HTTP_PROXY
-                Uri: !Sub http://34.213.63.0:5000/users/register
+                Uri: !Sub http://${EC2Instance.PublicIp}/users/register
 
     # Enabling cors ref: https://stackoverflow.com/questions/40292888/enable-cors-for-api-gateway-in-cloudformation-template
     RegisterOptionsMethod:
@@ -434,6 +443,9 @@ Resources:
     Deployment:
         DependsOn:
             - ProxyMethod
+            - RegisterMethod
+            - RegisterOptionsMethod
+            - ProxyOptionsMethod
         Type: "AWS::ApiGateway::Deployment"
         Properties:
             RestApiId: !Ref Api
