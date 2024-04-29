@@ -33,6 +33,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/select/Select"
+import Loading from '@/components/loading/Loading';
 
 interface UserData {
     id: string;
@@ -41,9 +42,11 @@ interface UserData {
 }
 
 const InstitutionUsers = () => {
-    // const { id } = useParams<{ id: string }>()
     const [users, setUsers] = useState<any[]>([]);
     const [selectedRole, setSelectedRole] = useState<string>('');
+    const [loading, setLoading] = useState(true);
+    const [loadingFade, setLoadingFade] = useState(false);
+
     const token = localStorage.getItem('token');
 
     const getAllUsers = async () => {
@@ -66,6 +69,10 @@ const InstitutionUsers = () => {
 
     useEffect(() => {
         getAllUsers();
+        setTimeout(() => {
+            setLoadingFade(true)
+            setTimeout(() => setLoading(false), 250)
+        }, 1000)    
     }, []);
 
     const handleDelete = (userId: string) => async () => {
@@ -125,11 +132,11 @@ const InstitutionUsers = () => {
                         name: "Users",
                         icon: <SquareUser size={24} />,
                     },
-                    // {
-                    //     url: "/settings",
-                    //     name: "Settings",
-                    //     icon: <Settings size={24} />,
-                    // },
+                    {
+                        url: "/settings",
+                        name: "Settings",
+                        icon: <Settings size={24} />,
+                    },
                 ]} />
                 <ScrollArea className="h-screen w-full rounded-md border pl-12 pr-12 pt-12">
                     <div className="flex justify-between items-center mt-2">
@@ -188,6 +195,7 @@ const InstitutionUsers = () => {
                     </Table>
                 </ScrollArea>
             </div>
+            {loading ? <Loading loadingFade={loadingFade} /> : ''}
         </>
     );
 };

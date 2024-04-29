@@ -14,6 +14,7 @@ import {
     CardContent,
     CardHeader,
 } from "@/components/card.tsx"
+import Loading from "@/components/loading/Loading"
 
 export type Message = {
     role: string;
@@ -34,6 +35,8 @@ const Reports = () => {
     const [courseName, setCourseName] = useState("")
     const [bubbles, setBubbles] = useState(false)
     const [reason, setReason] = useState("")
+    const [loading, setLoading] = useState(true);
+    const [loadingFade, setLoadingFade] = useState(false);
 
     const user = localStorage.getItem('user');
     const userId = user ? JSON.parse(user).id : null;
@@ -117,88 +120,94 @@ const Reports = () => {
 
     useEffect(() => {
         getReports();
+        setTimeout(() => {
+            setLoadingFade(true)
+            setTimeout(() => setLoading(false), 250)
+        }, 1000)
     }, [])
 
     return (
-        <div className="flex flex-row">
-            <SideNav navItems={[
-                {
-                    url: "/dashboard",
-                    name: "Courses",
-                    icon: <Book size={24} />,
-                },
-                {
-                    url: "/reports",
-                    name: "Reports",
-                    icon: <OctagonAlert size={24} />,
-                },
-                // {
-                //     url: "/settings",
-                //     name: "Settings",
-                //     icon: <Settings size={24} />,
-                // },
-            ]} />
+        <>
+            <div className="flex flex-row">
+                <SideNav navItems={[
+                    {
+                        url: "/dashboard",
+                        name: "Courses",
+                        icon: <Book size={24} />,
+                    },
+                    {
+                        url: "/reports",
+                        name: "Reports",
+                        icon: <OctagonAlert size={24} />,
+                    },
+                    // {
+                    //     url: "/settings",
+                    //     name: "Settings",
+                    //     icon: <Settings size={24} />,
+                    // },
+                ]} />
 
-            <div className="flex h-screen w-screen">
-                <div className="text-white w-64 flex-none">
-                    <>
-                        <aside className="text-black w-64 flex-none h-screen overflow-y-auto p-5">
-                            <h2 className="text-xl">Reports</h2>
-                            <ul>
-                                <Separator className="my-4" />
-                                {reports && reports.map((report: any) => (
-                                    <li key={report.conversation_id} className="mb-2 truncate cursor-pointer">
-                                        <div className="flex flex-row">
-                                            <p className="w-10/12 truncate" onClick={() => handleReportClick(report.conversation_id, report.course_code, report.reason)}>{report.reason}</p>
-                                            <Trash2Icon className="ml-auto text-red-600 hover:animate-pulse" onClick={deleteReport(report.report_id)}/>
-                                        </div>
-                                        <Separator className="my-4" />
-                                    </li>
-                                ))}
-                            </ul>
-                        </aside>
-                    </>
-                </div>
-                <div className="flex flex-col flex-grow overflow-hidden">
-                    <div className="flex-grow overflow-auto">
-                        {/* Modified from: https://github.com/shadcn-ui/ui */}
-                        <div className={'h-full w-full overflow-auto'}>
-                            <Card className={`w-full h-full flex flex-col`}>
-                                <CardHeader className="flex flex-row items-center ">
-                                    <div className="flex items-center space-x-4 w-full">
-                                        {reason && <div className="w-full">
-                                            <p className="text-xl font-medium leading-none mb-4">{courseName}</p>
-                                            <p className="text-md leading-none mb-4 leading-6"><strong>Report Reason: </strong>{reason}</p>
-                                            <Separator className="my-4 w-full" />
-                                        </div>}
-                                    </div>
-                                </CardHeader>
-
-                                <CardContent className="flex-1 overflow-auto">
-                                    <div className="space-y-4">
-                                        {messages && messages.map((message, index) => (
-                                            <div
-                                                key={index}
-                                                className={cn(
-                                                    "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
-                                                    message.role === "user"
-                                                        ? "ml-auto bg-primary text-primary-foreground"
-                                                        : "bg-muted"
-                                                )}
-                                            >
-                                                {message.message}
+                <div className="flex h-screen w-screen">
+                    <div className="text-white w-64 flex-none">
+                        <>
+                            <aside className="text-black w-64 flex-none h-screen overflow-y-auto p-5">
+                                <h2 className="text-xl">Reports</h2>
+                                <ul>
+                                    <Separator className="my-4" />
+                                    {reports && reports.map((report: any) => (
+                                        <li key={report.conversation_id} className="mb-2 truncate cursor-pointer">
+                                            <div className="flex flex-row">
+                                                <p className="w-10/12 truncate" onClick={() => handleReportClick(report.conversation_id, report.course_code, report.reason)}>{report.reason}</p>
+                                                <Trash2Icon className="ml-auto text-red-600 hover:animate-pulse" onClick={deleteReport(report.report_id)} />
                                             </div>
-                                        ))}
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                            <Separator className="my-4" />
+                                        </li>
+                                    ))}
+                                </ul>
+                            </aside>
+                        </>
+                    </div>
+                    <div className="flex flex-col flex-grow overflow-hidden">
+                        <div className="flex-grow overflow-auto">
+                            {/* Modified from: https://github.com/shadcn-ui/ui */}
+                            <div className={'h-full w-full overflow-auto'}>
+                                <Card className={`w-full h-full flex flex-col`}>
+                                    <CardHeader className="flex flex-row items-center ">
+                                        <div className="flex items-center space-x-4 w-full">
+                                            {reason && <div className="w-full">
+                                                <p className="text-xl font-medium leading-none mb-4">{courseName}</p>
+                                                <p className="text-md leading-none mb-4 leading-6"><strong>Report Reason: </strong>{reason}</p>
+                                                <Separator className="my-4 w-full" />
+                                            </div>}
+                                        </div>
+                                    </CardHeader>
+
+                                    <CardContent className="flex-1 overflow-auto">
+                                        <div className="space-y-4">
+                                            {messages && messages.map((message, index) => (
+                                                <div
+                                                    key={index}
+                                                    className={cn(
+                                                        "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
+                                                        message.role === "user"
+                                                            ? "ml-auto bg-primary text-primary-foreground"
+                                                            : "bg-muted"
+                                                    )}
+                                                >
+                                                    {message.message}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
-
-        </div>
-
+            {loading ? <Loading loadingFade={loadingFade} /> : ''}
+        </>
     )
 }
 

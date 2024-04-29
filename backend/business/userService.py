@@ -10,7 +10,6 @@ def register(create_user_data):
     if user:
         return None
 
-    # get all users, if count is 0, make user admin
     users = get_users()
     role = Role.Student
     if len(users) == 0:

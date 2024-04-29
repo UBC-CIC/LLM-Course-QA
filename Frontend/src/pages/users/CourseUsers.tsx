@@ -6,12 +6,9 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom"
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faPlus, faCopy } from '@fortawesome/free-solid-svg-icons';
-
 import {
     Book,
-    Settings,
 } from "lucide-react"
-
 import {
     Dialog,
     DialogContent,
@@ -22,6 +19,7 @@ import {
 } from "@/components/dialog/Dialog"
 import { Button } from "@/components/button/Button";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Loading from '@/components/loading/Loading';
 
 interface UserData {
     id: string;
@@ -34,6 +32,8 @@ const CourseUsers = () => {
     const [users, setUsers] = useState<any[]>([]);
     const [accessCode, setAccessCode] = useState<string>('');
     const token = localStorage.getItem('token');
+    const [loading, setLoading] = useState(true);
+    const [loadingFade, setLoadingFade] = useState(false);
 
     const getEnrolledStudents = async () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/courses/${id}/users`, {
@@ -56,6 +56,10 @@ const CourseUsers = () => {
 
     useEffect(() => {
         getEnrolledStudents();
+        setTimeout(() => {
+            setLoadingFade(true)
+            setTimeout(() => setLoading(false), 250)
+        }, 1000)
     }, []);
 
     const handleDelete = (studentId: string) => async () => {
@@ -147,7 +151,7 @@ const CourseUsers = () => {
                     </Table>
                 </ScrollArea>
             </div>
-
+            {loading ? <Loading loadingFade={loadingFade} /> : ''}                
         </>
     );
 };

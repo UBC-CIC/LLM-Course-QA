@@ -35,6 +35,7 @@ import {
 } from "@/components/select/Select"
 
 import { Input } from "@/components/input/Input";
+import Loading from '@/components/loading/Loading';
 
 
 type CourseData = {
@@ -57,7 +58,8 @@ const AdminDashboard = () => {
     const [selectedCourseId, setSelectedCourseId] = useState<string>('');
     const [open, setOpen] = useState(false);
     const [openAddCourse, setOpenAddCourse] = useState(false);
-
+    const [loading, setLoading] = useState(true);
+    const [loadingFade, setLoadingFade] = useState(false);
 
     const user = localStorage.getItem('user');
     const userId = user ? JSON.parse(user).id : null;
@@ -101,12 +103,13 @@ const AdminDashboard = () => {
     useEffect(() => {
         getAllCourses();
         getAllInstructors();
+        setTimeout(() => {
+            setLoadingFade(true)
+            setTimeout(() => setLoading(false), 250)
+        }, 1000)
     }, []);
 
     const updateCourse = async () => {
-
-        console.log("Update course")
-
         if (!selectedCourseCode || !selectedCourseName || !selectedCourseSection || !selectedCourseDescription) {
             setAssignedInstructor('');
             setSelectedCourseCode('');
@@ -203,11 +206,11 @@ const AdminDashboard = () => {
                         name: "Users",
                         icon: <SquareUser size={24} />,
                     },
-                    // {
-                    //     url: "/settings",
-                    //     name: "Settings",
-                    //     icon: <Settings size={24} />,
-                    // },
+                    {
+                        url: "/settings",
+                        name: "Settings",
+                        icon: <Settings size={24} />,
+                    },
                 ]} />
                 <ScrollArea className="h-screen w-full rounded-md border pl-12 pr-12 pt-12">
                     <div className="flex justify-between items-center mt-2">
@@ -220,7 +223,7 @@ const AdminDashboard = () => {
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
-                                    <DialogTitle>Edit Course</DialogTitle>
+                                    <DialogTitle>Create Course</DialogTitle>
                                     <DialogDescription>
                                         <Select onValueChange={inst => setAssignedInstructor(inst)}>
                                             <SelectTrigger>
@@ -288,6 +291,7 @@ const AdminDashboard = () => {
                     </Table>
                 </ScrollArea>
             </div>
+            {loading ? <Loading loadingFade={loadingFade} /> : ''}
         </>
     );
 };
