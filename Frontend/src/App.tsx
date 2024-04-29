@@ -28,15 +28,12 @@ function App() {
       });
       const json = await response.json();
       if (response.ok) {
-        console.log('Role fetched successfully: ' + json.role);
         setRole(json.role);
         localStorage.setItem('role', json.role);
       }
     };
     getUserRole();
   }
-
-  console.log("role: " + role)
 
   return (
     <>
@@ -49,7 +46,7 @@ function App() {
           <Route path="/upload/:id" element={role ? (role === "Instructor" ? <UploadFile /> : <Navigate to="/" />) : <Navigate to="/" />} />
           <Route path="/chat" element={role ? (role === "Student" ? <Chat /> : (role === "Instructor" ? <Chat /> : <Navigate to="/" />)) : <Navigate to="/" />} />
           <Route path="/chat/:id" element={role ? (role === "Student" ? <Chat /> : (role === "Instructor" ? <Chat /> : <Navigate to="/" />)) : <Navigate to="/" />} />
-          <Route path="/settings" element={<AdminSettings />} />
+          <Route path="/settings" element={role ? (role === "Admin" ? <AdminSettings /> : <Navigate to="/" />) : <Navigate to="/" />} />
           <Route path="/users" element={role ? (role === "Admin" ? <InstitutionUsers /> : <Navigate to="/" />) : <Navigate to="/" />} />
           <Route path="/users/:id" element={role ? (role === "Instructor" ? <CourseUsers /> : <Navigate to="/users" />) : <Navigate to="/" />} />
           <Route path="/reports" element={role ? (role === "Instructor" ? <Reports /> : <Navigate to="/" />) : <Navigate to="/" />} />

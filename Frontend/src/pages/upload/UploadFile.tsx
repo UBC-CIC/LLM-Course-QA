@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import SideNav from '@/components/navbar/SideNav';
+import Loading from '@/components/loading/Loading';
 
 type CourseData = {
     id: string;
@@ -27,6 +28,8 @@ const UploadFile = () => {
     const { id } = useParams<{ id: string }>()
     const [files, setFiles] = useState<any[]>([]);
     const token = localStorage.getItem('token');
+    const [loading, setLoading] = useState(true);
+    const [loadingFade, setLoadingFade] = useState(false);
 
     useEffect(() => {
         const getFiles = async () => {
@@ -48,6 +51,10 @@ const UploadFile = () => {
         }
 
         getFiles();
+        setTimeout(() => {
+            setLoadingFade(true)
+            setTimeout(() => setLoading(false), 250)
+        }, 1000)
     }, []);
 
     const inputFile = useRef<HTMLInputElement>(null);
@@ -66,7 +73,6 @@ const UploadFile = () => {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'Content-Type': 'multipart/form-data',
                     'Authorization': 'Bearer ' + token
                 }
             });
@@ -147,6 +153,7 @@ const UploadFile = () => {
                     </Table>
                 </ScrollArea>
             </div>
+            {loading ? <Loading loadingFade={loadingFade} /> : ''}
         </>
     );
 };
