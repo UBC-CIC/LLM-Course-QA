@@ -6,14 +6,15 @@ from .web.queryController import queryBp
 from .web.userController import userBp
 from .web.adminController import adminBp
 from .web.reportController import reportBp
-from .extensions import db, login_manager, bcrypt, environment
+from .extensions import db, login_manager, bcrypt
+from .config import Config
 
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_object('config.Config')
     CORS(app, resources={r"/*": {"origins": "*"}})
+    app.config['SQLALCHEMY_DATABASE_URI'] = Config.SQLALCHEMY_DATABASE_URI
     os.environ.get('FLASK_ENV')
     app.register_blueprint(courseBp)
     app.register_blueprint(queryBp)

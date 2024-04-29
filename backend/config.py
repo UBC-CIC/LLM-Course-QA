@@ -6,7 +6,7 @@ import json
 class Config:
     ENVIRONMENT = os.environ.get('environment') 
     if ENVIRONMENT != 'production':
-        PROFILE_NAME = '' # input for local testing
+        PROFILE_NAME = 'parithi' # input for local testing
         EMBEDDING_ENDPOINT_NAME = '' # input for local testing
         LLM_ENDPOINT_NAME = '' # input for local testing
         LLM_INFERENCE_COMPONENT_NAME = '' # input for local testing
