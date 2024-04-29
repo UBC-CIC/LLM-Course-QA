@@ -2,7 +2,8 @@ from langchain_community.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from ..data.models.conversation import Conversation
 from ..data.models.query import Query
-from ..extensions import db, vecdb, session
+from ..extensions import db, vecdb
+from ..app import app
 from .embeddingService import query_embedding
 from .generationService import llm_open, prompt
 from .courseService import get_course
@@ -44,7 +45,7 @@ def query_llm(query_data):
     )
     db.session.add(query)
     db.session.commit()
-    s3 = session.client('s3')
+    s3 = app.config['SESSION'].client('s3')
     sources = []
     for source in llm_response["source_documents"]:
         s3_presigned_data = split_s3_url(source.metadata['source'])

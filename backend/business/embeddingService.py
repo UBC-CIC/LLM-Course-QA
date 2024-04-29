@@ -2,7 +2,8 @@ import json
 from typing import Dict, List
 from langchain_community.embeddings import SagemakerEndpointEmbeddings
 from langchain_community.embeddings.sagemaker_endpoint import EmbeddingsContentHandler
-from ..extensions import profile_name, embedding_endpoint_name, region_name, environment
+from ..app import app
+# profile_name, embedding_endpoint_name, region_name, environment
 # embedding model object
 # ref:
 class ContentHandler(EmbeddingsContentHandler):
@@ -22,14 +23,14 @@ content_handler = ContentHandler()
 
 # Conditionally include credentials_profile_name based on profile_name
 embedding_args = {
-    "endpoint_name": embedding_endpoint_name,
-    "region_name": region_name,
+    "endpoint_name": app.config['EMBEDDING_ENDPOINT_NAME'],
+    "region_name": app.config['REGION_NAME'],
     "content_handler": content_handler,
     "endpoint_kwargs": {"CustomAttributes": "accept_eula=true"}
 }
 
-if environment != 'production':
-    embedding_args["credentials_profile_name"] = profile_name
+if app.config['ENVIRONMENT'] != 'production':
+    embedding_args["credentials_profile_name"] = app.config['PROFILE_NAME']
 
 embedding = SagemakerEndpointEmbeddings(**embedding_args)
 
@@ -52,13 +53,13 @@ query_content_handler = QueryContentHandler()
 
 # Conditionally include credentials_profile_name based on profile_name
 query_embedding_args = {
-    "endpoint_name": embedding_endpoint_name,
-    "region_name": region_name,
+    "endpoint_name": app.config['EMBEDDING_ENDPOINT_NAME'],
+    "region_name": app.config['REGION_NAME'],
     "content_handler": query_content_handler,
     "endpoint_kwargs": {"CustomAttributes": "accept_eula=true"}
 }
 
-if environment != 'production':
-    query_embedding_args["credentials_profile_name"] = profile_name
+if app.config['ENVIRONMENT'] != 'production':
+    embedding_args["credentials_profile_name"] = app.config['PROFILE_NAME']
 
 query_embedding = SagemakerEndpointEmbeddings(**query_embedding_args)

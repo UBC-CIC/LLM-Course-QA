@@ -1,7 +1,8 @@
 from ..data.models.course import Course
 from ..data.models.user import User, Role
 from ..data.models.document import Document, StatusEnum
-from ..extensions import db, vecdb, session
+from ..extensions import db, vecdb
+from ..app import app
 from langchain_community.vectorstores import Chroma
 from . import extractionService
 from .embeddingService import embedding
@@ -39,8 +40,8 @@ def create_course(create_course_data):
         add_course_to_admins(course)
 
         # Creates s3 bucket for course
-        s3 = session.client('s3')
-        s3.put_object(Bucket='institutionname', Key=str(course.id) + "/")
+        s3 = app.config['SESSION'].client('s3')
+        s3.put_object(Bucket=app.config['BUCKET_NAME'], Key=str(course.id) + "/")
         # Creates collection in vector store
         vecdb.create_collection(str(course.id))
     except:
@@ -64,8 +65,8 @@ def delete_course(course_delete_data):
     course = Course.query.get(course_delete_data['course_id'])
     if course:
         # Deletes course from s3
-        s3 = session.client('s3')
-        s3.delete_object(Bucket='institutionname', Key=str(course.id) + "/")
+        s3 = app.config['SESSION'].client('s3')
+        s3.delete_object(Bucket=app.config['BUCKET_NAME'], Key=str(course.id) + "/")
         db.session.delete(course)
         # Deletes collection from vector store
         vecdb.delete_collection(str(course.id))
@@ -92,7 +93,7 @@ def upload_course_document(course_document_data):
     if not file or file.content_type != 'application/pdf':
         return False
     try:
-        s3 = session.client('s3')
+        s3 = app.config['SESSION'].client('s3')
         count = 0
         new_filename = file.filename
 
@@ -116,11 +117,11 @@ def upload_course_document(course_document_data):
         )
         db.session.add(document)
         db.session.commit()
-        s3.upload_fileobj(file, 'institutionname', str(document.course_id) + "/" + file.filename,
+        s3.upload_fileobj(file, app.config['BUCKET_NAME'], str(document.course_id) + "/" + file.filename,
                           ExtraArgs={'Metadata': {'course_id': str(document.course_id),
                                                   'document_id': str(document.id)}})
 
-        s3_url = "s3://institutionname/" + str(course_document_data['course_id']) + "/" + file.filename
+        s3_url = "s3://" + app.config['BUCKET_NAME'] + "/" + str(course_document_data['course_id']) + "/" + file.filename
         # add document to vector store
         thread = threading.Thread(target=vectorize_documents, args=(str(document.course_id), s3_url, str(document.id),))
         thread.start()
@@ -140,9 +141,9 @@ def upload_course_document(course_document_data):
 def delete_course_document(course_document_data):
     document = Document.query.get(course_document_data['document_id'])
     if document:
-        s3 = session.client('s3')
-        s3_url = "s3://institutionname/" + str(document.course_id) + "/" + document.name
-        s3.delete_object(Bucket='institutionname', Key=str(document.course_id) + "/" + document.name)
+        s3 = app.config['SESSION'].client('s3')
+        s3_url = "s3://" + app.config['BUCKET_NAME'] + "/" + str(document.course_id) + "/" + document.name
+        s3.delete_object(Bucket=app.config['BUCKET_NAME'], Key=str(document.course_id) + "/" + document.name)
         course_id = str(document.course_id)
         db.session.delete(document)
         db.session.commit()

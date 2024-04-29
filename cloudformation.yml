@@ -27,12 +27,13 @@ Parameters:
         Type: String
         Default: ilamparithi10/cic-course-qa-backend
         Description: Docker image name
-    DBUser:
+    BucketName:
         Type: String
-        Description: RDS master username
-    DBPassword:
+        Default: institutionname
+        Description: BucketName for storing course documents
+    SecretId:
         Type: String
-        Description: RDS master password
+        Description: Secret manager secret id
 
 Resources:
     MyIAMRole:
@@ -78,6 +79,14 @@ Resources:
                           - Effect: Allow
                             Action:
                                 - rds:*
+                            Resource: "*"
+                - PolicyName: SecretsManagerFullAccessPolicy
+                  PolicyDocument:
+                      Version: "2012-10-17"
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - secretsmanager:*
                             Resource: "*"
 
     MyInstanceProfile:
@@ -126,6 +135,7 @@ Resources:
         Properties:
             SubnetId: !Ref Subnet1
             RouteTableId: !Ref Subnet1RouteTable
+
     Subnet1:
         Type: AWS::EC2::Subnet
         Properties:
@@ -137,6 +147,16 @@ Resources:
                 - !GetAZs ""
 
     Subnet2:
+        Type: AWS::EC2::Subnet
+        Properties:
+            VpcId: !Ref VPC
+            CidrBlock: 10.0.1.0/24
+            MapPublicIpOnLaunch: true
+            AvailabilityZone: !Select
+                - 0
+                - !GetAZs ""
+
+    Subnet3:
         Type: AWS::EC2::Subnet
         Properties:
             VpcId: !Ref VPC
@@ -162,8 +182,8 @@ Resources:
         Properties:
             DBSubnetGroupDescription: Subnets available for the RDS instance
             SubnetIds:
-                - !Ref Subnet1
                 - !Ref Subnet2
+                - !Ref Subnet3
 
     DBInstance:
         Type: AWS::RDS::DBInstance
@@ -172,8 +192,8 @@ Resources:
             Engine: "postgres"
             DBInstanceClass: !Ref DBInstanceClass
             AllocatedStorage: "20"
-            MasterUsername: !Ref DBUser
-            MasterUserPassword: !Ref DBPassword
+            MasterUsername: !Sub "{{resolve:secretsmanager:${SecretId}:SecretString:DBUser}}"
+            MasterUserPassword: !Sub "{{resolve:secretsmanager:${SecretId}:SecretString:DBPassword}}"
             DBSubnetGroupName: !Ref DBSubnetGroup
             MultiAZ: false
             VPCSecurityGroups:
@@ -196,11 +216,11 @@ Resources:
                     sudo systemctl start docker
                     sudo docker pull ilamparithi10/cic-course-qa-backend
                     sudo docker run -d \
-                        -e postgres_username=${DBUser} \
-                        -e postgres_password=${DBPassword} \
+                        -e secret_id=${SecretId} \
                         -e postgres_hostname=${DBInstance.Endpoint.Address} \
                         -e postgres_port=5432 \
                         -e postgres_database_name=${DBName} \
+                        -e bucket_name=${BucketName} \
                         -e llm_endpoint_name=${LLMEndpointName} \
                         -e embedding_endpoint_name=${EmbeddingEndpointName} \
                         -e region_name=${RegionName} \
@@ -338,10 +358,10 @@ Resources:
                     integration.request.path.proxy: "method.request.path.proxy"
                 IntegrationHttpMethod: ANY
                 Type: HTTP_PROXY
-                Uri: !Sub http://${EC2Instance.PublicIp}/{proxy}
+                Uri: !Sub http://34.213.63.0:5000/{proxy}
 
     RegisterMethod:
-        Type: AWS::ApiGateway::Method
+        Type: "AWS::ApiGateway::Method"
         Properties:
             HttpMethod: POST
             ResourceId: !Ref RegisterResource
@@ -350,7 +370,66 @@ Resources:
             Integration:
                 IntegrationHttpMethod: POST
                 Type: HTTP_PROXY
-                Uri: !Sub http://${EC2Instance.PublicIp}/users/register
+                Uri: !Sub http://34.213.63.0:5000/users/register
+
+    # Enabling cors ref: https://stackoverflow.com/questions/40292888/enable-cors-for-api-gateway-in-cloudformation-template
+    RegisterOptionsMethod:
+        Type: AWS::ApiGateway::Method
+        Properties:
+            AuthorizationType: NONE
+            ResourceId: !Ref RegisterResource
+            RestApiId: !Ref Api
+            HttpMethod: OPTIONS
+            Integration:
+                IntegrationResponses:
+                    - StatusCode: 200
+                      ResponseParameters:
+                          method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                          method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                      ResponseTemplates:
+                          application/json: ""
+                PassthroughBehavior: WHEN_NO_MATCH
+                RequestTemplates:
+                    application/json: '{"statusCode": 200}'
+                Type: MOCK
+            MethodResponses:
+                - StatusCode: 200
+                  ResponseModels:
+                      application/json: "Empty"
+                  ResponseParameters:
+                      method.response.header.Access-Control-Allow-Headers: false
+                      method.response.header.Access-Control-Allow-Methods: false
+                      method.response.header.Access-Control-Allow-Origin: false
+
+    ProxyOptionsMethod:
+        Type: AWS::ApiGateway::Method
+        Properties:
+            AuthorizationType: NONE
+            ResourceId: !Ref Resource
+            RestApiId: !Ref Api
+            HttpMethod: OPTIONS
+            Integration:
+                IntegrationResponses:
+                    - StatusCode: 200
+                      ResponseParameters:
+                          method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                          method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,PUT,POST,OPTIONS'"
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                      ResponseTemplates:
+                          application/json: ""
+                PassthroughBehavior: WHEN_NO_MATCH
+                RequestTemplates:
+                    application/json: '{"statusCode": 200}'
+                Type: MOCK
+            MethodResponses:
+                - StatusCode: 200
+                  ResponseModels:
+                      application/json: "Empty"
+                  ResponseParameters:
+                      method.response.header.Access-Control-Allow-Headers: false
+                      method.response.header.Access-Control-Allow-Methods: false
+                      method.response.header.Access-Control-Allow-Origin: false
 
     Deployment:
         DependsOn:

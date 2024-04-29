@@ -47,9 +47,8 @@ You can use a container with the latest code, already hosted on dockerhub or opt
 2. Login to your docker account on your local machine
 3. Go to [docker hub](hub.docker.com)
 4. Create a new public docker hub repository (cannot deploy backend automatically without public repository)
-5. Clone repository on your local machine
-6. Navigate to the backend directory of the cloned repository on terminal or shell
-7. Enter the following command
+5. Navigate to the backend directory of the cloned repository on terminal or shell
+6. Enter the following command
 
 ```
 docker build -t account_name/repo_name .
@@ -57,6 +56,21 @@ docker push account_name/repo_name
 ```
 
 This will dockerize the backend and push it to dockerhub.
+
+### Step 3: Set up AWS Secrets
+
+We can use the AWS Secrets Manager to securely store the master username and password of the postgres database. Note: These secrets will directly be used in Cloudformation Template if you use the same name and key as mentioned in this guide. If you choose a new name, you have to change the cloudformation code to reflect the new name and keys To store the keys securely:
+
+Navigate to the Secrets Manager console in AWS console
+
+1. Click 'Store a new secret'
+2. Click 'Other type of secret'
+3. Add 1 more row to make it 1 pairs in total
+4. Set the first Key to 'DBUser' and set the value to the master username for the database.
+5. Set the second key to 'DBPassword' and set the value to the master password for the database
+6. Click Next
+7. Set Secret name to a name of your choice and make sure to update this value in cloudformation template (Parameter SecretId)
+8. Click Next, Next and Store
 
 ## Deployment
 
