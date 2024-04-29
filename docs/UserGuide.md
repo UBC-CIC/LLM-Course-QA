@@ -45,6 +45,14 @@ After clicking on the "Users" tab on the side navigation bar, the admin can see 
 The admin can change the role of a user by clicking on the button at the end of the user row and selecting a new role. Users who are initally signed up as students but should be instructors or admins can have their roles elevated here.
 ![Institution Users Page](images/edit-role.png)
 
+**Institution Settings Screen**
+
+After clicking on the "Settings" tab on the side navigation bar, the admin can see the institution configuration. This configuration is what all of the users of the application sees on their side navigation bar after logging in.
+![Settings Page](images/settings.png)
+
+To change the configuration, the admin can upload a new logo and change the colour of the side navigation bar. After clicking "Save Changes", these new settings will be visible to all users of the application.
+![Change Settings Page](images/change-settings.png)
+
 ## Instructor View
 **Courses Screen**
 
