@@ -16,17 +16,17 @@ def get_config():
 @adminBp.route('', methods=['PUT'])
 def update_config():
     data = request.get_json()
-    file = request.files['file']
 
     update_config_data = {
-        'logo': data['logo'] if file and file.content_type == 'image/svg+xml' else None,
+        'logo': data['logo'] if 'logo' in data else None,
         'primaryColour': data['primaryColour'] if 'primaryColour' in data else None
     }
 
     try:
         update_config = adminService.update_config(update_config_data)
         return jsonify({'message': 'Configuration updated'}), 200
-    except:
+    except Exception as e:
+        print(e)
         return jsonify({'error': 'Internal Server Error'}), 500
 
 @adminBp.route('/users', methods=['PUT'])
