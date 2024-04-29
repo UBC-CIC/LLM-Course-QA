@@ -33,6 +33,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/select/Select"
+import Loading from '@/components/loading/Loading';
 
 interface UserData {
     id: string;
@@ -43,6 +44,9 @@ interface UserData {
 const InstitutionUsers = () => {
     const [users, setUsers] = useState<any[]>([]);
     const [selectedRole, setSelectedRole] = useState<string>('');
+    const [loading, setLoading] = useState(true);
+    const [loadingFade, setLoadingFade] = useState(false);
+
     const token = localStorage.getItem('token');
 
     const getAllUsers = async () => {
@@ -65,6 +69,10 @@ const InstitutionUsers = () => {
 
     useEffect(() => {
         getAllUsers();
+        setTimeout(() => {
+            setLoadingFade(true)
+            setTimeout(() => setLoading(false), 250)
+        }, 1000)    
     }, []);
 
     const handleDelete = (userId: string) => async () => {
@@ -187,6 +195,7 @@ const InstitutionUsers = () => {
                     </Table>
                 </ScrollArea>
             </div>
+            {loading ? <Loading loadingFade={loadingFade} /> : ''}
         </>
     );
 };

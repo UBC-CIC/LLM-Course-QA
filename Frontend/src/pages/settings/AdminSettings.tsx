@@ -14,16 +14,68 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/popover/Popover"
+import Loading from "@/components/loading/Loading";
 
 const AdminSettings = () => {
     const [color, setColor] = React.useState('#000000');
-    const [currentPassword, setCurrentPassword] = React.useState('');
-    const [newPassword, setNewPassword] = React.useState('');
-    const [comparePassword, setComparePassword] = React.useState('');
-    const [open, setOpen] = React.useState(false);
+    const [logo, setLogo] = React.useState('');
+    const [error, setError] = React.useState(false);
+    const [loading, setLoading] = React.useState(true);
+    const [loadingFade, setLoadingFade] = React.useState(false);
 
     const handleColorChange = (color: any) => {
         setColor(color.hex);
+    }
+
+    const encodeImageToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64String = reader.result as string;
+                resolve(base64String);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const saveChanges = async () => {
+        const logoInput = document.getElementById('picture') as HTMLInputElement;
+        const logoFile = logoInput.files?.[0];
+
+        const requestBody = {} as any;
+
+        if (logoFile) {
+            if(logoFile.type == 'image/png') {
+                const base64Logo = await encodeImageToBase64(logoFile);
+                requestBody.logo = base64Logo;
+                setError(false)
+            } else {
+                setError(true)
+                return;
+            }
+        }
+
+        if (color) {
+            requestBody.primaryColour = color;
+        }
+
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        const json = await response.json();
+
+        if (response.ok) {
+            console.log(json);
+        } else {
+            console.log(json);
+        }
+
     }
 
     const getInstitutionConfig = async () => {
@@ -37,7 +89,8 @@ const AdminSettings = () => {
         const json = await response.json();
 
         if (response.ok) {
-            setColor(json.colours);
+            setColor(json.colour);
+            setLogo(`data:image/png;base64,${json.logo}`);
         } else {
             console.log(json);
         }
@@ -45,58 +98,11 @@ const AdminSettings = () => {
 
     React.useEffect(() => {
         getInstitutionConfig();
+        setTimeout(() => {
+            setLoadingFade(true)
+            setTimeout(() => setLoading(false), 250)
+        }, 1200)
     }, []);
-
-
-
-    const handleChangePassword = () => {
-
-        if (currentPassword === '' || newPassword === '' || comparePassword === '') {
-            console.log('Please fill in all fields');
-            setOpen(false);
-            return;
-        }
-
-        if (newPassword !== comparePassword) {
-            console.log('Passwords do not match');
-            setOpen(false);
-            return;
-        }
-
-        const user = localStorage.getItem('user');
-        const userId = user ? JSON.parse(user).id : null;
-        const token = localStorage.getItem('token');
-
-        if (!userId) {
-            console.log('User not found');
-            setOpen(false);
-            return;
-        }
-
-        const reqData = {
-            user_id: userId,
-            old_password: currentPassword,
-            new_password: newPassword,
-        }
-
-        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token,
-            },
-            body: JSON.stringify(reqData),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-
-        setOpen(false);
-    }
 
     return (
         <div className='flex flex-row' >
@@ -120,28 +126,23 @@ const AdminSettings = () => {
             <div className="p-6 pt-12 w-screen">
                 <div className="flex justify-between items-center">
                     <h1 className="text-2xl font-bold mb-6">Settings</h1>
-                    <Button variant={'default'}>Save Changes</Button>
+                    <Button variant={'default'} onClick={saveChanges}>Save Changes</Button>
                 </div>
 
                 <div className="border-b border-gray-200 mt-6">
-                    <h2 className="text-xl font-bold">Institution configuration</h2>
-                    <div className="flex items-center mt-8">
-                        <h3 className="text-lg mr-6 w-40">Institution Name</h3>
-                        <Input className="w-72" placeholder="The University of British Columbia" />
-                    </div>
-
                     <div className="flex items-center mt-8 mr-4">
                         <h3 className="text-lg mr-6 w-40">Institution Logo</h3>
                         <div className="flex flex-col items-center">
-                            <img src="/ubclogo.png" alt="UBC Logo" className="w-20 h-20" />
+                            <img className="h-20 m-8" src={logo ? logo : "courseqa-logo.png"} alt="Logo" />
                             <Input id="picture" type="file" />
                         </div>
                     </div>
+                    {error && <p className="text-red-500">Please upload a png file</p>}
 
                     <div className="flex items-center mt-8 mb-6">
                         <h3 className="text-lg mr-6 w-40">Primary Color</h3>
-                        <Popover>
-                            <PopoverTrigger className='w-10 h-10' style={{ backgroundColor: color }} />
+                        <Popover >
+                            <PopoverTrigger className='w-10 h-10 border-solid border-2 border-black' style={{ backgroundColor: color }} />
                             <PopoverContent className='w-50'>
                                 <BlockPicker color={color} onChange={handleColorChange} />
                             </PopoverContent>
@@ -149,6 +150,7 @@ const AdminSettings = () => {
                     </div>
                 </div>
             </div>
+            {loading ? <Loading loadingFade={loadingFade} /> : ''}
         </div>
     );
 };
