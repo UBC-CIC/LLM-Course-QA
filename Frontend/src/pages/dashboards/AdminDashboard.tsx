@@ -35,6 +35,7 @@ import {
 } from "@/components/select/Select"
 
 import { Input } from "@/components/input/Input";
+import Loading from '@/components/loading/Loading';
 
 
 type CourseData = {
@@ -57,7 +58,8 @@ const AdminDashboard = () => {
     const [selectedCourseId, setSelectedCourseId] = useState<string>('');
     const [open, setOpen] = useState(false);
     const [openAddCourse, setOpenAddCourse] = useState(false);
-
+    const [loading, setLoading] = useState(true);
+    const [loadingFade, setLoadingFade] = useState(false);
 
     const user = localStorage.getItem('user');
     const userId = user ? JSON.parse(user).id : null;
@@ -101,6 +103,10 @@ const AdminDashboard = () => {
     useEffect(() => {
         getAllCourses();
         getAllInstructors();
+        setTimeout(() => {
+            setLoadingFade(true)
+            setTimeout(() => setLoading(false), 250)
+        }, 1000)
     }, []);
 
     const updateCourse = async () => {
@@ -285,6 +291,7 @@ const AdminDashboard = () => {
                     </Table>
                 </ScrollArea>
             </div>
+            {loading ? <Loading loadingFade={loadingFade} /> : ''}
         </>
     );
 };
