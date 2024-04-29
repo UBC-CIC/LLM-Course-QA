@@ -41,7 +41,6 @@ interface UserData {
 }
 
 const InstitutionUsers = () => {
-    // const { id } = useParams<{ id: string }>()
     const [users, setUsers] = useState<any[]>([]);
     const [selectedRole, setSelectedRole] = useState<string>('');
     const token = localStorage.getItem('token');

@@ -230,7 +230,7 @@ def list_enrolled_students(list_enrolled_students_data):
         student_objects.append({
             'id': student.id,
             'name': student.name,
-            'role': "student"
+            'role': "Student"
         })
 
     list_enrolled_students_response = {
