@@ -1,5 +1,6 @@
 # LLM-Course-QA
-This project is a question-answering system that leverages Large Language Models (LLMs) to provide a platform for higher-education students to receive answers to course specific questions. The system uses information in course documents uploaded by instructors as its sources when responding to these queries.
+This project was built for the UBC Cloud Innovation Centre as a part of the UBC ECE Capstone course.
+LLM-Course-QA is a question-answering system that leverages Large Language Models (LLMs) to provide a platform for higher-education students to receive answers to course specific questions. The system uses information in course documents uploaded by instructors as its sources when responding to these queries.
 # High Level Architecture
 This project is split into 4 main systems: frontend, backend, data ingestion and retrieval pipelines, and the large language model.
 
