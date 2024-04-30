@@ -18,7 +18,6 @@ def register():
 def login():
     try:
         data = request.get_json()
-    # TODO: Validate data
     except Exception as e:
         print(f"Error parsing JSON: {str(e)}")
 
@@ -37,7 +36,7 @@ def logout():
     else:
         return jsonify({'error': 'Logout failed'}), 400
 
-# get user role
+# Gets user role
 @userBp.route('/role', methods=['GET'])
 @login_required
 def get_role(user):
@@ -50,7 +49,6 @@ def get_role(user):
         return jsonify({'role': role}), 200
     else:
         return jsonify({'error': 'Invalid password'}), 400
-
 
 
 @userBp.route('', methods=['PUT'])

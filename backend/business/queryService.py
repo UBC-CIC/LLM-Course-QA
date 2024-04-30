@@ -16,7 +16,7 @@ def query_llm(query_data):
     user_id = query_data['user_id']
     question = question
 
-    # use chroma and sagemaker embeddings to get documents
+    # Retrieve documents using chroma and sagemaker embeddings
     vectordb = Chroma(client=vecdb, collection_name = course_id ,embedding_function=query_embedding)
     retriever = vectordb.as_retriever()
 
@@ -28,6 +28,7 @@ def query_llm(query_data):
                                   chain_type_kwargs={"prompt": prompt})
     llm_response = qa_chain(question)
 
+    # If its a new conversation, create a new conversation
     if (conversation_id is None):
         conversation = Conversation(
             name = question,
@@ -45,6 +46,8 @@ def query_llm(query_data):
     )
     db.session.add(query)
     db.session.commit()
+
+    # Get temporary url for the source documents
     s3 = Config.SESSION.client('s3')
     sources = []
     for source in llm_response["source_documents"]:
@@ -61,6 +64,7 @@ def query_llm(query_data):
 
     return response
 
+# Extracts bucket name and object name from s3 url
 def split_s3_url(source):
     parts = source.replace("s3://", "").split("/", 1)
     bucket_name = parts[0]
@@ -68,6 +72,7 @@ def split_s3_url(source):
 
     return {"bucket_name": bucket_name, "object_name": object_name}
 
+# Gets the list of questions and answers for a conversation
 def query_list(query_data):
     conversation = Conversation.query.get(query_data['conversation_id'])
     queries = sorted(conversation.queries, key=lambda query: query.date)
@@ -83,6 +88,7 @@ def query_list(query_data):
     }
     return response
 
+# Gets the list of conversations between a user and a course
 def conversation_history(query_data):
     conversations = Conversation.query.filter_by(user_id=query_data['user_id'], course_id=query_data['course_id']).order_by(Conversation.date.desc()).all()
     cId = get_course(query_data['course_id'])

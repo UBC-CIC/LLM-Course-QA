@@ -4,6 +4,7 @@ from ..extensions import db
 from .courseService import get_courses
 import base64
 
+# Gets the configuration of the institution
 def get_config():
     try:
         with open('core/config/logo.png', 'rb') as image_file:
@@ -21,6 +22,7 @@ def get_config():
         'colour': primary_colour
     }
 
+# Updates the configuration of the institution (logo and primary colour)
 def update_config(update_config_data):
     if 'logo' in update_config_data and update_config_data['logo'] is not None:
         logo_base64 = update_config_data['logo']
@@ -43,6 +45,7 @@ def update_config(update_config_data):
 
     return True
 
+# Updates the role of a user, can be Admin, Instructor or Student
 def update_users(update_user_data):
     user = User.query.get(update_user_data['id'])
     print("user", user)
@@ -63,6 +66,7 @@ def update_users(update_user_data):
 
     return True
 
+# Removes a user from the institution
 def delete_user(delete_user_data):
     user = User.query.get(delete_user_data['user_id'])
     if user is None:

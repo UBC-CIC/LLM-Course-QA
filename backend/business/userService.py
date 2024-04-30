@@ -12,6 +12,8 @@ def register(create_user_data):
 
     users = get_users()
     role = Role.Student
+
+    # Makes the first user an admin
     if len(users) == 0:
         role = Role.Admin
 
@@ -45,6 +47,8 @@ def login(login_data):
 # Changes user password
 def change_password(change_password_data):
     user = User.query.get(change_password_data['user_id'])
+
+    # Checks if the password is correct
     if bcrypt.check_password_hash(user.password, change_password_data['old_password']):
         user.password = bcrypt.generate_password_hash(change_password_data['new_password']).decode('utf-8')
         db.session.commit()

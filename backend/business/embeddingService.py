@@ -3,9 +3,9 @@ from typing import Dict, List
 from langchain_community.embeddings import SagemakerEndpointEmbeddings
 from langchain_community.embeddings.sagemaker_endpoint import EmbeddingsContentHandler
 from ..config import Config
-# profile_name, embedding_endpoint_name, region_name, environment
-# embedding model object
-# ref:
+
+# Embedding model object
+# ref: https://python.langchain.com/docs/integrations/llms/sagemaker/
 class ContentHandler(EmbeddingsContentHandler):
     content_type = "application/json"
     accepts = "application/json"
@@ -20,8 +20,6 @@ class ContentHandler(EmbeddingsContentHandler):
 
 content_handler = ContentHandler()
 
-
-# Conditionally include credentials_profile_name based on profile_name
 embedding_args = {
     "endpoint_name": Config.EMBEDDING_ENDPOINT_NAME,
     "region_name": Config.REGION_NAME,
@@ -29,6 +27,7 @@ embedding_args = {
     "endpoint_kwargs": {"CustomAttributes": "accept_eula=true"}
 }
 
+# Conditionally include credentials_profile_name based on profile_name
 if Config.ENVIRONMENT != 'production':
     embedding_args["credentials_profile_name"] = Config.PROFILE_NAME
 

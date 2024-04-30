@@ -79,7 +79,7 @@ def delete_course_document(courseId, documentId):
         return jsonify({'error': 'Document does not exist'}), 400
     return jsonify({'message': 'Document deleted'}), 200
 
-# get all courses
+# Gets all courses
 @courseBp.route('', methods=['GET'])
 @login_required
 def get_courses(user):
@@ -110,7 +110,7 @@ def join_course(user):
     except:
         return jsonify({'error': 'Internal Server Error'}), 500
 
-# get all course documents
+# Gets all course documents
 @courseBp.route('/<courseId>/documents', methods=['GET'])
 # @login_required
 def get_course_documents(courseId):
@@ -130,7 +130,7 @@ def list_enrolled_students(courseId):
     list_enrolled_students = courseService.list_enrolled_students(list_enrolled_students_data)
     return jsonify(list_enrolled_students), 200
 
-# remove student from course
+# Removes student from course
 @courseBp.route('/<courseId>/users/<student_id>', methods=['DELETE'])
 # @login_required
 def remove_student_from_course(courseId, student_id):

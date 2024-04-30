@@ -8,7 +8,6 @@ queryBp = Blueprint('query', __name__, url_prefix='/queries')
 @login_required
 def query_llm(user):
     data = request.get_json()
-    # TODO: Validate data
     query_data = {
         'question': data['question'],
         'course_id': data['course_id'],
@@ -23,7 +22,6 @@ def query_llm(user):
 
 @queryBp.route('/conversations/<conversationId>', methods=['GET'])
 def query_list(conversationId):
-    # TODO: Validate data
     query_data = {
         'conversation_id': conversationId,
     }
@@ -36,7 +34,6 @@ def query_list(conversationId):
 @queryBp.route('/<courseId>/conversations', methods=['GET'])
 @login_required
 def conversation_history(user, courseId):
-    # TODO: Validate data
     query_data = {
         'course_id': courseId,
         'user_id': user.id, # add by middleware TODO

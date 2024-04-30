@@ -4,6 +4,7 @@ from langchain_community.llms.sagemaker_endpoint import LLMContentHandler, Sagem
 from langchain.prompts import PromptTemplate
 from ..config import Config
 
+# ref: https://python.langchain.com/docs/integrations/llms/sagemaker/
 class ContentHandler(LLMContentHandler):
     content_type = "application/json"
     accepts = "application/json"
@@ -40,17 +41,14 @@ if Config.ENVIRONMENT != 'production':
 
 llm_open = SagemakerEndpoint(**llm_open_args)
 
-
-# llm_open = Ollama(model="mistral")
-
-template = """ <s>[INST] 
+template = """ <s>[INST]
 You are a helpful assistant that provides direct and concise answers based only on the provided information.
 Use the following information from the course information to answer the user's question. If the answer is not present in the provided information, your answer must only be 'I do not know the answer'.
-Do not refer to the fact that there are provided course documents in your answer, just directly answer the question. 
+Do not refer to the fact that there are provided course documents in your answer, just directly answer the question.
 < -- COURSE INFORMATION -- >
 {context}
 < -- END COURSE INFORMATION -- >
-< -- QUESTION -- > 
+< -- QUESTION -- >
 {question}
 < -- END QUESTION -- >
 Solution:
