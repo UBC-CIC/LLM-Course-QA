@@ -27,7 +27,7 @@ embedding_args = {
     "endpoint_kwargs": {"CustomAttributes": "accept_eula=true"}
 }
 
-# Conditionally include credentials_profile_name based on profile_name
+# Conditionally include credentials_profile_name based on environment
 if Config.ENVIRONMENT != 'production':
     embedding_args["credentials_profile_name"] = Config.PROFILE_NAME
 
