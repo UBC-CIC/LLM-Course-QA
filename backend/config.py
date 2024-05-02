@@ -2,9 +2,8 @@ import boto3
 import os
 import json
 
-
 class Config:
-    ENVIRONMENT = os.environ.get('environment') 
+    ENVIRONMENT = os.environ.get('environment')
     if ENVIRONMENT != 'production':
         PROFILE_NAME = '' # input for local testing
         EMBEDDING_ENDPOINT_NAME = '' # input for local testing
@@ -31,5 +30,5 @@ class Config:
 
         # Set the SQLALCHEMY_DATABASE_URI
         SQLALCHEMY_DATABASE_URI = 'postgresql://' + str(DBUser) + ':' + str(DBPassword) + '@' + os.environ.get('postgres_hostname') + ':' + os.environ.get('postgres_port') + '/' + os.environ.get('postgres_database_name')
-    
+
 

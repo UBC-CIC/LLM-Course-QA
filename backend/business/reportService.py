@@ -6,7 +6,7 @@ from ..data.models.course import Course
 from ..extensions import db
 from .courseService import get_course
 
-
+# Reports a conversation and assigns the report to the instructor
 def report(report_data):
     conversation = Conversation.query.get(report_data['conversation_id'])
     if not conversation:
@@ -16,6 +16,7 @@ def report(report_data):
     if not course:
         return None
 
+    # Get the instructor of the course that the conversation belongs to
     instructor = User.query.join(Course.users) \
                         .filter(Course.id == conversation.course_id) \
                         .filter(User.role == Role.Instructor) \
@@ -32,7 +33,7 @@ def report(report_data):
 
     return report.id
 
-
+# Retrieves all reports for an instructor
 def list_reports(report_data):
     reports = Report.query.filter_by(instructor_id=report_data['instructor_id']).all()
 

@@ -86,7 +86,7 @@ def join_course(join_course_data):
             return True
     return False
 
-# Uploads course document to s3
+# Uploads course document to s3, adds document to document table and adds document to vector store
 def upload_course_document(course_document_data):
     print(course_document_data)
     file = course_document_data['document']
@@ -122,32 +122,33 @@ def upload_course_document(course_document_data):
                                                   'document_id': str(document.id)}})
 
         s3_url = "s3://" + Config.BUCKET_NAME + "/" + str(course_document_data['course_id']) + "/" + file.filename
-        # add document to vector store
+
+        # Adds document to vector store
         thread = threading.Thread(target=vectorize_documents, args=(str(document.course_id), s3_url, str(document.id),))
         thread.start()
     except Exception as e:
         print(e)
         return False
 
-    # return file name and id
     file_data = {
         'name': new_filename,
         'id': document.id
     }
 
-    print("file_data: ", file_data)
     return file_data
 
 def delete_course_document(course_document_data):
     document = Document.query.get(course_document_data['document_id'])
     if document:
+        # Removes document from s3 and document table
         s3 = Config.SESSION.client('s3')
         s3_url = "s3://" + Config.BUCKET_NAME + "/" + str(document.course_id) + "/" + document.name
         s3.delete_object(Bucket=Config.BUCKET_NAME, Key=str(document.course_id) + "/" + document.name)
         course_id = str(document.course_id)
         db.session.delete(document)
         db.session.commit()
-        # remove from vector store
+
+        # Removes document from vector store
         thread = threading.Thread(target=delete_document_vectors, args=(course_id, s3_url))
         thread.start()
         return True
@@ -191,13 +192,16 @@ def get_courses():
     courses = Course.query.all()
     return courses
 
-# get course
+# Get course with a specific course_id
 def get_course(course_id):
     course = Course.query.get(course_id)
     return course
 
+# Vectorizes and adds document to vector store
 def vectorize_documents(course_id, s3_url, document_id):
+    # Extracts plain text from document
     documents = extractionService.extract_text(s3_url, document_id)
+
     vectordb = Chroma(
     client=vecdb,
     collection_name=course_id,

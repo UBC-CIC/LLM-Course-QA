@@ -10,4 +10,4 @@ class Report(db.Model):
     reason = Column(Text, nullable=False)
     conversation_id = Column(UUID(as_uuid=True), ForeignKey('conversations.id'), nullable=False)
     instructor_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
-    
+

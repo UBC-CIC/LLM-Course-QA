@@ -7,8 +7,6 @@ export const useLogin = () => {
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
 
-    // const { dispatch } = useAuthContext()
-
     const login = async (email: string, password: string) => {
         setIsLoading(true)
         const user = new CognitoUser({

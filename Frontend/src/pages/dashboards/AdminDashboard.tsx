@@ -4,7 +4,6 @@ import { Badge } from '@/components/badge/Badge';
 import { faEllipsisV, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import SideNav from '@/components/navbar/SideNav';
 import React, { useState, useEffect } from "react";
-// import { useParams } from "react-router-dom"
 
 import {
     Book,
@@ -47,7 +46,6 @@ type CourseData = {
 }
 
 const AdminDashboard = () => {
-    // const { id } = useParams<{ id: string }>()
     const [courses, setCourses] = useState<any[]>([]);
     const [instructors, setInstructors] = useState<any[]>([]);
     const [selectedCourseCode, setSelectedCourseCode] = useState<string>('');
