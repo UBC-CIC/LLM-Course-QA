@@ -19,7 +19,7 @@ const Login = () => {
 
         if(cognitoUser){
             let userId;
-            // get user id from user
+            // Gets the user id from cognito session
             cognitoUser.getSession(function(err: Error | null, session: CognitoUserSession) {
                 if (err) {
                     alert(err.message || JSON.stringify(err));
