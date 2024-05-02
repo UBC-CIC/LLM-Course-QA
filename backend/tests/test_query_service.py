@@ -9,8 +9,8 @@ from datetime import datetime
 
 @pytest.fixture(scope='module')
 def app_context():
-    app = create_app()  
-    with app.app_context(): 
+    app = create_app()
+    with app.app_context():
         yield
 
 @pytest.fixture

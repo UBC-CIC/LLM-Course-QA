@@ -11,8 +11,8 @@ bcrypt = Bcrypt()
 @pytest.fixture(scope='module')
 def app_context():
     app = create_app()
-    app.config['TESTING'] = True 
-    with app.app_context(): 
+    app.config['TESTING'] = True
+    with app.app_context():
         yield app
 
 @pytest.fixture
@@ -33,7 +33,7 @@ def test_register(mock_query, mock_users, app_context):
     mock_query.filter_by().first.return_value = None
     result = register({'name': 'user7', 'username': 'user7', 'password': 'password', 'role': 'Student'})
     assert result is not None
-    
+
 # Testing login
 @patch('backend.data.models.user.User.query')
 def test_login(mock_query, mock_users, app_context):
@@ -42,7 +42,7 @@ def test_login(mock_query, mock_users, app_context):
         result = login({'username': 'user1', 'password': 'password'})
         assert result['id'] == mock_users[0].id
         assert result['role'] == mock_users[0].role
-    
+
 # Testing login with invalid username
 @patch('backend.data.models.user.User.query')
 def test_login_invalid(mock_query, mock_users, app_context):
@@ -73,14 +73,14 @@ def test_get_user(mock_query, mock_users, app_context):
     assert result.name == mock_users[0].name
     assert result.username == mock_users[0].username
     assert result.role == mock_users[0].role
-    
+
 # Testing get_user with invalid user_id
 @patch('backend.data.models.user.User.query')
 def test_get_user_invalid(mock_query, mock_users, app_context):
     mock_query.get.return_value = None
     result = get_user('invalid')
     assert result is None
-    
+
 # Testing get_users
 @patch('backend.data.models.user.User.query')
 def test_get_users(mock_query, mock_users, app_context):
