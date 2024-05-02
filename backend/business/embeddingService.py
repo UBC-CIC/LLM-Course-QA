@@ -50,7 +50,7 @@ class QueryContentHandler(EmbeddingsContentHandler):
 query_content_handler = QueryContentHandler()
 
 
-# Conditionally include credentials_profile_name based on profile_name
+# Conditionally include credentials_profile_name based on environment
 query_embedding_args = {
     "endpoint_name": Config.EMBEDDING_ENDPOINT_NAME,
     "region_name": Config.REGION_NAME,
